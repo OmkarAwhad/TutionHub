@@ -61,7 +61,9 @@ module.exports.login = async (req, res) => {
 			return res.json(new ApiError(400, "All fields are required"));
 		}
 
-		const userDetails = await User.findOne({ email: email });
+		const userDetails = await User.findOne({ email: email })
+			.populate("profile")
+			.exec();
 
 		if (!userDetails) {
 			return res.json(

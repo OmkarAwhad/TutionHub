@@ -9,6 +9,9 @@ const lectureSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	day:{
+		type:String,
+	},
 	tutor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",

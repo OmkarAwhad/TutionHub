@@ -107,3 +107,17 @@ module.exports.login = async (req, res) => {
 		return res.json(new ApiError(500, "Error in login "));
 	}
 };
+
+module.exports.removeUser = async (req, res) => {
+	try {
+		const { userId } = req.body;
+		await User.findByIdAndDelete(userId);
+
+		return res.json(
+			new ApiResponse(200, {}, "User deleted successfully")
+		);
+	} catch (error) {
+		console.log("Error in creating a lecture ", error);
+		return res.json(new ApiError(500, "Error in creating a lecture "));
+	}
+};

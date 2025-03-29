@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Profile",
 	},
+	subjects: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Subject",
+		},
+	],
 	// progress: {
 	// 	type: mongoose.Schema.Types.ObjectId,
 	// 	ref: "Progress",

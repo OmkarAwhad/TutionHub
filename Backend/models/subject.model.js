@@ -6,11 +6,11 @@ const subjectSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
-   code:{
-      type: String,
+	code: {
+		type: String,
 		sparse: true,
 		unique: true,
-   }
+	},
 });
 
 module.exports = mongoose.model("Subject", subjectSchema);

@@ -17,7 +17,7 @@ exports.auth = async (req, res, next) => {
 			return res.json(
 				new ApiError(400, "Not authorized, Login Again")
 			);
-		}  
+		}
 
 		try {
 			const decode = await jwt.verify(token, process.env.JWT_SECRET);
@@ -44,6 +44,7 @@ exports.auth = async (req, res, next) => {
 
 exports.isStudent = async (req, res, next) => {
 	try {
+		// console.log("req.user : ",req.user)
 		const { role } = req.user;
 		if (role !== "Student") {
 			return res.json(
@@ -53,6 +54,7 @@ exports.isStudent = async (req, res, next) => {
 				)
 			);
 		}
+		next();
 	} catch (error) {
 		console.log("Error in student auth ", error.message);
 		return res.json(new ApiError(500, "Error in student auth"));

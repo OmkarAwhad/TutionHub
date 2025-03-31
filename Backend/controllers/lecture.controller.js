@@ -12,7 +12,7 @@ module.exports.createLecture = async (req, res) => {
 			return res.json(new ApiError(400, "All fields are required"));
 		}
 
-		const lectureExists = await Lecture.find({ date: date, time: time });
+		const lectureExists = await Lecture.findOne({ date: date, time: time });
 		if (lectureExists) {
 			return res.json(
 				new ApiError(

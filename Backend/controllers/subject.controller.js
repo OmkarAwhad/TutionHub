@@ -1,6 +1,7 @@
 const Subject = require("../models/subject.model");
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
+const User = require("../models/user.model");
 
 module.exports.createSubject = async (req, res) => {
 	try {
@@ -8,6 +9,16 @@ module.exports.createSubject = async (req, res) => {
 		if (!name || !code) {
 			return res.json(
 				new ApiError(400, "Name and code both are required")
+			);
+		}
+
+		const alreadyMade = await Subject.find({ name: name, code: code });
+		if (alreadyMade) {
+			return res.json(
+				new ApiError(
+					400,
+					"Subject with the same name and code already exists"
+				)
 			);
 		}
 
@@ -103,5 +114,47 @@ module.exports.getAllSubjects = async (req, res) => {
 	} catch (error) {
 		console.log("Error in fetching all subjects ", error);
 		return res.json(new ApiError(500, "Error in fetching all subjects "));
+	}
+};
+
+module.exports.assignSubject = async (req, res) => {
+	try {
+		// const userId = req.user.id;
+		const { subjects, studentId } = req.body;
+
+		const validatedSubjectIds = [];
+
+		for (const subjectName of subjects) {
+			const subDetails = await Subject.findOne({ name: subjectName });
+			if (!subDetails) {
+				return res.json(
+					new ApiError(
+						404,
+						`Subject ${subjectName} does not exist in DB`
+					)
+				);
+			}
+
+			validatedSubjectIds.push(subDetails._id);
+		}
+
+		const updatedUser = await User.findByIdAndUpdate(
+			studentId,
+			{ $addToSet: { subjects: { $each: validatedSubjectIds } } },
+			{ new: true }
+		).populate("subjects");
+
+		return res.json(
+			new ApiResponse(
+				200,
+				updatedUser,
+				"Subjects assigned successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching subjects of that student ", error);
+		return res.json(
+			new ApiError(500, "Error in fetching subjects of that student ")
+		);
 	}
 };

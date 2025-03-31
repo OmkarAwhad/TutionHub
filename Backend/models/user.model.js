@@ -30,11 +30,11 @@ const userSchema = new mongoose.Schema({
 			ref: "Subject",
 		},
 	],
-	// progress: {
+	// Marks: {
 	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: "Progress",
+	// 	ref: "Marks",
 	// },
-	/// Nahi chahiye kyuki progress mein humne studentId access kar rakha h
+	/// Nahi chahiye kyuki Marks mein humne studentId access kar rakha h
 });
 
 module.exports = mongoose.model("User", userSchema);

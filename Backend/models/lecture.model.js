@@ -9,8 +9,8 @@ const lectureSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	day:{
-		type:String,
+	day: {
+		type: String,
 	},
 	tutor: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -20,6 +20,10 @@ const lectureSchema = new mongoose.Schema({
 	subject: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Subject",
+	},
+	description: {
+		type: String,
+		enum: ["Test", "Lecture"],
 	},
 });
 

@@ -117,6 +117,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 
 module.exports.viewStudAttendanceForLec = async (req, res) => {
 	try {
+		// Tutor and Admin can see the attendance for any particular lecture
 		if (req.user.role === "Student") {
 			return res.json(
 				new ApiError(
@@ -213,6 +214,44 @@ module.exports.attendAccToSub = async (req, res) => {
 			new ApiError(
 				500,
 				"Error in fetching attendance acc to a subject "
+			)
+		);
+	}
+};
+
+module.exports.studsPresentForALec = async (req, res) => {
+	try {
+		const { lectureId } = req.body;
+		if (!lectureId) {
+			return res.json(new ApiError(400, "Lecture ID is required"));
+		}
+
+		const attendanceDetails = await Attendance.find({
+			lecture: lectureId,
+		})
+			.populate("student")
+			.exec();
+
+		const finalResult = attendanceDetails.filter(
+			(student) => student.status === "Present"
+		);
+
+		return res.json(
+			new ApiResponse(
+				200,
+				finalResult,
+				"List of students present for the lecture fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log(
+			"Error in fetching all present students details for that lecture  ",
+			error
+		);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching all present students details for that lecture  "
 			)
 		);
 	}

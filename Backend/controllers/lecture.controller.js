@@ -6,13 +6,16 @@ const { ApiResponse } = require("../utils/ApiResponse.utils");
 
 module.exports.createLecture = async (req, res) => {
 	try {
-		const { date, time, tutor, subject } = req.body;
+		const { date, time, tutor, subject, description } = req.body;
 
-		if (!date || !time || !tutor || !subject) {
+		if (!date || !time || !tutor || !subject || !description) {
 			return res.json(new ApiError(400, "All fields are required"));
 		}
 
-		const lectureExists = await Lecture.findOne({ date: date, time: time });
+		const lectureExists = await Lecture.findOne({
+			date: date,
+			time: time,
+		});
 		if (lectureExists) {
 			return res.json(
 				new ApiError(
@@ -50,6 +53,7 @@ module.exports.createLecture = async (req, res) => {
 			tutor: tutorDetails._id,
 			subject: subjectDetails._id,
 			day: dayOfWeek,
+			description: description,
 		});
 
 		return res.json(
@@ -104,6 +108,7 @@ module.exports.getLecturesByDay = async (req, res) => {
 					tutor: lect.tutor,
 					date: lect.date,
 					day: lect.day,
+					description: lect.description,
 				});
 			}
 		});
@@ -123,6 +128,34 @@ module.exports.getLecturesByDay = async (req, res) => {
 		console.log("Error in getting all lectures of a week ", error);
 		return res.json(
 			new ApiError(500, "Error in getting all lectures of a week ")
+		);
+	}
+};
+
+module.exports.getTestDays = async (req, res) => {
+	try {
+		const { description } = req.body;
+		if (description !== "Test") {
+			return res.json(
+				new ApiError(400, "This route can only fetch test days")
+			);
+		}
+		const details = await Lecture.find({ description: description })
+			.populate("tutor")
+			.populate("subject")
+			.exec();
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{ Tests: details },
+				"Test days fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error fetching Test days schedule ", error);
+		return res.json(
+			new ApiError(500, "Error fetching Test days schedule ")
 		);
 	}
 };

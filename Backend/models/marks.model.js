@@ -1,12 +1,17 @@
 const mongoose = require("mongoose");
 
-const ProgressSchema = new mongoose.Schema({
+const MarksSchema = new mongoose.Schema({
 	student: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
-	subject: {
+	lecture: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Lecture",
+		required: true,
+	},
+	subject:{
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Subject",
 		required: true,
@@ -18,6 +23,9 @@ const ProgressSchema = new mongoose.Schema({
 	totalMarks: {
 		type: Number,
 	},
+	description: {
+		type: String,
+	},
 	updatedBy: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
@@ -27,9 +35,6 @@ const ProgressSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
-	description: {
-		type: String,
-	},
 });
 
-module.exports = mongoose.model("Progress", ProgressSchema);
+module.exports = mongoose.model("Marks", MarksSchema);

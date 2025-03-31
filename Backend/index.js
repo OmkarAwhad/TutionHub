@@ -25,5 +25,5 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/auth", authRoutes);
 
 app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

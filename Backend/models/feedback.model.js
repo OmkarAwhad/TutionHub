@@ -6,17 +6,6 @@ const FeedbackSchema = new mongoose.Schema({
 		ref: "User",
 		required: true,
 	},
-	// submittedTo: {
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: "User", // Tutor
-	// 	required: true,
-	// },
-	rating: {
-		type: Number,
-		min: 1,
-		max: 5,
-		required: true,
-	},
 	comment: {
 		type: String,
 	},

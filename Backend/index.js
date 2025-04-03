@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
-const { cloudinaryConnect } = require("./config/cloudinary");
 
 const authRoutes = require("./routes/auth.routes");
 const profileRoutes = require("./routes/profile.routes");
@@ -14,6 +13,7 @@ const attendanceRoutes = require("./routes/attendance.routes");
 const marksRoutes = require("./routes/marks.routes");
 const feedbackRoutes = require("./routes/feedback.routes");
 const notesRoutes = require("./routes/notes.routes");
+const homeworkRoutes = require("./routes/homework.routes");
 
 const PORT = process.env.PORT || 5001;
 
@@ -32,6 +32,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 require("./config/mongoose").connect();
 
+app.use("/api/v1/homework", homeworkRoutes);
 app.use("/api/v1/notes", notesRoutes);
 app.use("/api/v1/feedback", feedbackRoutes);
 app.use("/api/v1/marks", marksRoutes);

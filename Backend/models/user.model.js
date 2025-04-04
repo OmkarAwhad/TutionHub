@@ -30,6 +30,12 @@ const userSchema = new mongoose.Schema({
 			ref: "Subject",
 		},
 	],
+	announcement: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Announcement",
+		},
+	],
 	// Marks: {
 	// 	type: mongoose.Schema.Types.ObjectId,
 	// 	ref: "Marks",

@@ -14,6 +14,8 @@ const marksRoutes = require("./routes/marks.routes");
 const feedbackRoutes = require("./routes/feedback.routes");
 const notesRoutes = require("./routes/notes.routes");
 const homeworkRoutes = require("./routes/homework.routes");
+const announcementRoutes = require("./routes/announcement.routes");
+const remarksRoutes = require("./routes/remarks.routes");
 
 const PORT = process.env.PORT || 5001;
 
@@ -32,6 +34,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 require("./config/mongoose").connect();
 
+app.use("/api/v1/remarks", remarksRoutes);
+app.use("/api/v1/announcement", announcementRoutes);
 app.use("/api/v1/homework", homeworkRoutes);
 app.use("/api/v1/notes", notesRoutes);
 app.use("/api/v1/feedback", feedbackRoutes);

@@ -7,7 +7,7 @@ const AnnouncementSchema = new mongoose.Schema({
 	},
 	target: {
 		type: String,
-		enum: ["all", "students", "tutors", "subject"],
+		enum: ["All", "Students", "Tutors"],
 		required: true,
 	},
 	subject: {
@@ -16,7 +16,7 @@ const AnnouncementSchema = new mongoose.Schema({
 	},
 	createdBy: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "Users",
+		ref: "User",
 		required: true,
 	},
 	createdAt: {

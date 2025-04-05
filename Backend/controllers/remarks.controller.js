@@ -9,29 +9,24 @@ module.exports.addARemark = async (req, res) => {
 		const { studentId, subjectId, remark } = req.body;
 		const tutorId = req.user.id;
 
-		// Validate inputs
 		if (!studentId || !subjectId || !remark) {
 			return res.json(new ApiError(400, "All fields are required"));
 		}
 
-      // Check if the subject exists
 		const subject = await Subject.findById(subjectId);
 		if (!subject) {
 			return res.json(new ApiError(404, "Subject not found"));
 		}
 
-		// Check if the student exists
 		const student = await User.findById(studentId);
 		if (!student || student.role !== "Student") {
 			return res.json(new ApiError(404, "Student not found"));
 		}
 
-      // Check if the student has taken the subject
       if (!student.subjects.includes(subjectId)) {
          return res.json(new ApiError(400, "Student has not taken this subject"));
       }
 
-		// Create the remark
 		const newRemark = await Remark.create({
 			student: studentId,
 			tutor: tutorId,
@@ -54,7 +49,6 @@ module.exports.viewRemarks = async (req, res) => {
 	try {
 		const studentId = req.user.id;
 
-		// Fetch remarks for the student
 		const remarks = await Remark.find({ student: studentId })
 			.populate("tutor", "name email")
 			.populate("subject", "name code")

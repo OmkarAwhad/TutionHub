@@ -78,7 +78,7 @@ module.exports.login = async (req, res) => {
 		// 	return res.json(new ApiError(400,"Role of the user didn't matched"))
 		// }
 
-		if (!bcrypt.compare(password, userDetails.password)) {
+		if (!await bcrypt.compare(password, userDetails.password)) {
 			return res.json(new ApiError(400, "Invalid password"));
 		}
 
@@ -117,7 +117,24 @@ module.exports.removeUser = async (req, res) => {
 			new ApiResponse(200, {}, "User deleted successfully")
 		);
 	} catch (error) {
-		console.log("Error in creating a lecture ", error);
-		return res.json(new ApiError(500, "Error in creating a lecture "));
+		console.log("Error in removing the user ", error);
+		return res.json(new ApiError(500, "Error in removing the user "));
+	}
+};
+
+module.exports.deleteMyAccount = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		await User.findByIdAndDelete(userId);
+		return res.json(
+			new ApiResponse(
+				200,
+				{},
+				"Your account has been deleted successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in deleting my account ", error);
+		return res.json(new ApiError(500, "Error in deleting my account "));
 	}
 };

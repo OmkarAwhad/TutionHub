@@ -1,0 +1,103 @@
+:root {
+	--jet-black: #181818;
+	--charcoal-gray: #323232;
+	--medium-gray: #4b4b4b;
+	--slate-gray: #656565;
+	--light-gray: #e6e6e6;
+}
+
+/* In your CSS file */
+.logo-text {
+	font-family: "Chakra Petch", sans-serif;
+	font-weight: 700;
+}
+
+/* Charcoal Gray */
+.bg-charcoal-gray {
+	background-color: var(--charcoal-gray);
+}
+
+.text-charcoal-gray {
+	color: var(--charcoal-gray);
+}
+
+.border-charcoal-gray {
+	border-color: var(--charcoal-gray);
+}
+
+.shadow-charcoal-gray {
+	box-shadow: 0 4px 6px -1px var(--charcoal-gray),
+		0 2px 4px -2px var(--charcoal-gray);
+}
+
+/* Medium Gray */
+.bg-medium-gray {
+	background-color: var(--medium-gray);
+}
+
+.text-medium-gray {
+	color: var(--medium-gray);
+}
+
+.border-medium-gray {
+	border-color: var(--medium-gray);
+}
+
+.shadow-medium-gray {
+	box-shadow: 0 4px 6px -1px var(--medium-gray),
+		0 2px 4px -2px var(--medium-gray);
+}
+
+/* Jet Black */
+.bg-jet-black {
+	background-color: var(--jet-black);
+}
+
+.text-jet-black {
+	color: var(--jet-black);
+}
+
+.border-jet-black {
+	border-color: var(--jet-black);
+}
+
+.shadow-jet-black {
+	box-shadow: 0 4px 6px -1px var(--jet-black),
+		0 2px 4px -2px var(--jet-black);
+}
+
+/* Light Gray */
+.bg-light-gray {
+	background-color: var(--light-gray);
+}
+
+.text-light-gray {
+	color: var(--light-gray);
+}
+
+.border-light-gray {
+	border-color: var(--light-gray);
+}
+
+.shadow-light-gray {
+	box-shadow: 0 4px 6px -1px var(--light-gray),
+		0 2px 4px -2px var(--light-gray);
+}
+
+/* Slate Gray */
+.bg-slate-gray {
+	background-color: var(--slate-gray);
+}
+
+.text-slate-gray {
+	color: var(--slate-gray);
+}
+
+.border-slate-gray {
+	border-color: var(--slate-gray);
+}
+
+.shadow-slate-gray {
+	box-shadow: 0 4px 6px -1px var(--slate-gray),
+		0 2px 4px -2px var(--slate-gray);
+}

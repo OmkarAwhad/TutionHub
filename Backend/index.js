@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const authRoutes = require("./routes/auth.routes");
 const profileRoutes = require("./routes/profile.routes");
@@ -28,6 +29,14 @@ if (!fs.existsSync(uploadDir)) {
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Allow CORS for frontend
+app.use(
+	cors({
+		origin: "http://localhost:5173",
+		credentials: true,
+	})
+);
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

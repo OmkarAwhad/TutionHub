@@ -4,12 +4,12 @@ import { FaEye } from "react-icons/fa6";
 import { FaEyeSlash } from "react-icons/fa6";
 import LogoNoBgBlack from "../assets/logos/noBg_white.png";
 import { ACCOUNT_TYPE } from "../utils/constants.utils";
-import Tab from "../components/Tab";
+import Tab from "../components/auth/Tab";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { setLoading } from "../slices/auth.slice";
-import { signUp } from "../services/operations/auth.operation";
-import { useNavigate } from "react-router-dom";
+import { signUp } from "../services/operations/auth.service";
+import { useNavigate, Link } from "react-router-dom";
 
 function SignUpPage() {
 	const {
@@ -190,6 +190,12 @@ function SignUpPage() {
 						Sign Up
 					</button>
 				</form>
+				<p className="font-sans text-xs font-medium text-center pt-3 ">
+					Already have an account?{" "}
+					<Link to={"/login"} className="text-blue-500">
+						Log in
+					</Link>
+				</p>
 			</div>
 		</div>
 	);

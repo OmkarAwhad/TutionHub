@@ -32,29 +32,35 @@ module.exports.updateProfile = async (req, res) => {
 	try {
 		const { name, phoneNumber, gender } = req.body;
 		const userId = req.user.id;
+		// console.log(userId);
 
-		const userDetails = await User.findById(userId);
+		const userDetails = await User.findById(userId)
+			.populate("profile")
+			.exec();
+		if (!userDetails || !userDetails.profile) {
+			return res.json(new ApiError(404, "User or profile not found"));
+		}
 
-		const profileDetails = await Profile.findById(userDetails.profile);
+		const profileDetails = await Profile.findById(
+			userDetails.profile._id
+		);
 
 		profileDetails.phoneNumber = phoneNumber;
 		profileDetails.gender = gender;
 
 		await profileDetails.save();
 
-		const updatedUserDetails = await User.findByIdAndUpdate(userId, {
-			name: name,
-		})
+		const updatedUserDetails = await User.findByIdAndUpdate(
+			userId,
+			{
+				name: name,
+			},
+			{ new: true }
+		)
 			.populate("profile")
 			.exec();
 
-		return res.json(
-			new ApiResponse(
-				201,
-				{ User: updatedUserDetails },
-				"Profile updated successfully"
-			)
-		);
+		return res.json(new ApiResponse(201, { User: updatedUserDetails }));
 	} catch (error) {
 		console.log("Error in updating profile details ", error);
 		return res.json(

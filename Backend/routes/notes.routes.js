@@ -5,7 +5,7 @@ const {
 	uploadNotes,
 	getAllNotes,
 	getNotesBySubject,
-	deleteNote,
+	// deleteNote,
 } = require("../controllers/notes.controller");
 
 router.post("/uploadNotes", auth, isTutor, uploadNotes);

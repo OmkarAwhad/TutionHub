@@ -95,6 +95,7 @@ module.exports.createAnnouncement = async (req, res) => {
 module.exports.getAnnouncements = async (req, res) => {
 	try {
 		const userId = req.user.id;
+		console.log(userId)
 		const userDetails = await User.findById(userId).populate("announcement").exec();
 		return res.json(
 			new ApiResponse(

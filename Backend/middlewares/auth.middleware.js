@@ -6,10 +6,11 @@ require("dotenv").config();
 exports.auth = async (req, res, next) => {
 	try {
 		const token =
-			(req.header("Authorization") &&
-				req.header("Authorization").replace("Bearer ", "")) ||
-			req.headers.token ||
-			req.cookies.token;
+			req.cookies.token ||
+			req.header("Authorization").replace("Bearer ", "");
+		// (req.cookies.token || req.header("Authorization") &&
+		// 	req.header("Authorization").replace("Bearer ", "")) ||
+		// req.headers.token
 
 		// console.log("Token ", token);
 
@@ -22,6 +23,7 @@ exports.auth = async (req, res, next) => {
 		try {
 			const decode = await jwt.verify(token, process.env.JWT_SECRET);
 			// console.log("Decode ", decode);
+			// console.log(decode);
 			req.user = decode;
 		} catch (error) {
 			return res.json(new ApiError(401, "Invalid token"));

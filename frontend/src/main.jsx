@@ -13,12 +13,12 @@ const store = configureStore({
 });
 
 createRoot(document.getElementById("root")).render(
-	<StrictMode>
-		<Provider store={store}>
-			<BrowserRouter>
-				<Toaster />
-				<App />
-			</BrowserRouter>
-		</Provider>
-	</StrictMode>
+	// <StrictMode>
+	<Provider store={store}>
+		<BrowserRouter>
+			<Toaster />
+			<App />
+		</BrowserRouter>
+	</Provider>
+	// </StrictMode>
 );

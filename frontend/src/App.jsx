@@ -13,6 +13,9 @@ import Feedback from "./components/dashboard/Students/feedback/Feedback.jsx";
 import Notes from "./components/dashboard/Students/notes/Notes.jsx";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "./utils/constants.utils.js";
+import Attendance from "./components/dashboard/Students/attendance/Attendance.jsx";
+import Progress from "./components/dashboard/Students/progress/Progress.jsx";
+import Remarks from "./components/dashboard/Students/remarks/Remarks.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -63,6 +66,18 @@ function App() {
 							<Route
 								path="/dashboard/feedback"
 								element={<Feedback />}
+							/>
+							<Route
+								path="/dashboard/my-profile/attendance"
+								element={<Attendance />}
+							/>
+							<Route
+								path="/dashboard/my-profile/progress"
+								element={<Progress />}
+							/>
+							<Route
+								path="/dashboard/my-profile/remarks"
+								element={<Remarks />}
 							/>
 						</>
 					)}

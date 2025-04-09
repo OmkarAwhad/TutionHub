@@ -5,6 +5,7 @@ const {
 	deleteSubject,
 	getAllSubjects,
 	assignSubject,
+	subsOfThatStud,
 } = require("../controllers/subject.controller");
 const { auth, isAdmin } = require("../middlewares/auth.middleware");
 const router = express.Router();
@@ -14,5 +15,6 @@ router.post("/updateSubject", auth, isAdmin, updateSubject);
 router.delete("/deleteSubject", auth, isAdmin, deleteSubject);
 router.get("/getAllSubjects", auth, isAdmin, getAllSubjects);
 router.post("/assignSubject", auth, isAdmin, assignSubject);
+router.get("/subsOfThatStud", auth, subsOfThatStud);
 
 module.exports = router;

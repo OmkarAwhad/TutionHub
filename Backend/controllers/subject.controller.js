@@ -108,7 +108,16 @@ module.exports.subsOfThatStud = async (req, res) => {
   try {
 	const userId = req.user.id;
 
-	
+	const subDetails = await User.findById(userId).populate('subjects').exec();
+  if (!subDetails) {
+    return res.json(
+      new ApiError(404, "No subjects found for the given student")
+    );
+  }
+
+  return res.json(
+    new ApiResponse(200, subDetails.subjects, "Subjects fetched successfully")
+  );
 
   } catch (error) {
     console.log("Error in fetching subjects of that student ", error);

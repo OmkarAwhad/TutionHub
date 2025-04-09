@@ -30,6 +30,14 @@
 		0 2px 4px -2px var(--charcoal-gray);
 }
 
+.hover\:bg-charcoal-gray:hover {
+	background-color: var(--charcoal-gray);
+}
+
+.hover\:text-charcoal-gray:hover {
+	color: var(--charcoal-gray);
+}
+
 /* Medium Gray */
 .bg-medium-gray {
 	background-color: var(--medium-gray);
@@ -46,6 +54,14 @@
 .shadow-medium-gray {
 	box-shadow: 0 4px 6px -1px var(--medium-gray),
 		0 2px 4px -2px var(--medium-gray);
+}
+
+.hover\:bg-medium-gray:hover {
+	background-color: var(--medium-gray);
+}
+
+.hover\:text-medium-gray:hover {
+	color: var(--medium-gray);
 }
 
 /* Jet Black */
@@ -66,6 +82,14 @@
 		0 2px 4px -2px var(--jet-black);
 }
 
+.hover\:bg-jet-black:hover {
+	background-color: var(--jet-black);
+}
+
+.hover\:text-jet-black:hover {
+	color: var(--jet-black);
+}
+
 /* Light Gray */
 .bg-light-gray {
 	background-color: var(--light-gray);
@@ -84,6 +108,14 @@
 		0 2px 4px -2px var(--light-gray);
 }
 
+.hover\:bg-light-gray:hover {
+	background-color: var(--light-gray);
+}
+
+.hover\:text-light-gray:hover {
+	color: var(--light-gray);
+}
+
 /* Slate Gray */
 .bg-slate-gray {
 	background-color: var(--slate-gray);
@@ -100,4 +132,12 @@
 .shadow-slate-gray {
 	box-shadow: 0 4px 6px -1px var(--slate-gray),
 		0 2px 4px -2px var(--slate-gray);
+}
+
+.hover\:bg-slate-gray:hover {
+	background-color: var(--slate-gray);
+}
+
+.hover\:text-slate-gray:hover {
+	color: var(--slate-gray);
 }

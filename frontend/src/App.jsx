@@ -16,6 +16,11 @@ import { ACCOUNT_TYPE } from "./utils/constants.utils.js";
 import Attendance from "./components/dashboard/Students/attendance/Attendance.jsx";
 import Progress from "./components/dashboard/Students/progress/Progress.jsx";
 import Remarks from "./components/dashboard/Students/remarks/Remarks.jsx";
+import AdminUsers from "./components/dashboard/admin/users/AdminUsers.jsx";
+import AdminLecture from "./components/dashboard/admin/lecture/AdminLecture.jsx";
+import AdminSubjects from "./components/dashboard/admin/subjects/AdminSubjects.jsx";
+import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
+import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -78,6 +83,31 @@ function App() {
 							<Route
 								path="/dashboard/my-profile/remarks"
 								element={<Remarks />}
+							/>
+						</>
+					)}
+
+					{user?.role === ACCOUNT_TYPE.ADMIN && (
+						<>
+							<Route
+								path="/dashboard/admin-users"
+								element={<AdminUsers />}
+							/>
+							<Route
+								path="/dashboard/admin-lecture"
+								element={<AdminLecture />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects"
+								element={<AdminSubjects />}
+							/>
+							<Route
+								path="/dashboard/admin-marks"
+								element={<AdminMarks />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance"
+								element={<AdminAttendance />}
 							/>
 						</>
 					)}

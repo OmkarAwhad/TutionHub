@@ -51,31 +51,31 @@ export const sidbarLinks = [
 	{
 		id: 9,
 		name: "Users",
-		path: "/dashboard/users",
+		path: "/dashboard/admin-users",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{
 		id: 10,
 		name: "Create Lecture",
-		path: "/dashboard/create-lecture",
+		path: "/dashboard/admin-lecture",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{
 		id: 11,
 		name: "Mark Attendance",
-		path: "/dashboard/mark-attendance",
+		path: "/dashboard/admin-attendance",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{
 		id: 12,
 		name: "Marks",
-		path: "/dashboard/mark-marks",
+		path: "/dashboard/admin-marks",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{
 		id: 13,
 		name: "Subjects",
-		path: "/dashboard/subjects",
+		path: "/dashboard/admin-subjects",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{

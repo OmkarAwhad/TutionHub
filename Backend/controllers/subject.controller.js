@@ -10,7 +10,7 @@ module.exports.createSubject = async (req, res) => {
       return res.json(new ApiError(400, "Name and code both are required"));
     }
 
-		const alreadyMade = await Subject.find({ name: name, code: code });
+		const alreadyMade = await Subject.findOne({ name: name, code: code });
 		if (alreadyMade) {
 			return res.json(
 				new ApiError(

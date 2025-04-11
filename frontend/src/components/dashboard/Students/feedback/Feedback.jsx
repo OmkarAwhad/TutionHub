@@ -48,13 +48,13 @@ function Feedback() {
             <div className="flex flex-col gap-6 items-center justify-center min-h-[60vh] animate-fade-in">
                <button
                   onClick={() => handleViewClick("form")}
-                  className="bg-slate-gray text-white px-8 py-4 rounded-sm text-xl w-full max-w-md hover:bg-medium-gray transition-all transform hover:scale-[103%] cursor-pointer"
+                  className="bg-medium-gray text-white px-8 py-4 rounded-sm text-xl w-full max-w-md hover:bg-charcoal-gray transition-all transform hover:scale-[103%] cursor-pointer"
                >
                   Submit a Feedback
                </button>
                <button
                   onClick={() => handleViewClick("list")}
-                  className="bg-slate-gray text-white px-8 py-4 rounded-sm text-xl w-full max-w-md hover:bg-medium-gray transition-all transform hover:scale-[103%] cursor-pointer"
+                  className="bg-medium-gray text-white px-8 py-4 rounded-sm text-xl w-full max-w-md hover:bg-charcoal-gray transition-all transform hover:scale-[103%] cursor-pointer"
                >
                   View all Feedbacks
                </button>

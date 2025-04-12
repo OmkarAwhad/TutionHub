@@ -57,18 +57,38 @@ module.exports.updateSubject = async (req, res) => {
     }
 
     const subjectDetails = await Subject.findById(subjectId);
+    
+    if (!subjectDetails) {
+      return res.json(
+        new ApiError(404, "Subject not found")
+      );
+    }
+
+    // Check if the new name or code already exists for another subject
+    const existingSubject = await Subject.findOne({
+      $or: [
+        { name, _id: { $ne: subjectId } },
+        { code, _id: { $ne: subjectId } }
+      ]
+    });
+
+    if (existingSubject) {
+      return res.json(
+        new ApiError(400, "Subject with the same name or code already exists")
+      );
+    }
 
     subjectDetails.name = name;
     subjectDetails.code = code;
 
     await subjectDetails.save();
 
-    return res.json(new ApiResponse(200, {}, "Subject updated successfully"));
+    return res.json(new ApiResponse(200, subjectDetails, "Subject updated successfully"));
   } catch (error) {
     if (error.code === 11000) {
       // Handle duplicate key error
-      const duplicateField = Object.keys(error.keyValue)[0]; // Get the field causing the error
-      const duplicateValue = error.keyValue[duplicateField]; // Get the duplicate value
+      const duplicateField = Object.keys(error.keyValue)[0];
+      const duplicateValue = error.keyValue[duplicateField];
       return res.json(
         new ApiError(
           400,
@@ -84,11 +104,22 @@ module.exports.updateSubject = async (req, res) => {
 module.exports.deleteSubject = async (req, res) => {
   try {
     const { subjectId } = req.body;
+    
+    if (!subjectId) {
+      return res.json(new ApiError(400, "Subject ID is required"));
+    }
+
+    const subject = await Subject.findById(subjectId);
+    
+    if (!subject) {
+      return res.json(new ApiError(404, "Subject not found"));
+    }
+
     await Subject.findByIdAndDelete(subjectId);
     return res.json(new ApiResponse(200, {}, "Subject deleted successfully"));
   } catch (error) {
     console.log("Error in deleting subject ", error);
-    return res.json(new ApiError(500, "Error in deleting subject "));
+    return res.json(new ApiError(500, "Error in deleting subject"));
   }
 };
 

@@ -77,12 +77,75 @@ export function getAllSubjects(token) {
 				return [];
 			}
 			// toast.success("Subjects fetched successfully");
-			console.log(result.data.data);
+			// console.log(result.data.data);
 			return result.data.data;
 		} catch (error) {
 			toast.error("Failed to fetch subjects");
 			console.log("Error in fetching subjects", error);
 			return [];
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function updateSubject(data, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Updating subject...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				subjectApi.UPDATE_SUBJECT,
+				data,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
+			}
+			toast.success("Subject updated successfully");
+			return result.data.data;
+		} catch (error) {
+			toast.error(
+				error.response?.data?.message || "Failed to update subject"
+			);
+			console.log("Error in updating subject", error);
+			return null;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function deleteSubject(subjectId, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Deleting subject...");
+		try {
+			const result = await apiConnector(
+				"DELETE",
+				subjectApi.DELETE_SUBJECT,
+				{ subjectId },
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
+			}
+			return result.data.data;
+		} catch (error) {
+			toast.error(
+				error.response?.data?.message || "Failed to delete subject"
+			);
+			console.log("Error in deleting subject", error);
+			return null;
 		} finally {
 			toast.dismiss(toastId);
 		}

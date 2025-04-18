@@ -3,45 +3,57 @@ const { ApiResponse } = require("../utils/ApiResponse.utils");
 const User = require("../models/user.model");
 const Lecture = require("../models/lecture.model");
 
-module.exports.getStudentsList = async (req, res) => {
+module.exports.getMyStudentsList = async (req, res) => {
 	try {
+		// console.log(req.user)
 		const userId = req.user.id;
+		// console.log("1")
 
-		const userDetails = await User.findById(userId).populate('subject').exec();
-      const subjectId = userDetails.subjects[0];
+		const userDetails = await User.findById(userId)
+			.populate("subjects")
+			.exec();
+		if (!userDetails.role === "Student") {
+			return res.json(
+				new ApiError(
+					403,
+					"Access denied. Only students can access this resource"
+				)
+			);
+		}
 
-		let students;
+		if (!userDetails) {
+			return res.json(new ApiError(404, "User not found"));
+		}
 
-		if (subjectId) {
-			students = await User.find({
-				subjects: subjectId,
-				role: "Student",
-			}).select("name email admissionDate");
-		} else if (lectureId) {
-			const lecture = await Lecture.findById(lectureId).populate(
-				"subject"
+		// If user has subjects, fetch students for those subjects
+		if (userDetails.subjects && userDetails.subjects.length > 0) {
+			const subjectIds = userDetails.subjects.map(
+				(subject) => subject._id
 			);
 
-			if (!lecture) {
-				return res.json(new ApiError(404, "Lecture not found"));
+			const students = await User.find({
+				subjects: { $in: subjectIds },
+				role: "Student",
+			}).select("name email admissionDate subjects");
+
+			if (!students || students.length === 0) {
+				return res.json(
+					new ApiResponse(200, [], "No students found")
+				);
 			}
 
-			students = await User.find({
-				subjects: lecture.subject._id,
-				role: "Student",
-			}).select("name email admissionDate");
+			return res.json(
+				new ApiResponse(
+					200,
+					students,
+					"Students list fetched successfully"
+				)
+			);
 		}
 
-		if (!students || students.length === 0) {
-			return res.json(new ApiResponse(200, [], "No students found"));
-		}
-
+		// If no subjects found, return empty list
 		return res.json(
-			new ApiResponse(
-				200,
-				students,
-				"Students list fetched successfully"
-			)
+			new ApiResponse(200, [], "No subjects found for this user")
 		);
 	} catch (error) {
 		console.log("Error fetching students list: ", error);
@@ -83,6 +95,34 @@ module.exports.viewStudentProfile = async (req, res) => {
 			new ApiError(
 				500,
 				"Error fetching student profile: " + error.message
+			)
+		);
+	}
+};
+
+module.exports.getAllStudentsList = async (req, res) => {
+	try {
+		const students = await User.find({ role: "Student" }).select(
+			"name email admissionDate subjects"
+		);
+
+		if (!students || students.length === 0) {
+			return res.json(new ApiResponse(200, [], "No students found"));
+		}
+
+		return res.json(
+			new ApiResponse(
+				200,
+				students,
+				"All students list fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error fetching all students list: ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error fetching all students list: " + error.message
 			)
 		);
 	}

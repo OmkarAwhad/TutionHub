@@ -160,42 +160,53 @@ module.exports.subsOfThatStud = async (req, res) => {
 
 module.exports.assignSubject = async (req, res) => {
 	try {
-		// const userId = req.user.id;
-		const { subjects, studentId } = req.body;
+		const { subjectId, studentId, isChecked } = req.body;
 
-		const validatedSubjectIds = [];
+		if (!subjectId || !studentId || typeof isChecked === 'undefined') {
+			return res.json(
+				new ApiError(400, "Subject ID, student ID, and isChecked are required")
+			);
+		}
 
-		for (const subjectName of subjects) {
-			const subDetails = await Subject.findOne({ name: subjectName });
-			if (!subDetails) {
-				return res.json(
-					new ApiError(
-						404,
-						`Subject ${subjectName} does not exist in DB`
-					)
-				);
-			}
+		const subject = await Subject.findById(subjectId);
+		if (!subject) {
+			return res.json(
+				new ApiError(404, "Subject not found")
+			);
+		}
 
-			validatedSubjectIds.push(subDetails._id);
+		let updateOperation;
+		if (isChecked) {
+			// Add subject to student's subjects array
+			updateOperation = { $addToSet: { subjects: subjectId } };
+		} else {
+			// Remove subject from student's subjects array
+			updateOperation = { $pull: { subjects: subjectId } };
 		}
 
 		const updatedUser = await User.findByIdAndUpdate(
 			studentId,
-			{ $addToSet: { subjects: { $each: validatedSubjectIds } } },
+			updateOperation,
 			{ new: true }
 		).populate("subjects");
+
+		if (!updatedUser) {
+			return res.json(
+				new ApiError(404, "Student not found")
+			);
+		}
 
 		return res.json(
 			new ApiResponse(
 				200,
 				updatedUser,
-				"Subjects assigned successfully"
+				`Subject ${isChecked ? 'assigned' : 'removed'} successfully`
 			)
 		);
 	} catch (error) {
-		console.log("Error in fetching subjects of that student ", error);
+		console.log("Error in assigning/removing subject: ", error);
 		return res.json(
-			new ApiError(500, "Error in fetching subjects of that student ")
+			new ApiError(500, "Error in assigning/removing subject")
 		);
 	}
 };

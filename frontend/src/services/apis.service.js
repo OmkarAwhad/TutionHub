@@ -30,6 +30,12 @@ export const subjectApi = {
 	UPDATE_SUBJECT: BASE_URL + "/subject/updateSubject",
 	DELETE_SUBJECT: BASE_URL + "/subject/deleteSubject",
 	GET_ALL_SUBJECTS: BASE_URL + "/subject/getAllSubjects",
+	ASSIGN_SUBJECT_TO_STUDENT: BASE_URL + "/subject/assignSubject",
+};
+
+export const studentApi = {
+	GET_MY_STUDENTS_LIST: BASE_URL + "/student/getMyStudentsList",
+	GET_ALL_STUDENTS_LIST: BASE_URL + "/student/getAllStudentsList",
 };
 
 export const feedbackApi = {

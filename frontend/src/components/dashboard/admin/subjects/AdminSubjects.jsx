@@ -7,6 +7,7 @@ import {
 import { toast } from "react-hot-toast";
 import GetAllSubjects from "./GetAllSubjects";
 import SubjectForm from "./SubjectForm";
+import AssignSubjects from "./AssignSubjects";
 
 function AdminSubjects() {
 	const [clickButton, setClickButton] = useState(null);
@@ -61,30 +62,30 @@ function AdminSubjects() {
 			<div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl border border-slate-gray flex flex-row items-center justify-evenly min-h-[15vh] text-2xl ">
 				<div
 					onClick={() => handleClickedButton("createSubject")}
-					className={`px-5 py-2 bg-medium-gray rounded-md cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
+					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "createSubject"
-							? "bg-charcoal-gray "
-							: ""
+							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							: "border-4"
 					} `}
 				>
 					Create Subject
 				</div>
 				<div
 					onClick={() => handleClickedButton("getSubjects")}
-					className={`px-5 py-2 bg-medium-gray rounded-md cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
+					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "getSubjects"
-							? "bg-charcoal-gray "
-							: ""
+							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							: "border-4"
 					} `}
 				>
 					Get All Subjects
 				</div>
 				<div
 					onClick={() => handleClickedButton("assignSubjects")}
-					className={`px-5 py-2 bg-medium-gray rounded-md cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
+					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "assignSubjects"
-							? "bg-charcoal-gray "
-							: ""
+							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							: "border-4"
 					} `}
 				>
 					Assign Subjects
@@ -106,7 +107,7 @@ function AdminSubjects() {
 					handleEdit={handleEdit}
 				/>
 			) : clickButton === "assignSubjects" ? (
-				<div>ef</div>
+				<AssignSubjects />
 			) : (
 				<></>
 			)}

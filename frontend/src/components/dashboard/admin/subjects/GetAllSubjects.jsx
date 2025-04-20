@@ -7,7 +7,7 @@ function GetAllSubjects({ subjects, handleDelete, handleEdit }) {
 			{subjects.map((subject) => (
 				<div
 					key={subject._id}
-					className="bg-white shadow shadow-slate-gray p-6 rounded-md hover:shadow-lg transition-all transform hover:scale-[1.02] animate-fade-in"
+					className="bg-white shadow-2xs shadow-slate-gray p-6 rounded-md hover:shadow-lg transition-all transform hover:scale-[1.02] animate-fade-in"
 				>
 					<h3 className="text-medium-gray text-xl font-semibold mb-2">
 						{subject.name}

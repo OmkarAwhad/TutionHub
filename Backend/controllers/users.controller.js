@@ -127,3 +127,27 @@ module.exports.getAllStudentsList = async (req, res) => {
 		);
 	}
 };
+
+module.exports.getTutors = async (req, res) => {
+	try {
+		const tutorDetails = await User.find({ role: "Tutor" })
+			.populate("profile")
+			.exec();
+		if (!tutorDetails || tutorDetails.length === 0) {
+			return res.json(new ApiResponse(200, [], "No tutors found"));
+		}
+
+		return res.json(
+			new ApiResponse(
+				200,
+				tutorDetails,
+				"Tutors list fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error fetching tutors list: ", error);
+		return res.json(
+			new ApiError(500, "Error fetching tutors list: " + error.message)
+		);
+	}
+};

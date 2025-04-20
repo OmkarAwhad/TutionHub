@@ -33,9 +33,16 @@ export const subjectApi = {
 	ASSIGN_SUBJECT_TO_STUDENT: BASE_URL + "/subject/assignSubject",
 };
 
-export const studentApi = {
-	GET_MY_STUDENTS_LIST: BASE_URL + "/student/getMyStudentsList",
-	GET_ALL_STUDENTS_LIST: BASE_URL + "/student/getAllStudentsList",
+export const lectureApi = {
+	CREATE_LECTURE: BASE_URL + "/lecture/createLecture",
+	GET_WEEK_LECTURES: BASE_URL + "/lecture/getLecturesOfWeek",
+	GET_TEST_DAYS: BASE_URL + "/lecture/getTestDays",
+};
+
+export const usersApi = {
+	GET_MY_STUDENTS_LIST: BASE_URL + "/users/getMyStudentsList",
+	GET_ALL_STUDENTS_LIST: BASE_URL + "/users/getAllStudentsList",
+	GET_TUTORS: BASE_URL + "/users/getTutors",
 };
 
 export const feedbackApi = {

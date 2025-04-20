@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	getMyStudentsList,
-	assignSubjectToStudent,
-	getAllStudentsList,
-} from "../../../../services/operations/student.service";
+import { getAllStudentsList } from "../../../../services/operations/users.service";
+import { assignSubjectToStudent } from "../../../../services/operations/subject.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 
@@ -153,7 +150,7 @@ function AssignSubjects() {
 																	.checked
 															)
 														}
-														className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+														className="form-checkbox h-4 w-4 bg-charcoal-gray border-charcoal-gray text-charcoal-gray transition duration-150 ease-in-out focus:ring-charcoal-gray focus:ring-offset-0 focus:ring-2 focus:ring-opacity-50 checked:bg-charcoal-gray"
 													/>
 												</label>
 											</td>

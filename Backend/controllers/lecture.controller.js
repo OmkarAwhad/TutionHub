@@ -69,7 +69,7 @@ module.exports.createLecture = async (req, res) => {
 	}
 };
 
-module.exports.getLecturesByDay = async (req, res) => {
+module.exports.getLecturesOfWeek = async (req, res) => {
 	try {
 		const weekStart = new Date();
 		weekStart.setHours(0, 0, 0, 0);

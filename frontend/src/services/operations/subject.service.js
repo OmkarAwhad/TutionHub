@@ -151,3 +151,33 @@ export function deleteSubject(subjectId, token) {
 		}
 	};
 }
+
+export function assignSubjectToStudent(studentId, subjectId, isChecked, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Assigning subject to student...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				subjectApi.ASSIGN_SUBJECT_TO_STUDENT,
+				{ studentId, subjectId, isChecked },
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
+			}
+			toast.success("Subject assigned successfully");
+			return result.data.data;
+		} catch (error) {
+			toast.error("Failed to assign subject to student");
+			console.log("Error in assigning subject to student", error);
+			return null;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}

@@ -116,6 +116,10 @@ module.exports.deleteSubject = async (req, res) => {
     }
 
     await Subject.findByIdAndDelete(subjectId);
+    await User.updateMany(
+      { subjects: { $in: [subjectId] } },
+      { $pull: { subjects: subjectId } }
+    );
     return res.json(new ApiResponse(200, {}, "Subject deleted successfully"));
   } catch (error) {
     console.log("Error in deleting subject ", error);

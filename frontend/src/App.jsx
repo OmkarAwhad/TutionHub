@@ -18,6 +18,8 @@ import Progress from "./components/dashboard/Students/progress/Progress.jsx";
 import Remarks from "./components/dashboard/Students/remarks/Remarks.jsx";
 import AdminUsers from "./components/dashboard/admin/users/AdminUsers.jsx";
 import AdminLecture from "./components/dashboard/admin/lecture/AdminLecture.jsx";
+import CreateLecture from "./components/dashboard/admin/lecture/CreateLecture.jsx";
+import LectureList from "./components/dashboard/admin/lecture/LectureList.jsx";
 import AdminSubjects from "./components/dashboard/admin/subjects/AdminSubjects.jsx";
 import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
 import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
@@ -96,6 +98,14 @@ function App() {
 							<Route
 								path="/dashboard/admin-lecture"
 								element={<AdminLecture />}
+							/>
+							<Route
+								path="/dashboard/admin-lecture/create-lecture"
+								element={<CreateLecture />}
+							/>
+							<Route
+								path="/dashboard/admin-lecture/lectures-list"
+								element={<LectureList />}
 							/>
 							<Route
 								path="/dashboard/admin-subjects"

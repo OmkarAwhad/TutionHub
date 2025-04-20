@@ -1,14 +1,14 @@
 const express = require("express");
-const { auth, isAdmin } = require("../middlewares/auth.middleware");
+const { auth, isAdmin, isStudent } = require("../middlewares/auth.middleware");
 const {
 	createLecture,
-	getLecturesByDay,
+	getLecturesOfWeek,
 	getTestDays,
 } = require("../controllers/lecture.controller");
 const router = express.Router();
 
 router.post("/createLecture", auth, isAdmin, createLecture);
-router.get("/getLecturesByDay", auth, isAdmin, getLecturesByDay);
+router.get("/getLecturesOfWeek", auth, isStudent, getLecturesOfWeek);
 router.get("/getTestDays", auth, isAdmin, getTestDays);
 
 module.exports = router;

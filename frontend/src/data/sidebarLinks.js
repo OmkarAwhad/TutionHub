@@ -56,13 +56,13 @@ export const sidbarLinks = [
 	},
 	{
 		id: 10,
-		name: "Create Lecture",
+		name: "Lecture",
 		path: "/dashboard/admin-lecture",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
 	{
 		id: 11,
-		name: "Mark Attendance",
+		name: "Attendance",
 		path: "/dashboard/admin-attendance",
 		type: ACCOUNT_TYPE.ADMIN,
 	},

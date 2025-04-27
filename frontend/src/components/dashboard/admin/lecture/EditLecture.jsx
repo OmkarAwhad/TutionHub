@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { createLecture } from "../../../../services/operations/lecture.service";
+import { updateLecture } from "../../../../services/operations/lecture.service";
 import { getTutors } from "../../../../services/operations/users.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-function CreateLecture() {
+function EditLecture() {
 	const [loading, setLoading] = useState(false);
 	const [tutors, setTutors] = useState([]);
 	const [subjects, setSubjects] = useState([]);
 	const dispatch = useDispatch();
 	const { token } = useSelector((state) => state.auth);
+	const { editLecture } = useSelector((state) => state.lecture);
+	const navigate = useNavigate();
+
 	const [fromTime, setFromTime] = useState({
 		hours: "",
 		minutes: "",
@@ -24,8 +27,6 @@ function CreateLecture() {
 		minutes: "",
 		period: "AM",
 	});
-
-	const navigate = useNavigate();
 
 	const {
 		register,
@@ -42,12 +43,42 @@ function CreateLecture() {
 				const subjectsData = await dispatch(getAllSubjects(token));
 				setTutors(tutorsData);
 				setSubjects(subjectsData);
+
+				if (editLecture) {
+					// Parse the time string to set fromTime and toTime
+					const [timeFrom, timeTo] = editLecture.time.split(" to ");
+					const [fromHours, fromMinutes, fromPeriod] =
+						timeFrom.split(/[: ]/);
+					const [toHours, toMinutes, toPeriod] =
+						timeTo.split(/[: ]/);
+
+					setFromTime({
+						hours: fromHours,
+						minutes: fromMinutes,
+						period: fromPeriod,
+					});
+					setToTime({
+						hours: toHours,
+						minutes: toMinutes,
+						period: toPeriod,
+					});
+
+					// Set form values
+					setValue(
+						"date",
+						new Date(editLecture.date).toISOString().split("T")[0]
+					);
+					setValue("tutor", editLecture.tutor._id);
+					setValue("subject", editLecture.subject._id);
+					setValue("description", editLecture.description);
+				}
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			}
+         // console.log(editLecture)
 		};
 		fetchData();
-	}, [dispatch, token]);
+	}, [dispatch, token, editLecture, setValue]);
 
 	const handleTimeChange = (type, field, value) => {
 		if (type === "from") {
@@ -66,16 +97,18 @@ function CreateLecture() {
 			const timeString = `${timeFrom} to ${timeTo}`;
 
 			const result = await dispatch(
-				createLecture({ ...data, time: timeString }, token)
+				updateLecture(
+					editLecture._id,
+					{ ...data, time: timeString },
+					token
+				)
 			);
 			if (result) {
-				toast.success("Lecture created successfully");
-				reset();
-				setFromTime({ hours: "", minutes: "", period: "AM" });
-				setToTime({ hours: "", minutes: "", period: "AM" });
+				toast.success("Lecture updated successfully");
+				navigate("/dashboard/admin-lecture/lectures-list");
 			}
 		} catch (error) {
-			console.error("Error creating lecture:", error);
+			console.error("Error updating lecture:", error);
 		} finally {
 			setLoading(false);
 		}
@@ -85,11 +118,11 @@ function CreateLecture() {
 		<div className="w-full mx-auto flex flex-col gap-y-10 p-4">
 			<div className="bg-white shadow shadow-slate-gray p-6 rounded-md w-full max-w-2xl mx-auto animate-slide-in relative">
 				<IoChevronBack
-					className="absolute text-medium-gray "
+					className="absolute text-medium-gray cursor-pointer"
 					onClick={() => navigate(-1)}
 				/>
 				<h1 className="pb-5 pt-5 text-medium-gray logo-text text-center font-extrabold text-4xl">
-					Create Lecture
+					Edit Lecture
 				</h1>
 				<form
 					onSubmit={handleSubmit(submitHandler)}
@@ -285,7 +318,7 @@ function CreateLecture() {
 							})}
 							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md"
 						>
-							<option value="">Select type</option>
+							<option value="">Select Description</option>
 							<option value="Lecture">Lecture</option>
 							<option value="Test">Test</option>
 						</select>
@@ -301,7 +334,7 @@ function CreateLecture() {
 						disabled={loading}
 						className="bg-slate-gray text-white w-full px-6 py-2 rounded-sm mt-4 hover:bg-slate-700 transition-all transform hover:scale-102 hover:bg-medium-gray cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 					>
-						{loading ? "Creating..." : "Create Lecture"}
+						{loading ? "Updating..." : "Update Lecture"}
 					</button>
 				</form>
 			</div>
@@ -309,4 +342,4 @@ function CreateLecture() {
 	);
 }
 
-export default CreateLecture;
+export default EditLecture;

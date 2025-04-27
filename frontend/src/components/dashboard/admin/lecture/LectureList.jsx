@@ -10,6 +10,9 @@ import { format } from "date-fns";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import Modal from "../../extras/Modal";
 import LectureCard from "./LectureCard";
+import { toast } from "react-hot-toast";
+import { IoChevronBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 function LectureList() {
 	const { token } = useSelector((state) => state.auth);
@@ -22,6 +25,8 @@ function LectureList() {
 
 	const [selectedSubject, setSelectedSubject] = useState("all");
 	const [selectedDesc, setSelectedDesc] = useState("Lecture");
+
+   const navigate = useNavigate()
 
 	const getAllLecturesData = async () => {
 		try {
@@ -83,11 +88,16 @@ function LectureList() {
 
 	const handleDeleteClick = (lecture) => {
 		setSelectedLecture(lecture);
-      console.log(selectedLecture)
 		setShowDeleteModal(true);
 	};
 
 	const handleDeleteConfirm = async () => {
+		if (!selectedLecture?._id) {
+			toast.error("No lecture selected for deletion");
+			setShowDeleteModal(false);
+			return;
+		}
+
 		try {
 			await dispatch(deleteLecture(selectedLecture._id, token));
 			// Refresh the lecture list after successful deletion
@@ -106,6 +116,10 @@ function LectureList() {
 
 	return (
 		<div className="p-8 relative ">
+         <IoChevronBack
+            className="absolute text-medium-gray -top-2  "
+            onClick={() => navigate(-1)}
+         />
 			<h1 className="text-3xl font-bold mb-8 text-richblack-5">
 				All Lectures
 			</h1>

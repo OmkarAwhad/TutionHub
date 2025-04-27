@@ -6,7 +6,7 @@ export function createLecture(data, token) {
 	return async (dispatch) => {
 		const toastId = toast.loading("Creating lecture...");
 		try {
-			const response = await apiConnector(
+			const result = await apiConnector(
 				"POST",
 				lectureApi.CREATE_LECTURE,
 				data,
@@ -15,19 +15,17 @@ export function createLecture(data, token) {
 					Authorization: `Bearer ${token}`,
 				}
 			);
-
-			if (!response.data.success) {
-				toast.error(response.data.message);
-				console.log(response.data.message);
-				return [];
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
 			}
-			console.log(response.data.data);
 			toast.success("Lecture created successfully");
-			return response.data.data;
+			return result.data.data;
 		} catch (error) {
 			toast.error("Failed to create lecture");
 			console.log("Error in creating lecture", error);
-			throw error;
+			return null;
 		} finally {
 			toast.dismiss(toastId);
 		}
@@ -75,13 +73,11 @@ export function getAllLectures(token) {
 					Authorization: `Bearer ${token}`,
 				}
 			);
-			// console.log(response.data.data); // Ensure this logs the data
 			if (!response.data.success) {
 				toast.error(response.data.message);
 				console.log(response.data.message);
 				return [];
 			}
-			// Return the fetched data
 			return response.data.data;
 		} catch (error) {
 			toast.error("Failed to fetch all lectures");
@@ -100,7 +96,7 @@ export function deleteLecture(lectureId, token) {
 			const response = await apiConnector(
 				"DELETE",
 				lectureApi.DELETE_LECTURE,
-				lectureId,
+				{ lectureId },
 				{
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
@@ -117,6 +113,37 @@ export function deleteLecture(lectureId, token) {
 		} catch (error) {
 			toast.error("Failed to delete lecture");
 			console.log("Error in deleting lecture", error);
+			throw error;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function updateLecture(lectureId, data, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Updating lecture...");
+		try {
+			const response = await apiConnector(
+				"PUT",
+				`${lectureApi.UPDATE_LECTURE}/${lectureId}`,
+				data,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!response.data.success) {
+				toast.error(response.data.message);
+				throw new Error(response.data.message);
+			}
+
+			// toast.success("Lecture updated successfully");
+			return response.data.data;
+		} catch (error) {
+			toast.error("Failed to update lecture");
+			console.log("Error in updating lecture", error);
 			throw error;
 		} finally {
 			toast.dismiss(toastId);
@@ -151,8 +178,6 @@ export function deleteLecture(lectureId, token) {
 // 		toast.dismiss(toastId);
 // 	}
 // };
-
-
 
 // export function getLectureBySub(subjectId, token) {
 // 	return async (dispatch) => {

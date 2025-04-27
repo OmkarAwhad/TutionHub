@@ -1,11 +1,12 @@
 import React from "react";
-import { matchPath, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 function SidebarLinks({ item }) {
 	const location = useLocation();
 
 	const matchRoute = (route) => {
-		return matchPath({ path: route }, location.pathname);
+		// Check if the current path starts with the given route
+		return location.pathname.startsWith(route);
 	};
 
 	return (

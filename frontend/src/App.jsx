@@ -24,6 +24,9 @@ import LectureList from "./components/dashboard/admin/lecture/LectureList.jsx";
 import AdminSubjects from "./components/dashboard/admin/subjects/AdminSubjects.jsx";
 import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
 import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
+import MarkAttendance from "./components/dashboard/admin/attendance/MarkAttendance.jsx";
+import ViewAttendance from "./components/dashboard/admin/attendance/ViewAttendance.jsx";
+import MainMarking from "./components/dashboard/admin/attendance/MainMarking.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -123,6 +126,18 @@ function App() {
 							<Route
 								path="/dashboard/admin-attendance"
 								element={<AdminAttendance />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance/mark-attendance"
+								element={<MarkAttendance />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance/view-attendance"
+								element={<ViewAttendance />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance/mark-attendance/:lectureId"
+								element={<MainMarking />}
 							/>
 						</>
 					)}

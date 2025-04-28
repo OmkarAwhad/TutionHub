@@ -128,6 +128,70 @@ module.exports.getAllStudentsList = async (req, res) => {
 	}
 };
 
+module.exports.getMyStudentsListByLec = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		const userDetails = await User.findById(userId);
+		
+		if (!userDetails) {
+			return res.json(new ApiError(404, "User not found"));
+		}
+
+		if (userDetails.role === "Tutor") {
+			return res.json(
+				new ApiError(403, "Access denied. Only tutors can access this resource")
+			);
+		}
+
+		const { lectureId } = req.params;
+		// console.log("Lecture ID : ",lectureId)
+		if (!lectureId) {
+			return res.json(new ApiError(400, "Lecture ID is required"));
+		}
+
+		const lectureDetails = await Lecture.findById(lectureId);
+		if (!lectureDetails) {
+			return res.json(new ApiError(404, "Lecture not found"));
+		}
+
+		const subjectId = lectureDetails.subject;
+		if (!subjectId) {
+			return res.json(new ApiError(400, "Lecture does not have an associated subject"));
+		}
+
+		const studentsList = await User.find({
+			subjects: { $in: [subjectId] },
+			role: "Student"
+		}).select("name email subjects");
+
+		if (!studentsList || studentsList.length === 0) {
+			return res.json(
+				new ApiResponse(
+					200,
+					[],
+					"No students found for the lecture"
+				)
+			);
+		}
+
+		return res.json(
+			new ApiResponse(
+				200,
+				studentsList,
+				"Students list for the lecture fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.error("Error fetching students list by lecture: ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error fetching students list by lecture: " + error.message
+			)
+		);
+	}
+};
+
 module.exports.getTutors = async (req, res) => {
 	try {
 		const tutorDetails = await User.find({ role: "Tutor" })

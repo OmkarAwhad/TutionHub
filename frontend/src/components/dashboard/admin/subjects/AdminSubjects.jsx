@@ -10,7 +10,7 @@ import SubjectForm from "./SubjectForm";
 import AssignSubjects from "./AssignSubjects";
 
 function AdminSubjects() {
-	const [clickButton, setClickButton] = useState(null);
+	const [clickButton, setClickButton] = useState("createSubject");
 	const [subjects, setSubjects] = useState([]);
 	const [editingSubject, setEditingSubject] = useState(null);
 
@@ -64,7 +64,7 @@ function AdminSubjects() {
 					onClick={() => handleClickedButton("createSubject")}
 					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "createSubject"
-							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							? "bg-charcoal-gray border-4 border-gray-400 scale-[101%] "
 							: "border-4"
 					} `}
 				>
@@ -74,7 +74,7 @@ function AdminSubjects() {
 					onClick={() => handleClickedButton("getSubjects")}
 					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "getSubjects"
-							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							? "bg-charcoal-gray border-4 border-gray-400 scale-[101%] "
 							: "border-4"
 					} `}
 				>
@@ -84,7 +84,7 @@ function AdminSubjects() {
 					onClick={() => handleClickedButton("assignSubjects")}
 					className={`px-5 py-2 bg-medium-gray rounded-lg cursor-pointer shadow hover:shadow-2xl hover:shadow-slate-gray hover:bg-charcoal-gray transition-all duration-150 h-fit text-white  ${
 						clickButton === "assignSubjects"
-							? "bg-charcoal-gray border-4 border-black scale-[101%] "
+							? "bg-charcoal-gray border-4 border-gray-400 scale-[101%] "
 							: "border-4"
 					} `}
 				>

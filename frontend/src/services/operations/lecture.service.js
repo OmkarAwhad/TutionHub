@@ -61,13 +61,13 @@ export const getLecturesOfWeek = async (token) => {
 };
 
 export function getAllLectures(token) {
-	return async (dispatch) => {
+	return async () => {
 		const toastId = toast.loading("loading...");
 		try {
 			const response = await apiConnector(
 				"GET",
 				lectureApi.GET_ALL_LECTURES,
-				{},
+				null,
 				{
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
@@ -78,6 +78,7 @@ export function getAllLectures(token) {
 				console.log(response.data.message);
 				return [];
 			}
+			// console.log(response.data.data)
 			return response.data.data;
 		} catch (error) {
 			toast.error("Failed to fetch all lectures");

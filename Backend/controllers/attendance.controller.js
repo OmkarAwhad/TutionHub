@@ -256,3 +256,28 @@ module.exports.studsPresentForALec = async (req, res) => {
 		);
 	}
 };
+
+module.exports.checkLectureAttendance = async (req, res) => {
+	try {
+		const { lectureId } = req.params;
+
+		if (!lectureId) {
+			return res.json(new ApiError(400, "Lecture ID is required"));
+		}
+
+		const attendanceExists = await Attendance.findOne({ lecture: lectureId });
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{ attendanceMarked: !!attendanceExists },
+				"Attendance status checked successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error checking lecture attendance: ", error);
+		return res.json(
+			new ApiError(500, "Error checking lecture attendance: " + error.message)
+		);
+	}
+};

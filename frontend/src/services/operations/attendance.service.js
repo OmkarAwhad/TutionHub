@@ -1,5 +1,6 @@
 import { apiConnector } from "../apiConnector.service";
 import { attendanceApi } from "../apis.service";
+import toast from "react-hot-toast";
 
 export function viewAttendanceOfAStud(token) {
 	return async () => {
@@ -27,6 +28,65 @@ export function viewAttendanceOfAStud(token) {
 			toast.error("Error in fetching student subjects");
 			console.log("Error in fetching student subjects", error);
 			return [];
+		}
+	};
+}
+
+export function markAttendance(lectureId, studentId, status, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Marking attendance...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				attendanceApi.MARK_ATTENDANCE,
+				{
+					lectureId,
+					studentId,
+					status,
+				},
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return false;
+			}
+
+			return true;
+		} catch (error) {
+			toast.error("Failed to mark attendance");
+			console.error("Error in marking attendance:", error);
+			return false;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function checkLectureAttendance(lectureId, token) {
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				`${attendanceApi.CHECK_LECTURE_ATTENDANCE}/${lectureId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				console.log(result.data.message);
+				return false;
+			}
+			return result.data.data.attendanceMarked;
+		} catch (error) {
+			console.error("Error checking lecture attendance:", error);
+			return false;
 		}
 	};
 }

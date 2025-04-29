@@ -14,6 +14,8 @@ export const attendanceApi = {
 	GET_SUBJECT_ATTENDANCE: BASE_URL + "/attendance/attendAccToSub",
 	MARK_ATTENDANCE: BASE_URL + "/attendance/markAttendance",
 	CHECK_LECTURE_ATTENDANCE: BASE_URL + "/attendance/checkLectureAttendance",
+	GET_LECTURES_WITH_ATTENDANCE_MARKED: BASE_URL + "/attendance/getLecturesWithAttendanceMarked",
+	VIEW_STUD_ATTENDANCE_FOR_LEC: BASE_URL + "/attendance/viewStudAttendanceForLec",
 };
 
 export const marksApi = {

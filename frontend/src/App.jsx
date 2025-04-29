@@ -26,6 +26,7 @@ import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
 import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
 import MarkAttendance from "./components/dashboard/admin/attendance/MarkAttendance.jsx";
 import ViewAttendance from "./components/dashboard/admin/attendance/ViewAttendance.jsx";
+import ViewingLecAttendance from "./components/dashboard/admin/attendance/ViewingLecAttendance.jsx";
 import MainMarking from "./components/dashboard/admin/attendance/MainMarking.jsx";
 
 function App() {
@@ -134,6 +135,10 @@ function App() {
 							<Route
 								path="/dashboard/admin-attendance/view-attendance"
 								element={<ViewAttendance />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance/view-attendance/:lectureId"
+								element={<ViewingLecAttendance />}
 							/>
 							<Route
 								path="/dashboard/admin-attendance/mark-attendance/:lectureId"

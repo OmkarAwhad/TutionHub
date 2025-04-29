@@ -5,7 +5,7 @@ import { setMarkAttendanceLecture } from "../../../../slices/attendance.slice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function AttendanceCard({ lecture }) {
+function AttendanceCard({ lecture, mode = "mark" }) {
 	const isPastDate = (date) => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -14,6 +14,20 @@ function AttendanceCard({ lecture }) {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const handleCardClick = () => {
+		if (mode === "mark") {
+			dispatch(setMarkAttendanceLecture(lecture));
+			navigate(
+				`/dashboard/admin-attendance/mark-attendance/${lecture._id}`
+			);
+		} else {
+			dispatch(setMarkAttendanceLecture(lecture));
+			navigate(
+				`/dashboard/admin-attendance/view-attendance/${lecture._id}`
+			);
+		}
+	};
 
 	return (
 		<>
@@ -53,17 +67,12 @@ function AttendanceCard({ lecture }) {
 
 					<div className="flex gap-3 pt-4">
 						<button
-							onClick={() => {
-								dispatch(
-									setMarkAttendanceLecture(lecture)
-								);
-								navigate(
-									`/dashboard/admin-attendance/mark-attendance/${lecture._id}`
-								);
-							}}
-							className="py-3 w-full rounded-lg bg-medium-gray text-white font-extralight text-xs hover:bg-charcoal-gray transition-all duration-200 flex gap-2 items-center justify-center cursor-pointer "
+							onClick={handleCardClick}
+							className="py-3 w-full rounded-lg bg-medium-gray text-white font-extralight text-xs hover:bg-charcoal-gray transition-all duration-200 flex gap-2 items-center justify-center cursor-pointer"
 						>
-							Mark Attendance
+							{mode === "mark"
+								? "Mark Attendance"
+								: "View Attendance"}
 							<span className="text-base">
 								<PiStudentDuotone />
 							</span>

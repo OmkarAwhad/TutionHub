@@ -76,7 +76,9 @@ function MainMarking() {
 					markAttendance(
 						lectureId,
 						student._id,
-						attendanceStatus[student._id] ? "Present" : "Absent",
+						attendanceStatus[student._id]
+							? "Present"
+							: "Absent",
 						token
 					)
 				)
@@ -109,7 +111,11 @@ function MainMarking() {
 					Mark Attendance
 				</h3>
 				<button
-					onClick={() => navigate("/dashboard/admin-attendance/mark-attendance")}
+					onClick={() =>
+						navigate(
+							"/dashboard/admin-attendance/mark-attendance"
+						)
+					}
 					className="flex items-center gap-2 cursor-pointer text-richblack-200 hover:text-richblack-5 transition-all duration-200"
 				>
 					<IoArrowBack className="text-lg" />
@@ -210,13 +216,15 @@ function MainMarking() {
 						<button
 							onClick={handleSubmitAttendance}
 							disabled={isSubmitting}
-							className={`px-4 py-2 rounded-lg font-medium ${
+							className={`px-4 py-2 rounded-lg font-medium text-white ${
 								isSubmitting
 									? "bg-richblack-700 text-richblack-300 cursor-not-allowed"
-									: "bg-yellow-50 text-richblack-900 hover:bg-yellow-100"
+									: "bg-medium-gray text-richblack-900 hover:bg-charcoal-gray"
 							} transition-all duration-200`}
 						>
-							{isSubmitting ? "Submitting..." : "Submit Attendance"}
+							{isSubmitting
+								? "Submitting..."
+								: "Submit Attendance"}
 						</button>
 					</div>
 				</div>

@@ -3,6 +3,7 @@ const Lecture = require("../models/lecture.model");
 const User = require("../models/user.model");
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
+const mongoose = require("mongoose");
 
 module.exports.markAttendance = async (req, res) => {
 	try {
@@ -126,11 +127,11 @@ module.exports.viewStudAttendanceForLec = async (req, res) => {
 				)
 			);
 		}
-		const { lectureId } = req.body;
+		const { lectureId } = req.query;
 		const attendanceDetails = await Attendance.find({
 			lecture: lectureId,
 		})
-			.populate("student")
+			.populate("student", "name")
 			.exec();
 
 		return res.json(
@@ -265,7 +266,12 @@ module.exports.checkLectureAttendance = async (req, res) => {
 			return res.json(new ApiError(400, "Lecture ID is required"));
 		}
 
-		const attendanceExists = await Attendance.findOne({ lecture: lectureId });
+		const attendanceExists = await Attendance.find({
+			lecture: lectureId,
+		})
+			.populate("student")
+			.populate("lecture")
+			.exec();
 
 		return res.json(
 			new ApiResponse(
@@ -277,7 +283,45 @@ module.exports.checkLectureAttendance = async (req, res) => {
 	} catch (error) {
 		console.log("Error checking lecture attendance: ", error);
 		return res.json(
-			new ApiError(500, "Error checking lecture attendance: " + error.message)
+			new ApiError(
+				500,
+				"Error checking lecture attendance: " + error.message
+			)
+		);
+	}
+};
+
+module.exports.getLecturesWithAttendanceMarked = async (req, res) => {
+	try {
+		// First get all unique lecture IDs from attendance records
+		const attendanceRecords = await Attendance.find().distinct("lecture");
+
+		// Then get the lecture details with populated data
+		const lectures = await Lecture.find({
+			_id: { $in: attendanceRecords },
+		})
+			.populate("subject")
+			.populate("tutor")
+			.sort({ date: -1 });
+
+		return res.json(
+			new ApiResponse(
+				200,
+				lectures,
+				"Lectures with attendance marked fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log(
+			"Error in fetching lectures with attendance marked: ",
+			error
+		);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching lectures with attendance marked: " +
+					error.message
+			)
 		);
 	}
 };

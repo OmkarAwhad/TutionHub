@@ -90,3 +90,57 @@ export function checkLectureAttendance(lectureId, token) {
 		}
 	};
 }
+
+export function getLecturesWithAttendanceMarked(token) {
+	return async () => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				attendanceApi.GET_LECTURES_WITH_ATTENDANCE_MARKED,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return [];
+			}
+			// console.log(result.data.data)
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching lectures with attendance marked");
+			console.error("Error fetching lectures with attendance marked:", error);
+			return [];
+		}
+	};
+}
+
+export function viewStudAttendanceForLec(lectureId, token) {
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				`${attendanceApi.VIEW_STUD_ATTENDANCE_FOR_LEC}?lectureId=${lectureId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return [];
+			}
+			// console.log(result.data.data)
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching attendance for lecture");
+			console.error("Error fetching attendance for lecture:", error);
+			return [];
+		}
+	};
+}

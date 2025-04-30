@@ -224,53 +224,90 @@ module.exports.trackStudentProgress = async (req, res) => {
 };
 
 module.exports.trackProgressBySubject = async (req, res) => {
-   try {
-      const { subjectId } = req.body;
-      const userId = req.user.id;
+	try {
+		const { subjectId } = req.body;
+		const userId = req.user.id;
 
-      if (!subjectId) {
-         return res.json(
-            new ApiError(400, "Field (subjectId) is required.")
-         );
-      }
+		if (!subjectId) {
+			return res.json(
+				new ApiError(400, "Field (subjectId) is required.")
+			);
+		}
 
-      const marksDetails = await Marks.find({
-         student: userId,
-         subject: subjectId,
-      })
-         .populate({ path: "lecture", populate: "subject" })
-         .exec();
+		const marksDetails = await Marks.find({
+			student: userId,
+			subject: subjectId,
+		})
+			.populate({ path: "lecture", populate: "subject" })
+			.exec();
 
-      if (!marksDetails || marksDetails.length === 0) {
-         return res.json(
-            new ApiError(404, "No marks data found for the student in this subject.")
-         );
-      }
+		if (!marksDetails || marksDetails.length === 0) {
+			return res.json(
+				new ApiError(
+					404,
+					"No marks data found for the student in this subject."
+				)
+			);
+		}
 
-      let totalMarksObtained = 0;
-      let totalMarksPossible = 0;
+		let totalMarksObtained = 0;
+		let totalMarksPossible = 0;
 
-      marksDetails.forEach((mark) => {
-         totalMarksObtained += mark.marks;
-         totalMarksPossible += mark.totalMarks;
-      });
+		marksDetails.forEach((mark) => {
+			totalMarksObtained += mark.marks;
+			totalMarksPossible += mark.totalMarks;
+		});
 
-      const progressPercentage =
-         (totalMarksObtained / totalMarksPossible) * 100;
+		const progressPercentage =
+			(totalMarksObtained / totalMarksPossible) * 100;
 
-      return res.json(
-         new ApiResponse(
-            200,
-            { progressPercentage },
-            "Progress by subject tracked successfully"
-         )
-      );
-   } catch (error) {
-      console.log("Error in tracking progress by subject ", error);
-      return res.json(
-         new ApiError(500, "Error in tracking progress by subject")
-      );
-   }
+		return res.json(
+			new ApiResponse(
+				200,
+				{ progressPercentage },
+				"Progress by subject tracked successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in tracking progress by subject ", error);
+		return res.json(
+			new ApiError(500, "Error in tracking progress by subject")
+		);
+	}
 };
 
+module.exports.getMarksDetailsByALec = async (req, res) => {
+	try {
+		const { lectureId } = req.params;
+		if (!lectureId) {
+			return res.json(new ApiError(400, "Lecture Id not found"));
+		}
+		const lectureDetails = await Lecture.findById(lectureId);
+		if (!lectureDetails) {
+			return res.json(new ApiError(404, "Lecture not found."));
+		}
 
+		const marksDetails = await Marks.find({ lecture: lectureId })
+			.populate("student")
+			.populate("subject")
+			.exec();
+		if (!marksDetails) {
+			return res.json(
+				new ApiError(404, "No marks data found for the lecture.")
+			);
+		}
+
+		return res.json(
+			new ApiResponse(
+				200,
+				marksDetails,
+				"Marks details fetched successfully for the lecture"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching marks details by lecture ", error);
+		return res.json(
+			new ApiError(500, "Error in fetching marks details by lecture")
+		);
+	}
+};

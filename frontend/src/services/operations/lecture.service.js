@@ -78,7 +78,7 @@ export function getAllLectures(token) {
 				console.log(response.data.message);
 				return [];
 			}
-			// console.log(response.data.data)
+			// console.log(response.data.d	ata)
 			return response.data.data;
 		} catch (error) {
 			toast.error("Failed to fetch all lectures");

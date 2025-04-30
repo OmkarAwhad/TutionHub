@@ -21,7 +21,7 @@ function PastDateCard({ lecture, mode = "mark", onAttendanceMarked }) {
 			dispatch(setMarkLecture(lecture));
 			navigate(
 				`/dashboard/admin-attendance/mark-attendance/${lecture._id}`,
-				{ state: { onAttendanceMarked } }
+				// { state: { onAttendanceMarked } }
 			);
 		} else if (mode == "view") {
 			dispatch(setMarkLecture(lecture));

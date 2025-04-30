@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	markAttendanceLecture: localStorage.getItem("markAttendanceLecture")
-		? JSON.parse(localStorage.getItem("markAttendanceLecture"))
+	markLecture: localStorage.getItem("markLecture")
+		? JSON.parse(localStorage.getItem("markLecture"))
 		: null,
 };
 
@@ -10,21 +10,21 @@ const attendanceSlice = createSlice({
 	name: "attendance",
 	initialState,
 	reducers: {
-		setMarkAttendanceLecture(state, action) {
-			state.markAttendanceLecture = action.payload;
+		setMarkLecture(state, action) {
+			state.markLecture = action.payload;
 			localStorage.setItem(
-				"markAttendanceLecture",
+				"markLecture",
 				JSON.stringify(action.payload)
 			);
 		},
-		clearMarkAttendanceLecture(state) {
-			state.markAttendanceLecture = null;
-			localStorage.removeItem("markAttendanceLecture");
+		clearmarkLecture(state) {
+			state.markLecture = null;
+			localStorage.removeItem("markLecture");
 		},
 	},
 });
 
-export const { setMarkAttendanceLecture, clearMarkAttendanceLecture } =
+export const { setMarkLecture, clearmarkLecture } =
 	attendanceSlice.actions;
 
 export default attendanceSlice.reducer;

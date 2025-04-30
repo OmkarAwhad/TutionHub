@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllLectures } from "../../../../services/operations/lecture.service";
 import { getLecturesWithAttendanceMarked } from "../../../../services/operations/attendance.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
-import AttendanceCard from "./AttendanceCard";
+import PastDateCard from "./PastDateCard";
 import { IoArrowBack } from "react-icons/io5";
 
 function ViewAttendance() {
@@ -109,7 +109,7 @@ function ViewAttendance() {
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filteredLectures.map((lecture) => (
-					<AttendanceCard
+					<PastDateCard
 						key={lecture._id}
 						lecture={lecture}
 						mode="view"

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getAllLectures } from "../../../../services/operations/lecture.service";
-import { checkLectureAttendance } from "../../../../services/operations/attendance.service";
+import { getLecturesWithoutAttendance } from "../../../../services/operations/attendance.service";
 import { useDispatch, useSelector } from "react-redux";
-import AttendanceCard from "./AttendanceCard";
+import PastDateCard from "./PastDateCard";
 import { IoArrowBack } from "react-icons/io5";
-
 import { useNavigate } from "react-router-dom";
 
 function MarkAttendance() {
@@ -12,30 +11,15 @@ function MarkAttendance() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const [lecturesList, setLecturesList] = useState([]);
 	const [filteredLectures, setFilteredLectures] = useState([]);
 	const [loading, setLoading] = useState(true);
 
-	const getAllLecsData = async () => {
+	const refreshLectures = async () => {
+		setLoading(true);
 		try {
-			const response = await dispatch(getAllLectures(token));
-			if (response) {
-				setLecturesList(response);
-				// Check attendance status for each lecture
-				const attendanceChecks = await Promise.all(
-					response.map(async (lecture) => {
-						const hasAttendance = await dispatch(
-							checkLectureAttendance(lecture._id, token)
-						);
-						return { ...lecture, hasAttendance };
-					})
-				);
-				// Filter out lectures with marked attendance
-				const unmarkedLectures = attendanceChecks.filter(
-					(lecture) => !lecture.hasAttendance
-				);
-				setFilteredLectures(unmarkedLectures);
-			}
+			const response = await dispatch(getLecturesWithoutAttendance(token));
+			// console.log("Lectures without attendance:", response);
+			setFilteredLectures(response);
 		} catch (error) {
 			console.error("Failed to fetch lectures:", error);
 		} finally {
@@ -44,7 +28,7 @@ function MarkAttendance() {
 	};
 
 	useEffect(() => {
-		getAllLecsData();
+		refreshLectures();
 	}, []);
 
 	if (loading) {
@@ -56,9 +40,9 @@ function MarkAttendance() {
 	}
 
 	return (
-		<div className=" p-8 ">
-			<div className="flex items-center justify-between mb-8 ">
-				<h1 className="text-3xl font-bold  text-richblack-5">
+		<div className="p-8">
+			<div className="flex items-center justify-between mb-8">
+				<h1 className="text-3xl font-bold text-richblack-5">
 					All Lectures
 				</h1>
 				<button
@@ -73,9 +57,10 @@ function MarkAttendance() {
 				{filteredLectures.length > 0 ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{filteredLectures.map((lecture) => (
-							<AttendanceCard
+							<PastDateCard
 								key={lecture._id}
 								lecture={lecture}
+								onAttendanceMarked={refreshLectures}
 							/>
 						))}
 					</div>

@@ -25,6 +25,10 @@ const lectureSchema = new mongoose.Schema({
 		type: String,
 		enum: ["Test", "Lecture"],
 	},
+	marksMarked: {
+		type: Boolean,
+		default: false, // Ensure default is false
+	},
 });
 
 module.exports = mongoose.model("Lecture", lectureSchema);

@@ -3,6 +3,7 @@ const Subject = require("../models/subject.model");
 const User = require("../models/user.model");
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
+const Marks = require("../models/marks.model");
 
 module.exports.createLecture = async (req, res) => {
 	try {
@@ -239,10 +240,21 @@ module.exports.getAllLectures = async (req, res) => {
 			.populate("subject")
 			.sort({ date: -1, time: 1 });
 
+		// Add marksMarked property to indicate if marks are marked for the lecture
+		const lecturesWithMarksStatus = await Promise.all(
+			lectures.map(async (lecture) => {
+				const marksExist = await Marks.exists({ lecture: lecture._id });
+				return {
+					...lecture.toObject(),
+					marksMarked: !!marksExist, // Ensure boolean value
+				};
+			})
+		);
+
 		return res.json(
 			new ApiResponse(
 				200,
-				lectures,
+				lecturesWithMarksStatus,
 				"All lectures fetched successfully"
 			)
 		);

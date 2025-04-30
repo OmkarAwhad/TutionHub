@@ -4,14 +4,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { format, isValid } from "date-fns";
 import { viewStudAttendanceForLec } from "../../../../services/operations/attendance.service";
 import { IoArrowBack } from "react-icons/io5";
-import { clearMarkAttendanceLecture } from "../../../../slices/attendance.slice";
+import { clearmarkLecture } from "../../../../slices/attendance.slice";
 
 function ViewingLecAttendance() {
 	const { lectureId } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { token } = useSelector((state) => state.auth);
-	const { markAttendanceLecture } = useSelector((state) => state.attendance);
+	const { markLecture } = useSelector((state) => state.attendance);
 	const [attendanceList, setAttendanceList] = useState([]);
 	const [loading, setLoading] = useState(true);
 
@@ -36,7 +36,7 @@ function ViewingLecAttendance() {
 
 		// Cleanup function to clear the lecture details when component unmounts
 		return () => {
-			dispatch(clearMarkAttendanceLecture());
+			dispatch(clearmarkLecture());
 		};
 	}, [lectureId, dispatch, token]);
 
@@ -48,7 +48,7 @@ function ViewingLecAttendance() {
 	};
 
 	// Show loading state only when both loading is true and we don't have lecture data
-	if (loading && !markAttendanceLecture) {
+	if (loading && !markLecture) {
 		return (
 			<div className="flex items-center justify-center h-screen">
 				<div className="text-richblack-5">Loading...</div>
@@ -110,25 +110,25 @@ function ViewingLecAttendance() {
 
 				<div className="bg-richblack-800 p-6 rounded-xl shadow-lg">
 					{/* <h2 className="text-2xl font-semibold text-richblack-5 mb-4">
-						{markAttendanceLecture.subject?.name}
+						{markLecture.subject?.name}
 					</h2> */}
 					<div className="grid grid-cols-2 gap-4">
 						<div>
 							<p className="text-medium-gray">Date</p>
 							<p className="text-richblack-5">
-								{formatDate(markAttendanceLecture?.date)}
+								{formatDate(markLecture?.date)}
 							</p>
 						</div>
 						<div>
 							<p className="text-medium-gray">Time</p>
 							<p className="text-richblack-5">
-								{markAttendanceLecture?.time || "N/A"}
+								{markLecture?.time || "N/A"}
 							</p>
 						</div>
 						<div>
 							<p className="text-medium-gray">Tutor</p>
 							<p className="text-richblack-5">
-								{markAttendanceLecture?.tutor?.name ||
+								{markLecture?.tutor?.name ||
 									"N/A"}
 							</p>
 						</div>
@@ -137,7 +137,7 @@ function ViewingLecAttendance() {
 								Description
 							</p>
 							<p className="text-richblack-5">
-								{markAttendanceLecture?.description ||
+								{markLecture?.description ||
 									"N/A"}
 							</p>
 						</div>

@@ -16,12 +16,16 @@ export const attendanceApi = {
 	CHECK_LECTURE_ATTENDANCE: BASE_URL + "/attendance/checkLectureAttendance",
 	GET_LECTURES_WITH_ATTENDANCE_MARKED: BASE_URL + "/attendance/getLecturesWithAttendanceMarked",
 	VIEW_STUD_ATTENDANCE_FOR_LEC: BASE_URL + "/attendance/viewStudAttendanceForLec",
+	STUDS_PRESENT_FOR_LEC: BASE_URL + "/attendance/studsPresentForALec",
+	GET_ATTENDANCE_BY_SUBJECT: BASE_URL + "/attendance/attendAccToSub",
+	GET_LECTURES_WITHOUT_ATTENDANCE: BASE_URL + "/attendance/getLecturesWithoutAttendance",
 };
 
 export const marksApi = {
 	GET_SUBJECT_MARKS: BASE_URL + "/marks/marksAccToSubject",
 	GET_STUDENT_PROGRESS: BASE_URL + "/marks/trackStudentProgress",
 	GET_SUBJECT_PROGRESS: BASE_URL + "/marks/trackProgressBySubject",
+	MARK_STUDENT_MARKS: BASE_URL + "/marks/markStudentMarks",
 };
 
 export const remarksApi = {
@@ -57,4 +61,9 @@ export const usersApi = {
 export const feedbackApi = {
 	MAKE_A_FEEDBACK: BASE_URL + "/feedback/makeAFeedback",
 	MY_ALL_FEEDBACKS: BASE_URL + "/feedback/myFeedbacks",
+};
+
+export const endpoints = {
+	GET_MARKS: "/api/v1/marks/get-marks",
+	MARK_STUDENT_MARKS: "/api/v1/marks/mark-student-marks",
 };

@@ -1,11 +1,12 @@
 import React from "react";
 import { format } from "date-fns";
 import { PiStudentDuotone } from "react-icons/pi";
-import { setMarkAttendanceLecture } from "../../../../slices/attendance.slice";
+import { setMarkLecture } from "../../../../slices/attendance.slice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { MdGrade } from "react-icons/md";
 
-function AttendanceCard({ lecture, mode = "mark" }) {
+function PastDateCard({ lecture, mode = "mark", onAttendanceMarked }) {
 	const isPastDate = (date) => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -17,15 +18,22 @@ function AttendanceCard({ lecture, mode = "mark" }) {
 
 	const handleCardClick = () => {
 		if (mode === "mark") {
-			dispatch(setMarkAttendanceLecture(lecture));
+			dispatch(setMarkLecture(lecture));
 			navigate(
-				`/dashboard/admin-attendance/mark-attendance/${lecture._id}`
+				`/dashboard/admin-attendance/mark-attendance/${lecture._id}`,
+				{ state: { onAttendanceMarked } }
 			);
-		} else {
-			dispatch(setMarkAttendanceLecture(lecture));
+		} else if (mode == "view") {
+			dispatch(setMarkLecture(lecture));
 			navigate(
 				`/dashboard/admin-attendance/view-attendance/${lecture._id}`
 			);
+		} else if (mode == "marks") {
+			dispatch(setMarkLecture(lecture));
+			navigate(`/dashboard/admin-marks/add-marks/${lecture._id}`);
+		} else if (mode == "view-marks") {
+			dispatch(setMarkLecture(lecture));
+			navigate(`/dashboard/admin-marks/view-marks/${lecture._id}`);
 		}
 	};
 
@@ -72,9 +80,19 @@ function AttendanceCard({ lecture, mode = "mark" }) {
 						>
 							{mode === "mark"
 								? "Mark Attendance"
-								: "View Attendance"}
+								: mode === "view"
+								? "View Attendance"
+								: mode === "marks"
+								? "Add Marks"
+								: mode === "view-marks"
+								? "View Marks"
+								: null}
 							<span className="text-base">
-								<PiStudentDuotone />
+								{mode === "marks" || mode === "view-marks" ? (
+									<MdGrade />
+								) : (
+									<PiStudentDuotone />
+								)}
 							</span>
 						</button>
 					</div>
@@ -84,4 +102,4 @@ function AttendanceCard({ lecture, mode = "mark" }) {
 	);
 }
 
-export default AttendanceCard;
+export default PastDateCard;

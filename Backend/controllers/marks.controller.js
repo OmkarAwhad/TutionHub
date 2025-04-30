@@ -62,6 +62,9 @@ module.exports.markStudentMarks = async (req, res) => {
 			description: description ? description : "",
 		});
 
+		// Update the lecture to set marksMarked to true
+		await Lecture.findByIdAndUpdate(lectureId, { marksMarked: true });
+
 		return res.json(
 			new ApiResponse(200, marksDetails, "Marks marked successfully")
 		);
@@ -269,3 +272,5 @@ module.exports.trackProgressBySubject = async (req, res) => {
       );
    }
 };
+
+

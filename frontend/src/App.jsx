@@ -23,11 +23,15 @@ import EditLecture from "./components/dashboard/admin/lecture/EditLecture.jsx";
 import LectureList from "./components/dashboard/admin/lecture/LectureList.jsx";
 import AdminSubjects from "./components/dashboard/admin/subjects/AdminSubjects.jsx";
 import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
+import PutMarks from "./components/dashboard/admin/marks/PutMarks.jsx";
 import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
 import MarkAttendance from "./components/dashboard/admin/attendance/MarkAttendance.jsx";
 import ViewAttendance from "./components/dashboard/admin/attendance/ViewAttendance.jsx";
 import ViewingLecAttendance from "./components/dashboard/admin/attendance/ViewingLecAttendance.jsx";
 import MainMarking from "./components/dashboard/admin/attendance/MainMarking.jsx";
+import MarkMarks from "./components/dashboard/admin/marks/MarkMarks.jsx";
+import MarksList from "./components/dashboard/admin/marks/MarksList.jsx";
+import ViewMarks from "./components/dashboard/admin/marks/ViewMarks.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -123,6 +127,22 @@ function App() {
 							<Route
 								path="/dashboard/admin-marks"
 								element={<AdminMarks />}
+							/>
+							<Route
+								path="/dashboard/admin-marks/add-marks"
+								element={<MarkMarks />}
+							/>
+							<Route
+								path="/dashboard/admin-marks/add-marks/:lectureId"
+								element={<PutMarks />}
+							/>
+							<Route
+								path="/dashboard/admin-marks/view-marks"
+								element={<MarksList />}
+							/>
+							<Route
+								path="/dashboard/admin-marks/view-marks/:lectureId"
+								element={<ViewMarks />}
 							/>
 							<Route
 								path="/dashboard/admin-attendance"

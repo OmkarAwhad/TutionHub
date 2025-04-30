@@ -5,6 +5,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setEditLecture } from "../../../../slices/lecture.slice";
+import { setMarkLecture } from "../../../../slices/attendance.slice";
 
 function LectureCard({ lecture, isPastDate, handleDeleteClick }) {
 	const dispatch = useDispatch();
@@ -56,8 +57,12 @@ function LectureCard({ lecture, isPastDate, handleDeleteClick }) {
 							<>
 								<button
 									onClick={() => {
-										dispatch(setEditLecture(lecture));
-										navigate("/dashboard/admin-lecture/edit-lecture");
+										dispatch(
+											setEditLecture(lecture)
+										);
+										navigate(
+											"/dashboard/admin-lecture/edit-lecture"
+										);
 									}}
 									className="py-3 w-[50%] rounded-lg bg-medium-gray text-white font-extralight text-xs hover:bg-charcoal-gray transition-all duration-200 flex gap-2 items-center justify-center "
 								>
@@ -80,7 +85,17 @@ function LectureCard({ lecture, isPastDate, handleDeleteClick }) {
 							</>
 						) : (
 							<>
-								<button className="py-3 w-[50%] rounded-lg bg-medium-gray text-white font-extralight text-xs text-center hover:bg-charcoal-gray transition-all duration-200">
+								<button
+									onClick={() => {
+										dispatch(
+											setMarkLecture(lecture)
+										);
+										navigate(
+											`/dashboard/admin-attendance/view-attendance/${lecture._id}`
+										);
+									}}
+									className="py-3 w-[50%] rounded-lg bg-medium-gray text-white font-extralight text-xs text-center hover:bg-charcoal-gray transition-all duration-200"
+								>
 									View Attendance
 								</button>
 								<button

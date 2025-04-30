@@ -8,6 +8,7 @@ const {
 	studsPresentForALec,
 	checkLectureAttendance,
 	getLecturesWithAttendanceMarked,
+	getLecturesWithoutAttendance,
 } = require("../controllers/attendance.controller");
 const router = express.Router();
 
@@ -22,6 +23,12 @@ router.get(
 	auth,
 	isAdmin,
 	getLecturesWithAttendanceMarked
+);
+router.get(
+	"/getLecturesWithoutAttendance",
+	auth,
+	isAdmin,
+	getLecturesWithoutAttendance
 );
 
 module.exports = router;

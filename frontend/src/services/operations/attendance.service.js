@@ -144,3 +144,55 @@ export function viewStudAttendanceForLec(lectureId, token) {
 		}
 	};
 }
+
+export function studsPresentForALec(lectureId, token) {
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				`${attendanceApi.STUDS_PRESENT_FOR_LEC}?lectureId=${lectureId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return [];
+			}
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching present students for lecture");
+			console.error("Error fetching present students for lecture:", error);
+			return [];
+		}
+	};
+}
+
+export function getLecturesWithoutAttendance(token) {
+	return async () => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				attendanceApi.GET_LECTURES_WITHOUT_ATTENDANCE,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return [];
+			}
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching lectures without attendance");
+			console.error("Error fetching lectures without attendance:", error);
+			return [];
+		}
+	};
+}

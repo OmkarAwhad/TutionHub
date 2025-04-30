@@ -4,13 +4,13 @@ import { markAttendance } from "../../../../services/operations/attendance.servi
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { clearMarkAttendanceLecture } from "../../../../slices/attendance.slice";
+import { clearmarkLecture } from "../../../../slices/attendance.slice";
 import { IoArrowBack } from "react-icons/io5";
 import toast from "react-hot-toast";
 
 function MainMarking() {
 	const { token } = useSelector((state) => state.auth);
-	const { markAttendanceLecture } = useSelector((state) => state.attendance);
+	const { markLecture } = useSelector((state) => state.attendance);
 	const { lectureId } = useParams();
 	const [studentsList, setStudentsList] = useState([]);
 	const [selectAll, setSelectAll] = useState(true);
@@ -47,7 +47,7 @@ function MainMarking() {
 	// Cleanup function to clear the lecture data when component unmounts
 	useEffect(() => {
 		return () => {
-			dispatch(clearMarkAttendanceLecture());
+			dispatch(clearmarkLecture());
 		};
 	}, []);
 
@@ -99,7 +99,7 @@ function MainMarking() {
 	};
 
 	// If no lecture data is available, redirect back
-	if (!markAttendanceLecture) {
+	if (!markLecture) {
 		navigate("/dashboard/admin-attendance/mark-attendance");
 		return null;
 	}
@@ -124,17 +124,17 @@ function MainMarking() {
 			</div>
 
 			{/* Lecture Details Card */}
-			{markAttendanceLecture && (
+			{markLecture && (
 				<div className="bg-richblack-800 p-6 rounded-xl shadow-lg mb-8">
 					<div className="flex justify-between items-start">
 						<div>
 							<h2 className="text-2xl font-bold text-richblack-5 mb-2">
-								{markAttendanceLecture.subject?.name}
+								{markLecture.subject?.name}
 							</h2>
 							<p className="text-richblack-200">
 								{format(
 									new Date(
-										markAttendanceLecture.date
+										markLecture.date
 									),
 									"PPP"
 								)}
@@ -145,13 +145,13 @@ function MainMarking() {
 								<span className="text-medium-gray">
 									Time:{" "}
 								</span>
-								{markAttendanceLecture.time}
+								{markLecture.time}
 							</p>
 							<p className="text-richblack-200">
 								<span className="text-medium-gray">
 									Tutor:{" "}
 								</span>
-								{markAttendanceLecture.tutor?.name}
+								{markLecture.tutor?.name}
 							</p>
 						</div>
 					</div>

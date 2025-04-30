@@ -33,9 +33,9 @@ module.exports.markAttendance = async (req, res) => {
 			lecture: lectureId,
 			student: studentId,
 		});
-		// .populate("student")
-		// .populate("lecture")
-		// .exec();
+
+		// Update the lecture's isMarked field to true
+		await Lecture.findByIdAndUpdate(lectureId, { isMarked: true });
 
 		return res.json(
 			new ApiResponse(
@@ -60,8 +60,6 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 		const userDetails = await User.findById(userId);
 		const subjectIds = userDetails.subjects.map((elm) => elm._id);
 
-		// console.log("Subject IDs : ",subjectIds)
-
 		const lectureDetails = await Lecture.find({
 			subject: { $in: subjectIds },
 		});
@@ -74,8 +72,6 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 				)
 			);
 		}
-
-		// console.log("lectureDetails : ",lectureDetails)
 
 		const attendanceDetails = await Attendance.find({ student: userId })
 			.populate("lecture")
@@ -118,7 +114,6 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 
 module.exports.viewStudAttendanceForLec = async (req, res) => {
 	try {
-		// Tutor and Admin can see the attendance for any particular lecture
 		if (req.user.role === "Student") {
 			return res.json(
 				new ApiError(
@@ -222,7 +217,7 @@ module.exports.attendAccToSub = async (req, res) => {
 
 module.exports.studsPresentForALec = async (req, res) => {
 	try {
-		const { lectureId } = req.body;
+		const { lectureId } = req.query;
 		if (!lectureId) {
 			return res.json(new ApiError(400, "Lecture ID is required"));
 		}
@@ -232,6 +227,12 @@ module.exports.studsPresentForALec = async (req, res) => {
 		})
 			.populate("student")
 			.exec();
+
+		if (!attendanceDetails || attendanceDetails.length === 0) {
+			return res.json(
+				new ApiError(400, "No attendance records found for the given lecture")
+			);
+		}
 
 		const finalResult = attendanceDetails.filter(
 			(student) => student.status === "Present"
@@ -293,10 +294,8 @@ module.exports.checkLectureAttendance = async (req, res) => {
 
 module.exports.getLecturesWithAttendanceMarked = async (req, res) => {
 	try {
-		// First get all unique lecture IDs from attendance records
 		const attendanceRecords = await Attendance.find().distinct("lecture");
 
-		// Then get the lecture details with populated data
 		const lectures = await Lecture.find({
 			_id: { $in: attendanceRecords },
 		})
@@ -321,6 +320,37 @@ module.exports.getLecturesWithAttendanceMarked = async (req, res) => {
 				500,
 				"Error in fetching lectures with attendance marked: " +
 					error.message
+			)
+		);
+	}
+};
+
+module.exports.getLecturesWithoutAttendance = async (req, res) => {
+	try {
+		const allLectures = await Lecture.find()
+			.populate('subject')
+			.populate('tutor')
+			.sort({ date: -1 });
+
+		const lecturesWithAttendance = await Attendance.find().distinct('lecture');
+
+		const lecturesWithoutAttendance = allLectures.filter(lecture => 
+			!lecturesWithAttendance.includes(lecture._id.toString())
+		);
+
+		return res.json(
+			new ApiResponse(
+				200,
+				lecturesWithoutAttendance,
+				"Lectures without attendance marked fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching lectures without attendance: ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching lectures without attendance: " + error.message
 			)
 		);
 	}

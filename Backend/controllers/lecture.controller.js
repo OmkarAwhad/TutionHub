@@ -109,9 +109,24 @@ module.exports.getLecturesOfWeek = async (req, res) => {
 					tutor: lect.tutor,
 					date: lect.date,
 					day: lect.day,
+					time: lect.time,
 					description: lect.description,
 				});
 			}
+		});
+
+		// Sort lectures in each day's array by time
+		Object.keys(lectByDay).forEach((day) => {
+			lectByDay[day].sort((a, b) => {
+				const parseTime = (time) => {
+					const [hourMinute, period] = time.split(" ");
+					let [hours, minutes] = hourMinute.split(":").map(Number);
+					if (period === "PM" && hours !== 12) hours += 12;
+					if (period === "AM" && hours === 12) hours = 0;
+					return hours * 60 + minutes; // Convert to total minutes
+				};
+				return parseTime(a.time.split(" to ")[0]) - parseTime(b.time.split(" to ")[0]);
+			});
 		});
 
 		return res.json(
@@ -147,11 +162,7 @@ module.exports.getLectByDesc = async (req, res) => {
 			.exec();
 
 		return res.json(
-			new ApiResponse(
-				200,
-				details,
-				"Test days fetched successfully"
-			)
+			new ApiResponse(200, details, "Test days fetched successfully")
 		);
 	} catch (error) {
 		console.log("Error fetching Test days schedule ", error);
@@ -243,7 +254,9 @@ module.exports.getAllLectures = async (req, res) => {
 		// Add marksMarked property to indicate if marks are marked for the lecture
 		const lecturesWithMarksStatus = await Promise.all(
 			lectures.map(async (lecture) => {
-				const marksExist = await Marks.exists({ lecture: lecture._id });
+				const marksExist = await Marks.exists({
+					lecture: lecture._id,
+				});
 				return {
 					...lecture.toObject(),
 					marksMarked: !!marksExist, // Ensure boolean value
@@ -280,7 +293,11 @@ module.exports.getLectureBySub = async (req, res) => {
 
 		if (!lectureDetails || lectureDetails.length === 0) {
 			return res.json(
-				new ApiResponse(200, [], "No lectures found for this subject")
+				new ApiResponse(
+					200,
+					[],
+					"No lectures found for this subject"
+				)
 			);
 		}
 
@@ -295,6 +312,95 @@ module.exports.getLectureBySub = async (req, res) => {
 		console.log("Error in getting all lectures by subject: ", error);
 		return res.json(
 			new ApiError(500, "Error in getting all lectures by subject")
+		);
+	}
+};
+
+module.exports.getLecturesByDate = async (req, res) => {
+	try {
+		const { date } = req.query;
+		if (!date) {
+			return res.json(new ApiError(400, "Date is required"));
+		}
+
+		// Parse the input date and set it to start of day
+		const inputDate = new Date(date);
+		inputDate.setHours(0, 0, 0, 0);
+
+		// Calculate week start (Sunday) and end (Saturday)
+		const weekStart = new Date(inputDate);
+		weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+		const weekEnd = new Date(weekStart);
+		weekEnd.setDate(weekEnd.getDate() + 6);
+		weekEnd.setHours(23, 59, 59, 999);
+
+		// Find lectures within the week range
+		const lectures = await Lecture.find({
+			date: {
+				$gte: weekStart,
+				$lte: weekEnd
+			}
+		})
+			.populate("tutor")
+			.populate("subject")
+			.exec();
+
+		const lectByDay = {
+			Sunday: [],
+			Monday: [],
+			Tuesday: [],
+			Wednesday: [],
+			Thursday: [],
+			Friday: [],
+			Saturday: []
+		};
+
+		lectures.forEach((lect) => {
+			const day = lect.day;
+			if (lectByDay[day]) {
+				lectByDay[day].push({
+					_id: lect._id,
+					student: lect.student,
+					tutor: lect.tutor,
+					date: lect.date,
+					day: lect.day,
+					time: lect.time,
+					description: lect.description,
+					subject: lect.subject
+				});
+			}
+		});
+
+		// Sort lectures in each day's array by time
+		Object.keys(lectByDay).forEach((day) => {
+			lectByDay[day].sort((a, b) => {
+				const parseTime = (time) => {
+					const [hourMinute, period] = time.split(" ");
+					let [hours, minutes] = hourMinute.split(":").map(Number);
+					if (period === "PM" && hours !== 12) hours += 12;
+					if (period === "AM" && hours === 12) hours = 0;
+					return hours * 60 + minutes;
+				};
+				return parseTime(a.time.split(" to ")[0]) - parseTime(b.time.split(" to ")[0]);
+			});
+		});
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					weekStart: weekStart.toISOString().split("T")[0],
+					weekEnd: weekEnd.toISOString().split("T")[0],
+					lectures: lectByDay
+				},
+				"Lectures fetched and grouped by day for the specified week successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in getting lectures of specified week ", error);
+		return res.json(
+			new ApiError(500, "Error in getting lectures of specified week")
 		);
 	}
 };

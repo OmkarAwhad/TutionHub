@@ -206,3 +206,18 @@ export function updateLecture(lectureId, data, token) {
 // 		}
 // 	};
 // }
+
+const { GET_LECTURES_OF_WEEK, GET_LECTURES_BY_DATE } = lectureApi;
+
+export const getLecturesByDate = async (token, date) => {
+	try {
+		const response = await apiConnector("GET", GET_LECTURES_BY_DATE, null, {
+			Authorization: `Bearer ${token}`,
+		}, {
+			date: date
+		});
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};

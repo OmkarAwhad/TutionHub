@@ -51,7 +51,7 @@ function LoginPage() {
 							type="email"
 							placeholder="Enter email"
 							{...register("email", { required: true })}
-							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md "
+							className="px-4 py-2 w-full outline-none border-[2px] border-gray-300 rounded-md "
 						/>
 						{errors.email && (
 							<p className="text-red-200 text-sm ml-2 ">
@@ -63,7 +63,7 @@ function LoginPage() {
 						<p className="pl-2 text-base text-medium-gray pb-1  ">
 							Password
 						</p>
-						<div className=" border-[2px] border-gray-200 rounded-md flex justify-between items-center ">
+						<div className=" border-[2px] border-gray-300 rounded-md flex justify-between items-center ">
 							<input
 								type={
 									passwordVisible
@@ -98,7 +98,7 @@ function LoginPage() {
 						)}
 					</label>
 					<button
-						className=" bg-slate-gray text-white w-fit mx-auto px-4 py-2 rounded-sm "
+						className=" bg-medium-gray hover:bg-charcoal-gray transition-all duration-150 cursor-pointer text-white w-fit mx-auto px-4 py-2 rounded-sm"
 						type="submit"
 					>
 						Log in

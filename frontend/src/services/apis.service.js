@@ -67,8 +67,3 @@ export const feedbackApi = {
 	MAKE_A_FEEDBACK: BASE_URL + "/feedback/makeAFeedback",
 	MY_ALL_FEEDBACKS: BASE_URL + "/feedback/myFeedbacks",
 };
-
-export const endpoints = {
-	GET_MARKS: "/api/v1/marks/get-marks",
-	MARK_STUDENT_MARKS: "/api/v1/marks/mark-student-marks",
-};

@@ -6,15 +6,15 @@ export function viewAttendanceOfAStud(token) {
 	return async () => {
 		try {
 			// Parse the token if it's a string
-			const parsedToken = typeof token === 'string' ? JSON.parse(token) : token;
-			
+			// const parsedToken = typeof token === 'string' ? JSON.parse(token) : token;
+
 			const result = await apiConnector(
 				"GET",
 				attendanceApi.GET_STUDENT_ATTENDANCE,
 				{},
 				{
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${parsedToken}`,
+					Authorization: `Bearer ${token}`,
 				}
 			);
 
@@ -23,6 +23,7 @@ export function viewAttendanceOfAStud(token) {
 				console.log(result.data.message);
 				return [];
 			}
+			// console.log(result.data.data)
 			return result.data.data;
 		} catch (error) {
 			toast.error("Error in fetching student subjects");
@@ -112,7 +113,10 @@ export function getLecturesWithAttendanceMarked(token) {
 			return result.data.data;
 		} catch (error) {
 			toast.error("Error fetching lectures with attendance marked");
-			console.error("Error fetching lectures with attendance marked:", error);
+			console.error(
+				"Error fetching lectures with attendance marked:",
+				error
+			);
 			return [];
 		}
 	};
@@ -165,7 +169,10 @@ export function studsPresentForALec(lectureId, token) {
 			return result.data.data;
 		} catch (error) {
 			toast.error("Error fetching present students for lecture");
-			console.error("Error fetching present students for lecture:", error);
+			console.error(
+				"Error fetching present students for lecture:",
+				error
+			);
 			return [];
 		}
 	};
@@ -191,8 +198,37 @@ export function getLecturesWithoutAttendance(token) {
 			return result.data.data;
 		} catch (error) {
 			toast.error("Error fetching lectures without attendance");
-			console.error("Error fetching lectures without attendance:", error);
+			console.error(
+				"Error fetching lectures without attendance:",
+				error
+			);
 			return [];
+		}
+	};
+}
+
+export function attendAccToSub(subjectId, token) {
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				`${attendanceApi.GET_SUBJECT_ATTENDANCE}/${subjectId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return null;
+			}
+			console.log(result.data.data);
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching attendance for subject");
+			console.error("Error fetching attendance for subject:", error);
+			return null;
 		}
 	};
 }

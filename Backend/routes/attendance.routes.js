@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.post("/markAttendance", auth, isAdmin, markAttendance);
 router.get("/viewAttendanceOfAStud", auth, isStudent, viewAttendanceOfAStud);
+router.get("/attendAccToSub/:subjectId", auth, isStudent, attendAccToSub);
 router.get("/viewStudAttendanceForLec", auth, viewStudAttendanceForLec);
-router.get("/attendAccToSub", auth, isStudent, attendAccToSub);
 router.get("/studsPresentForALec", auth, isAdmin, studsPresentForALec);
 router.get("/checkLectureAttendance/:lectureId", auth, checkLectureAttendance);
 router.get(

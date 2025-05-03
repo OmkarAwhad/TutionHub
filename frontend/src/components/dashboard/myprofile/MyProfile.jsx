@@ -62,7 +62,7 @@ function MyProfile() {
 	return (
 		<div className="w-full mx-auto flex flex-col gap-y-10 p-4">
 			{/* Profile Details */}
-			<div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl border border-slate-gray">
+			<div className="bg-white rounded-xl shadow-2xl shadow-medium-gray overflow-hidden transition-all duration-300 hover:shadow-xl ">
 				{isEditing ? (
 					<form
 						onSubmit={handleFormSubmit}
@@ -222,22 +222,22 @@ function MyProfile() {
 
 			{user && user.role === ACCOUNT_TYPE.STUDENT && (
 				<>
-					<div className="bg-white rounded-xl p-8 flex justify-between shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl border border-slate-gray">
+					<div className="bg-white rounded-xl p-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-10 overflow-hidden transition-all duration-300  ">
 						<NavLink
 							to={"/dashboard/my-profile/attendance"}
-							className=" px-10 py-3 bg-medium-gray shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer hover:bg-charcoal-gray text-white rounded-md "
+							className=" bg-medium-gray min-w-[29%] px-20 py-14 text-white font-extrabold text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] "
 						>
 							Attendance
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/progress"}
-							className=" px-10 py-3 bg-medium-gray shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer hover:bg-charcoal-gray text-white rounded-md "
+							className=" bg-medium-gray min-w-[29%] px-20 py-14 text-white font-extrabold text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] "
 						>
 							Progress
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/remarks"}
-							className=" px-10 py-3 bg-medium-gray shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer hover:bg-charcoal-gray text-white rounded-md "
+							className=" bg-medium-gray min-w-[29%] px-20 py-14 text-white font-extrabold text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] "
 						>
 							Remarks
 						</NavLink>

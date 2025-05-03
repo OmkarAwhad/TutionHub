@@ -120,12 +120,17 @@ module.exports.getLecturesOfWeek = async (req, res) => {
 			lectByDay[day].sort((a, b) => {
 				const parseTime = (time) => {
 					const [hourMinute, period] = time.split(" ");
-					let [hours, minutes] = hourMinute.split(":").map(Number);
+					let [hours, minutes] = hourMinute
+						.split(":")
+						.map(Number);
 					if (period === "PM" && hours !== 12) hours += 12;
 					if (period === "AM" && hours === 12) hours = 0;
 					return hours * 60 + minutes; // Convert to total minutes
 				};
-				return parseTime(a.time.split(" to ")[0]) - parseTime(b.time.split(" to ")[0]);
+				return (
+					parseTime(a.time.split(" to ")[0]) -
+					parseTime(b.time.split(" to ")[0])
+				);
 			});
 		});
 
@@ -318,13 +323,16 @@ module.exports.getLectureBySub = async (req, res) => {
 
 module.exports.getLecturesByDate = async (req, res) => {
 	try {
-		const { date } = req.query;
+		const { date } = req.body;
 		if (!date) {
 			return res.json(new ApiError(400, "Date is required"));
 		}
 
 		// Parse the input date and set it to start of day
 		const inputDate = new Date(date);
+		if (isNaN(inputDate)) {
+			return res.json(new ApiError(400, "Invalid date format"));
+		}
 		inputDate.setHours(0, 0, 0, 0);
 
 		// Calculate week start (Sunday) and end (Saturday)
@@ -335,16 +343,25 @@ module.exports.getLecturesByDate = async (req, res) => {
 		weekEnd.setDate(weekEnd.getDate() + 6);
 		weekEnd.setHours(23, 59, 59, 999);
 
+		console.log(
+			"Searching for lectures between:",
+			weekStart,
+			"and",
+			weekEnd
+		);
+
 		// Find lectures within the week range
 		const lectures = await Lecture.find({
 			date: {
 				$gte: weekStart,
-				$lte: weekEnd
-			}
+				$lte: weekEnd,
+			},
 		})
 			.populate("tutor")
 			.populate("subject")
 			.exec();
+
+		console.log("Found lectures:", lectures.length);
 
 		const lectByDay = {
 			Sunday: [],
@@ -353,23 +370,36 @@ module.exports.getLecturesByDate = async (req, res) => {
 			Wednesday: [],
 			Thursday: [],
 			Friday: [],
-			Saturday: []
+			Saturday: [],
+		};
+
+		// Helper function to get day name from date
+		const getDayName = (date) => {
+			const days = [
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday",
+			];
+			return days[date.getDay()];
 		};
 
 		lectures.forEach((lect) => {
-			const day = lect.day;
-			if (lectByDay[day]) {
-				lectByDay[day].push({
-					_id: lect._id,
-					student: lect.student,
-					tutor: lect.tutor,
-					date: lect.date,
-					day: lect.day,
-					time: lect.time,
-					description: lect.description,
-					subject: lect.subject
-				});
-			}
+			// Derive the day from the lecture's date
+			const day = getDayName(new Date(lect.date));
+			lectByDay[day].push({
+				_id: lect._id,
+				student: lect.student,
+				tutor: lect.tutor,
+				date: lect.date,
+				day: day, // Use the derived day
+				time: lect.time,
+				description: lect.description,
+				subject: lect.subject,
+			});
 		});
 
 		// Sort lectures in each day's array by time
@@ -377,12 +407,17 @@ module.exports.getLecturesByDate = async (req, res) => {
 			lectByDay[day].sort((a, b) => {
 				const parseTime = (time) => {
 					const [hourMinute, period] = time.split(" ");
-					let [hours, minutes] = hourMinute.split(":").map(Number);
+					let [hours, minutes] = hourMinute
+						.split(":")
+						.map(Number);
 					if (period === "PM" && hours !== 12) hours += 12;
 					if (period === "AM" && hours === 12) hours = 0;
 					return hours * 60 + minutes;
 				};
-				return parseTime(a.time.split(" to ")[0]) - parseTime(b.time.split(" to ")[0]);
+				return (
+					parseTime(a.time.split(" to ")[0]) -
+					parseTime(b.time.split(" to ")[0])
+				);
 			});
 		});
 
@@ -392,7 +427,7 @@ module.exports.getLecturesByDate = async (req, res) => {
 				{
 					weekStart: weekStart.toISOString().split("T")[0],
 					weekEnd: weekEnd.toISOString().split("T")[0],
-					lectures: lectByDay
+					lectures: lectByDay,
 				},
 				"Lectures fetched and grouped by day for the specified week successfully"
 			)

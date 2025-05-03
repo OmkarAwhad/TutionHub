@@ -31,4 +31,18 @@ const lectureSchema = new mongoose.Schema({
 	},
 });
 
+lectureSchema.pre("save", function (next) {
+	const days = [
+		"Sunday",
+		"Monday",
+		"Tuesday",
+		"Wednesday",
+		"Thursday",
+		"Friday",
+		"Saturday",
+	];
+	this.day = days[new Date(this.date).getDay()];
+	next();
+});
+
 module.exports = mongoose.model("Lecture", lectureSchema);

@@ -86,7 +86,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 		).length;
 		const unrecordedCount = totalLectures - (presentCount + absentCount);
 		const percentage =
-			totalLectures > 0 ? (presentCount / totalLectures) * 100 : 0;
+			totalLectures > 0 ? (presentCount / (totalLectures-unrecordedCount)) * 100 : 0;
 
 		return res.json(
 			new ApiResponse(
@@ -98,6 +98,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
+						recordedLectures:totalLectures-unrecordedCount,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},
@@ -108,6 +109,78 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 		console.log("Error in fetching student attendance ", error);
 		return res.json(
 			new ApiError(500, "Error in fetching student attendance ")
+		);
+	}
+};
+
+module.exports.attendAccToSub = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		const { subjectId } = req.params; // Changed to params
+
+		const isSubjectTakenByStud = await User.findOne({
+			subjects: { $in: [subjectId] },
+		});
+		if (!isSubjectTakenByStud) {
+			return res.json(
+				new ApiError(
+					400,
+					"Student is not enrolled in the specified subject"
+				)
+			);
+		}
+
+		const lectureDetails = await Lecture.find({ subject: subjectId });
+		if (!lectureDetails || lectureDetails.length === 0) {
+			return res.json(
+				new ApiError(400, "No lectures found for this subject")
+			);
+		}
+
+		const lectureIds = lectureDetails.map((lect) => lect._id);
+
+		const attendanceDetails = await Attendance.find({
+			student: userId,
+			lecture: { $in: lectureIds },
+		}).populate({ path: "lecture", populate: "subject" });
+
+		const totalLectures = lectureDetails.length; // Include all lectures
+		const presentCount = attendanceDetails.filter(
+			(att) => att.status === "Present"
+		).length;
+		const absentCount = attendanceDetails.filter(
+			(att) => att.status === "Absent"
+		).length;
+		const unrecordedCount = totalLectures - (presentCount + absentCount);
+		const percentage =
+			totalLectures > 0
+				? (presentCount / (totalLectures - unrecordedCount)) * 100
+				: 0;
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					attendanceDetails,
+					statistics: {
+						totalLectures,
+						present: presentCount,
+						absent: absentCount,
+						unrecorded: unrecordedCount,
+						markedLectures: totalLectures - unrecordedCount,
+						percentage: percentage.toFixed(2) + "%",
+					},
+				},
+				"Attendance fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching attendance acc to a subject ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching attendance acc to a subject "
+			)
 		);
 	}
 };
@@ -144,77 +217,6 @@ module.exports.viewStudAttendanceForLec = async (req, res) => {
 	}
 };
 
-module.exports.attendAccToSub = async (req, res) => {
-	try {
-		const userId = req.user.id;
-		const { subject } = req.body;
-
-		const isSubjectTakenByStud = await User.findOne({
-			subjects: { $in: [subject] },
-		});
-		if (!isSubjectTakenByStud) {
-			return res.json(
-				new ApiError(
-					400,
-					"Student is not enrolled in the specified subject"
-				)
-			);
-		}
-
-		const lectureDetails = await Lecture.find({ subject: subject });
-		if (!lectureDetails || lectureDetails.length === 0) {
-			return res.json(
-				new ApiError(400, "No lectures found for this subject")
-			);
-		}
-
-		const lectureIds = lectureDetails
-			.filter((lect) => lect.date < Date.now())
-			.map((lect) => lect._id);
-
-		const attendanceDetails = await Attendance.find({
-			student: userId,
-			lecture: { $in: lectureIds },
-		}).populate({ path: "lecture", populate: "subject" });
-
-		const totalLectures = lectureIds.length;
-		const presentCount = attendanceDetails.filter(
-			(att) => att.status === "Present"
-		).length;
-		const absentCount = attendanceDetails.filter(
-			(att) => att.status === "Absent"
-		).length;
-		const percentage =
-			totalLectures > 0 ? (presentCount / totalLectures) * 100 : 0;
-
-		return res.json(
-			new ApiResponse(
-				200,
-				{
-					attendanceDetails,
-					statistics: {
-						totalLectures,
-						present: presentCount,
-						absent: absentCount,
-						unrecorded:
-							totalLectures - (presentCount + absentCount),
-						percentage: percentage.toFixed(2) + "%",
-					},
-				},
-				"Attendance fetched successfully"
-			)
-		);
-	} catch (error) {
-		console.log("Error in fetching attendance acc to a subject ", error);
-		return res.json(
-			new ApiError(
-				500,
-				"Error in fetching attendance acc to a subject "
-			)
-		);
-	}
-};
-
 module.exports.studsPresentForALec = async (req, res) => {
 	try {
 		const { lectureId } = req.query;
@@ -230,7 +232,10 @@ module.exports.studsPresentForALec = async (req, res) => {
 
 		if (!attendanceDetails || attendanceDetails.length === 0) {
 			return res.json(
-				new ApiError(400, "No attendance records found for the given lecture")
+				new ApiError(
+					400,
+					"No attendance records found for the given lecture"
+				)
 			);
 		}
 
@@ -328,14 +333,17 @@ module.exports.getLecturesWithAttendanceMarked = async (req, res) => {
 module.exports.getLecturesWithoutAttendance = async (req, res) => {
 	try {
 		const allLectures = await Lecture.find()
-			.populate('subject')
-			.populate('tutor')
+			.populate("subject")
+			.populate("tutor")
 			.sort({ date: -1 });
 
-		const lecturesWithAttendance = await Attendance.find().distinct('lecture');
+		const lecturesWithAttendance = await Attendance.find().distinct(
+			"lecture"
+		);
 
-		const lecturesWithoutAttendance = allLectures.filter(lecture => 
-			!lecturesWithAttendance.includes(lecture._id.toString())
+		const lecturesWithoutAttendance = allLectures.filter(
+			(lecture) =>
+				!lecturesWithAttendance.includes(lecture._id.toString())
 		);
 
 		return res.json(
@@ -350,7 +358,8 @@ module.exports.getLecturesWithoutAttendance = async (req, res) => {
 		return res.json(
 			new ApiError(
 				500,
-				"Error in fetching lectures without attendance: " + error.message
+				"Error in fetching lectures without attendance: " +
+					error.message
 			)
 		);
 	}

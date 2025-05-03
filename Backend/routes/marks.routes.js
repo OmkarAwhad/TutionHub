@@ -12,9 +12,15 @@ const {
 
 router.post("/markStudentMarks", auth, isAdmin, markStudentMarks);
 router.post("/editMarks", auth, isAdmin, editMarks);
+router.get(
+	"/getMarksDetailsByALec/:lectureId",
+	auth,
+	isAdmin,
+	getMarksDetailsByALec
+);
+
 router.get("/marksAccToSubject", auth, isStudent, marksAccToSubject);
 router.get("/trackStudentProgress", auth, isStudent, trackStudentProgress);
 router.get("/trackProgressBySubject", auth, isStudent, trackProgressBySubject);
-router.get("/getMarksDetailsByALec/:lectureId", auth, isAdmin, getMarksDetailsByALec);
 
 module.exports = router;

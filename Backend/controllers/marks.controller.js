@@ -211,7 +211,7 @@ module.exports.trackStudentProgress = async (req, res) => {
 		return res.json(
 			new ApiResponse(
 				200,
-				{ progressPercentage },
+				{ progressPercentage,marksDetails },
 				"Progress tracked successfully"
 			)
 		);

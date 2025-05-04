@@ -66,7 +66,14 @@ export function markStudentMarks(
 	};
 }
 
-export const editMarks = async (lectureId, studentId, marks, totalMarks, description, token) => {
+export const editMarks = async (
+	lectureId,
+	studentId,
+	marks,
+	totalMarks,
+	description,
+	token
+) => {
 	try {
 		const response = await apiConnector(
 			"POST",
@@ -76,9 +83,10 @@ export const editMarks = async (lectureId, studentId, marks, totalMarks, descrip
 				studentId,
 				marks: Number(marks),
 				totalMarks: Number(totalMarks),
-				description: description || ""
+				description: description || "",
 			},
 			{
+				"Content-Type": "application/json",
 				Authorization: `Bearer ${token}`,
 			}
 		);
@@ -90,6 +98,82 @@ export const editMarks = async (lectureId, studentId, marks, totalMarks, descrip
 		return response.data.data;
 	} catch (error) {
 		console.error("Error editing marks:", error);
+		throw error;
+	}
+};
+
+// Fetch marks for a specific subject
+export const marksAccToSubject = async (subjectId, token) => {
+	try {
+		// console.log(`${marksApi.GET_SUBJECT_MARKS}/${subjectId}`)
+		const response = await apiConnector(
+			"GET",
+			`${marksApi.GET_SUBJECT_MARKS}/${subjectId}`,
+			null,
+			{
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			}
+		);
+		if (!response?.data?.success) {
+			throw new Error(
+				response?.data?.message || "Failed to fetch marks"
+			);
+		}
+		return response.data.data;
+	} catch (error) {
+		console.error("Error in marksAccToSubject:", error);
+		throw error;
+	}
+};
+
+// Fetch overall student progress
+export const trackStudentProgress = async (token) => {
+	try {
+		const response = await apiConnector(
+			"GET",
+			marksApi.GET_STUDENT_PROGRESS,
+			null,
+			{
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			}
+		);
+		if (!response?.data?.success) {
+			throw new Error(
+				response?.data?.message || "Failed to track progress"
+			);
+		}
+		// console.log(response.data.data)
+		return response.data.data;
+	} catch (error) {
+		console.error("Error in trackStudentProgress:", error);
+		throw error;
+	}
+};
+
+// Fetch progress for a specific subject
+export const trackProgressBySubject = async (subjectId, token) => {
+	try {
+		const response = await apiConnector(
+			"GET",
+			`${marksApi.GET_SUBJECT_PROGRESS}/${subjectId}`,
+			null,
+			{
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			}
+		);
+		if (!response?.data?.success) {
+			throw new Error(
+				response?.data?.message ||
+					"Failed to track progress by subject"
+			);
+		}
+		// console.log(response.data.data);
+		return response.data.data;
+	} catch (error) {
+		console.error("Error in trackProgressBySubject:", error);
 		throw error;
 	}
 };

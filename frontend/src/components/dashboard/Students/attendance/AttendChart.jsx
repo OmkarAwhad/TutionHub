@@ -22,24 +22,42 @@ function AttendChart({ studAttendStats }) {
 						</thead>
 						<tbody>
 							<tr className="hover:bg-richblack-50">
-								<td className="p-3 border-b">Total Lectures</td>
-								<td className="p-3 border-b">{studAttendStats.totalLectures}</td>
+								<td className="p-3 border-b">
+									Total Lectures
+								</td>
+								<td className="p-3 border-b">
+									{studAttendStats.totalLectures}
+								</td>
 							</tr>
 							<tr className="hover:bg-richblack-50">
-								<td className="p-3 border-b">Unrecorded</td>
-								<td className="p-3 border-b">{studAttendStats.unrecorded}</td>
+								<td className="p-3 border-b">
+									Marked Lectures
+								</td>
+								<td className="p-3 border-b">
+									{studAttendStats.markedLectures}
+								</td>
 							</tr>
 							<tr className="hover:bg-richblack-50">
-								<td className="p-3 border-b">Present</td>
-								<td className="p-3 border-b">{studAttendStats.present}</td>
+								<td className="p-3 border-b">
+									Present
+								</td>
+								<td className="p-3 border-b">
+									{studAttendStats.present}
+								</td>
 							</tr>
 							<tr className="hover:bg-richblack-50">
 								<td className="p-3 border-b">Absent</td>
-								<td className="p-3 border-b">{studAttendStats.absent}</td>
+								<td className="p-3 border-b">
+									{studAttendStats.absent}
+								</td>
 							</tr>
 							<tr className="hover:bg-richblack-50">
-								<td className="p-3 border-b">Percentage</td>
-								<td className="p-3 border-b">{studAttendStats.percentage}</td>
+								<td className="p-3 border-b">
+									Percentage
+								</td>
+								<td className="p-3 border-b">
+									{studAttendStats.percentage}
+								</td>
 							</tr>
 						</tbody>
 					</table>

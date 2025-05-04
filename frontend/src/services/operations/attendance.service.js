@@ -223,7 +223,7 @@ export function attendAccToSub(subjectId, token) {
 				toast.error(result.data.message);
 				return null;
 			}
-			console.log(result.data.data);
+			// console.log(result.data.data);
 			return result.data.data;
 		} catch (error) {
 			toast.error("Error fetching attendance for subject");

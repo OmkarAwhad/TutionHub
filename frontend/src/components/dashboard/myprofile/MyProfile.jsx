@@ -62,7 +62,7 @@ function MyProfile() {
 	return (
 		<div className="w-full mx-auto flex flex-col gap-y-10 p-4">
 			{/* Profile Details */}
-			<div className="bg-white rounded-xl shadow-2xl shadow-medium-gray overflow-hidden transition-all duration-300 hover:shadow-xl ">
+			<div className="bg-white rounded-xl shadow-md shadow-slate-gray overflow-hidden transition-all duration-300 hover:shadow-xl ">
 				{isEditing ? (
 					<form
 						onSubmit={handleFormSubmit}

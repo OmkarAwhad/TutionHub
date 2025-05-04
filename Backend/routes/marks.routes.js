@@ -19,8 +19,8 @@ router.get(
 	getMarksDetailsByALec
 );
 
-router.get("/marksAccToSubject", auth, isStudent, marksAccToSubject);
+router.get("/marksAccToSubject/:subjectId", auth, isStudent, marksAccToSubject); // Changed from GET to POST
 router.get("/trackStudentProgress", auth, isStudent, trackStudentProgress);
-router.get("/trackProgressBySubject", auth, isStudent, trackProgressBySubject);
+router.get("/trackProgressBySubject/:subjectId", auth, isStudent, trackProgressBySubject);
 
 module.exports = router;

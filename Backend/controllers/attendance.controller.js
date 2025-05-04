@@ -98,7 +98,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
-						recordedLectures:totalLectures-unrecordedCount,
+						markedLectures:totalLectures-unrecordedCount,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},

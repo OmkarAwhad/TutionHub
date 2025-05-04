@@ -141,17 +141,15 @@ module.exports.editMarks = async (req, res) => {
 
 module.exports.marksAccToSubject = async (req, res) => {
 	try {
-		const { subjectId } = req.body;
+		const { subjectId } = req.params; // Changed from req.params to req.body
 		const userId = req.user.id;
 
 		if (!subjectId) {
 			return res.json(
-				new ApiError(
-					400,
-					"All fields (studentId, subjectId) are required."
-				)
+				new ApiError(400, "Field (subjectId) is required.")
 			);
 		}
+		// console.log('1')
 
 		const marksDetails = await Marks.find({
 			student: userId,
@@ -159,13 +157,15 @@ module.exports.marksAccToSubject = async (req, res) => {
 		})
 			.populate({ path: "lecture", populate: "subject" })
 			.exec();
-
+		// console.log('1')
+		
 		if (!marksDetails || marksDetails.length === 0) {
 			return res.json(
-				new ApiError(404, "No marks data found for the student.")
+				new ApiError(404, "No marks data found for the subject.")
 			);
 		}
-
+		// console.log('1')
+		
 		return res.json(
 			new ApiResponse(200, marksDetails, "Marks fetched successfully")
 		);
@@ -211,7 +211,7 @@ module.exports.trackStudentProgress = async (req, res) => {
 		return res.json(
 			new ApiResponse(
 				200,
-				{ progressPercentage,marksDetails },
+				{ progressPercentage, marksDetails },
 				"Progress tracked successfully"
 			)
 		);
@@ -225,7 +225,7 @@ module.exports.trackStudentProgress = async (req, res) => {
 
 module.exports.trackProgressBySubject = async (req, res) => {
 	try {
-		const { subjectId } = req.body;
+		const { subjectId } = req.params;
 		const userId = req.user.id;
 
 		if (!subjectId) {
@@ -264,7 +264,7 @@ module.exports.trackProgressBySubject = async (req, res) => {
 		return res.json(
 			new ApiResponse(
 				200,
-				{ progressPercentage },
+				{ progressPercentage, marksDetails },
 				"Progress by subject tracked successfully"
 			)
 		);

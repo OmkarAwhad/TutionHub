@@ -19,6 +19,6 @@ router.put("/updateLecture/:lectureId", auth, isAdmin, updateLecture);
 router.delete("/deleteLecture", auth, isAdmin, deleteLecture);
 router.get("/getAllLectures", auth, isAdmin, getAllLectures);
 router.get("/getLectureBySub", auth, isAdmin, getLectureBySub);
-router.get("/getLecturesByDate", auth, isStudent, getLecturesByDate);
+router.post("/getLecturesByDate", auth, isStudent, getLecturesByDate);
 
 module.exports = router;

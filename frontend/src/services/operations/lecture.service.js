@@ -60,6 +60,37 @@ export const getLecturesOfWeek = async (token) => {
 	}
 };
 
+export const getLecturesByDate = async (token, date, fetchWeek = true) => {
+	const toastId = toast.loading("Fetching lectures...");
+	try {
+		const response = await apiConnector(
+			"POST",
+			lectureApi.GET_WEEK_LECTURES_BY_DATE,
+			{ date, fetchWeek },
+			{
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			}
+		);
+
+		if (!response.data.success) {
+			throw new Error(response.data.message);
+		}
+
+		// Log the response for debugging
+		// console.log("Lectures data:", response.data.data);
+
+		// Return data for use in the component
+		return response.data.data;
+	} catch (error) {
+		console.log("Error in fetching lectures by date:", error);
+		toast.error(error.message || "Failed to fetch lectures");
+		throw error;
+	} finally {
+		toast.dismiss(toastId);
+	}
+};
+
 export function getAllLectures(token) {
 	return async () => {
 		const toastId = toast.loading("loading...");
@@ -206,17 +237,3 @@ export function updateLecture(lectureId, data, token) {
 // 		}
 // 	};
 // }
-
-
-export const getLecturesByDate = async (token, date) => {
-	try {
-		const response = await apiConnector("GET", lectureApi.GET_LECTURES_BY_DATE, null, {
-			Authorization: `Bearer ${token}`,
-		}, {
-			date: date
-		});
-		return response.data;
-	} catch (error) {
-		throw error;
-	}
-};

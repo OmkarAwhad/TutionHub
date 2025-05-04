@@ -323,34 +323,44 @@ module.exports.getLectureBySub = async (req, res) => {
 
 module.exports.getLecturesByDate = async (req, res) => {
 	try {
-		const { date } = req.body;
+		const { date, fetchWeek = true } = req.body;
+
+		// Validate input
 		if (!date) {
 			return res.json(new ApiError(400, "Date is required"));
 		}
 
-		// Parse the input date and set it to start of day
+		// Parse and validate date
 		const inputDate = new Date(date);
 		if (isNaN(inputDate)) {
-			return res.json(new ApiError(400, "Invalid date format"));
+			return res.json(
+				new ApiError(400, "Invalid date format. Use YYYY-MM-DD")
+			);
 		}
 		inputDate.setHours(0, 0, 0, 0);
 
-		// Calculate week start (Sunday) and end (Saturday)
-		const weekStart = new Date(inputDate);
-		weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+		let weekStart, weekEnd;
 
-		const weekEnd = new Date(weekStart);
-		weekEnd.setDate(weekEnd.getDate() + 6);
-		weekEnd.setHours(23, 59, 59, 999);
+		if (fetchWeek) {
+			// Calculate week start (Sunday) and end (Saturday)
+			weekStart = new Date(inputDate);
+			weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-		console.log(
-			"Searching for lectures between:",
-			weekStart,
-			"and",
-			weekEnd
-		);
+			weekEnd = new Date(weekStart);
+			weekEnd.setDate(weekEnd.getDate() + 6);
+			weekEnd.setHours(23, 59, 59, 999);
+		} else {
+			// Fetch lectures for the specific date
+			weekStart = new Date(inputDate);
+			weekEnd = new Date(inputDate);
+			weekEnd.setHours(23, 59, 59, 999);
+		}
 
-		// Find lectures within the week range
+		// console.log(
+		// 	`Searching for lectures between ${weekStart.toISOString()} and ${weekEnd.toISOString()}`
+		// );
+
+		// Query lectures with populated tutor and subject
 		const lectures = await Lecture.find({
 			date: {
 				$gte: weekStart,
@@ -361,8 +371,34 @@ module.exports.getLecturesByDate = async (req, res) => {
 			.populate("subject")
 			.exec();
 
-		console.log("Found lectures:", lectures.length);
+		// console.log(`Found ${lectures.length} lectures`);
 
+		// If no lectures found, return a specific message
+		if (lectures.length === 0) {
+			return res.json(
+				new ApiResponse(
+					200,
+					{
+						weekStart: weekStart.toISOString().split("T")[0],
+						weekEnd: weekEnd.toISOString().split("T")[0],
+						lectures: {
+							Sunday: [],
+							Monday: [],
+							Tuesday: [],
+							Wednesday: [],
+							Thursday: [],
+							Friday: [],
+							Saturday: [],
+						},
+					},
+					`No lectures found for the specified ${
+						fetchWeek ? "week" : "date"
+					}`
+				)
+			);
+		}
+
+		// Group lectures by day
 		const lectByDay = {
 			Sunday: [],
 			Monday: [],
@@ -384,40 +420,50 @@ module.exports.getLecturesByDate = async (req, res) => {
 				"Friday",
 				"Saturday",
 			];
-			return days[date.getDay()];
+			return days[new Date(date).getDay()];
 		};
 
+		// Process each lecture
 		lectures.forEach((lect) => {
-			// Derive the day from the lecture's date
-			const day = getDayName(new Date(lect.date));
+			const day = getDayName(lect.date);
 			lectByDay[day].push({
 				_id: lect._id,
 				student: lect.student,
 				tutor: lect.tutor,
 				date: lect.date,
-				day: day, // Use the derived day
+				day,
 				time: lect.time,
 				description: lect.description,
 				subject: lect.subject,
+				marksMarked: lect.marksMarked,
 			});
 		});
 
-		// Sort lectures in each day's array by time
+		// Sort lectures by start time within each day
 		Object.keys(lectByDay).forEach((day) => {
 			lectByDay[day].sort((a, b) => {
-				const parseTime = (time) => {
-					const [hourMinute, period] = time.split(" ");
-					let [hours, minutes] = hourMinute
-						.split(":")
-						.map(Number);
-					if (period === "PM" && hours !== 12) hours += 12;
-					if (period === "AM" && hours === 12) hours = 0;
-					return hours * 60 + minutes;
+				const parseTime = (timeStr) => {
+					try {
+						// Extract start time (before " to ")
+						const startTime = timeStr.split(" to ")[0].trim();
+						const [hourMinute, period] = startTime.split(" ");
+						let [hours, minutes = 0] = hourMinute
+							.split(":")
+							.map(Number);
+						if (period.toUpperCase() === "PM" && hours !== 12)
+							hours += 12;
+						if (period.toUpperCase() === "AM" && hours === 12)
+							hours = 0;
+						return hours * 60 + minutes;
+					} catch (error) {
+						console.error(
+							`Error parsing time: ${timeStr}`,
+							error
+						);
+						return 0; // Fallback to prevent sorting errors
+					}
 				};
-				return (
-					parseTime(a.time.split(" to ")[0]) -
-					parseTime(b.time.split(" to ")[0])
-				);
+				return parseTime(a.time) - parseTime(b.time);
 			});
 		});
 
@@ -429,13 +475,18 @@ module.exports.getLecturesByDate = async (req, res) => {
 					weekEnd: weekEnd.toISOString().split("T")[0],
 					lectures: lectByDay,
 				},
-				"Lectures fetched and grouped by day for the specified week successfully"
+				`Lectures fetched and grouped by day for the specified ${
+					fetchWeek ? "week" : "date"
+				} successfully`
 			)
 		);
 	} catch (error) {
-		console.log("Error in getting lectures of specified week ", error);
+		console.error("Error fetching lectures:", error);
 		return res.json(
-			new ApiError(500, "Error in getting lectures of specified week")
+			new ApiError(
+				500,
+				"Internal server error while fetching lectures"
+			)
 		);
 	}
 };

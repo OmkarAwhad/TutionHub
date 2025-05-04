@@ -49,6 +49,7 @@ export const subjectApi = {
 export const lectureApi = {
 	CREATE_LECTURE: BASE_URL + "/lecture/createLecture",
 	GET_WEEK_LECTURES: BASE_URL + "/lecture/getLecturesOfWeek",
+	GET_WEEK_LECTURES_BY_DATE: BASE_URL + "/lecture/getLecturesByDate",
 	GET_TEST_DAYS: BASE_URL + "/lecture/getLectByDesc",
 	GET_ALL_LECTURES: BASE_URL + "/lecture/getAllLectures",
 	GET_LECTURES_BY_SUBJECT: BASE_URL + "/lecture/getLectureBySub",

@@ -11,20 +11,25 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 		"Friday",
 		"Saturday",
 	];
-   
+
+	// Check if we have actual data for the week
+	const hasLectures = Object.values(lectList).some(
+		(day) => day && day.length > 0
+	);
+
 	return (
 		<div>
 			{weekStart && weekEnd && (
-				<p className="text-richblack-200 mt-2">
+				<p className="text-richblack-200 mt-2 mb-4">
 					Week of {format(new Date(weekStart), "MMM d")} -{" "}
 					{format(new Date(weekEnd), "MMM d, yyyy")}
 				</p>
 			)}
 
-			<div className="bg-richblack-800 rounded-xl py-6  ">
-				<table className="w-full table-fixed bg-gray-200 rounded-2xl min-h-[480px] ">
+			<div className="bg-richblack-800 rounded-xl py-6">
+				<table className="w-full table-fixed bg-gray-200 rounded-2xl min-h-[480px]">
 					<thead>
-						<tr className="space-x-1">
+						<tr>
 							{days.map((day) => (
 								<th
 									key={day}
@@ -36,7 +41,7 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 										day === "Saturday"
 											? "border-r-0"
 											: ""
-									} `}
+									}`}
 								>
 									{day}
 								</th>
@@ -47,16 +52,10 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 						<tr>
 							{days.map((day) => {
 								const lectures = lectList[day] || [];
-								const maxLectures = Math.max(
-									...Object.values(lectList).map(
-										(lects) => (lects || []).length || 0
-									)
-								);
-
 								return (
 									<td
 										key={day}
-										className={`py-3 px-1 align-top w-[14.28%] h-[300px] ${
+										className={`py-3 px-1 align-top w-[14.28%] min-h-[300px] ${
 											day === "Sunday"
 												? "pl-2"
 												: ""
@@ -64,62 +63,97 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 											day === "Saturday"
 												? "pr-2"
 												: ""
-										} `}
+										}`}
 									>
 										{lectures.length > 0 ? (
-											<div
-												className={`grid gap-3  `}
-												style={{
-													gridTemplateRows: `repeat(${maxLectures}, 1fr)`,
-												}}
-											>
+											<div className="flex flex-col gap-3">
 												{lectures.map(
-													(lecture) => (
-														<div
-															key={
-																lecture._id
-															}
-															className="bg-white text-center p-3 h-[140px] rounded-lg flex flex-col justify-between  "
-														>
-															<p className="text-richblack-5 text-lg font-medium">
-																{
-																	lecture.description
+													(lecture) => {
+														// Check if the lecture date is today
+														const lectureDate =
+															new Date(
+																lecture.date
+															);
+														const today =
+															new Date();
+														const isToday =
+															lectureDate.getDate() ===
+																today.getDate() &&
+															lectureDate.getMonth() ===
+																today.getMonth() &&
+															lectureDate.getFullYear() ===
+																today.getFullYear();
+
+														return (
+															<div
+																key={
+																	lecture._id
 																}
-															</p>
-															<p className="text-richblack-200 text-[13px]">
-																<span>
-																	{
-																		lecture.time.split(
-																			"to"
-																		)[0]
-																	}
-																</span>
-																<span>
-																	-
-																</span>
-																<span>
-																	{
-																		lecture.time.split(
-																			"to"
-																		)[1]
-																	}
-																</span>
-															</p>
-															<p className="text-richblack-200 bg-gray-200 py-1 rounded-md text-sm">
-																{
-																	lecture
+																className={`${
+																	isToday
+																		? "bg-green-200"
+																		: "bg-white"
+																} text-center p-3 min-h-[140px] rounded-lg flex flex-col justify-between`}
+															>
+																<p className="text-richblack-5 text-lg font-medium">
+																	{lecture.description ||
+																		"N/A"}
+																</p>
+																<p className="text-richblack-200 text-[13px]">
+																	{lecture.time
+																		? lecture.time
+																				.split(
+																					" to "
+																				)
+																				.map(
+																					(
+																						time,
+																						idx
+																					) => (
+																						<span
+																							key={
+																								idx
+																							}
+																						>
+																							{
+																								time
+																							}
+																							{idx ===
+																								0 &&
+																								" - "}
+																						</span>
+																					)
+																				)
+																		: "Time N/A"}
+																</p>
+																<p className="text-richblack-200 bg-gray-200 py-1 rounded-md text-sm">
+																	{lecture
+																		.subject
+																		?.name ||
+																		"Subject N/A"}
+																</p>
+																<p className="text-richblack-300 text-xs mt-1">
+																	{lecture
 																		.tutor
-																		?.name
-																}
-															</p>
-														</div>
-													)
+																		?.name ||
+																		"Unknown Tutor"}
+																</p>
+																{/* {lecture.marksMarked && (
+																	<span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mt-1">
+																		Marks
+																		Updated
+																	</span>
+																)} */}
+															</div>
+														);
+													}
 												)}
 											</div>
 										) : (
-											<div className="bg-white text-slate-gray text-center p-3 h-[140px] rounded-lg flex flex-col justify-center items-center">
-												<p className="text-richblack-400  text-sm">
-													No lectures yet
+											<div className="bg-white text-slate-gray text-center p-3 min-h-[140px] rounded-lg flex flex-col justify-center items-center">
+												<p className="text-richblack-400 text-sm">
+													No lectures
+													scheduled
 												</p>
 											</div>
 										)}
@@ -129,6 +163,12 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 						</tr>
 					</tbody>
 				</table>
+
+				{!hasLectures && (
+					<div className="text-center mt-4 text-richblack-200">
+						No lectures found for this week.
+					</div>
+				)}
 			</div>
 		</div>
 	);

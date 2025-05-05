@@ -5,12 +5,12 @@ const {
 	uploadNotes,
 	getAllNotes,
 	getNotesBySubject,
-	// deleteNote,
+	deleteNote,
 } = require("../controllers/notes.controller");
 
 router.post("/uploadNotes", auth, isTutor, uploadNotes);
 router.get("/getAllNotes", auth, getAllNotes);
 router.get("/getNotesBySubject", auth, getNotesBySubject);
-// router.delete("/deleteNote", auth, isTutor, deleteNote);
+router.delete("/deleteNote", auth, isTutor, deleteNote);
 
 module.exports = router;

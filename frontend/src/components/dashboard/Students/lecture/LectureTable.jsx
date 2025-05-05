@@ -91,9 +91,9 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 																}
 																className={`${
 																	isToday
-																		? "bg-green-200"
-																		: "bg-white"
-																} text-center p-3 min-h-[140px] rounded-lg flex flex-col justify-between`}
+																		? " border-2 border-green-300"
+																		: ""
+																} text-center bg-white p-3 min-h-[140px] rounded-lg flex flex-col justify-between`}
 															>
 																<p className="text-richblack-5 text-lg font-medium">
 																	{lecture.description ||

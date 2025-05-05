@@ -7,6 +7,7 @@ const {
 	getHomeworkBySubject,
 	submitHomework,
 	getSubmissions,
+	deleteHomework,
 } = require("../controllers/homework.controller");
 
 router.post("/submitHomework", auth, isStudent, submitHomework);
@@ -15,5 +16,6 @@ router.get("/getSubmissions", auth, isTutor, getSubmissions);
 router.post("/uploadHomework", auth, isTutor, uploadHomework);
 router.get("/getAllHomework", auth, getAllHomework);
 router.get("/getHomeworkBySubject", auth, getHomeworkBySubject);
+router.delete("/deleteHomework", auth, isTutor, deleteHomework);
 
 module.exports = router;

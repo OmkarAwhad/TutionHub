@@ -1,5 +1,9 @@
 const upload = require("../utils/multer.utils");
-const { uploadToCloudinary, cloudinary } = require("../config/cloudinary"); // Updated import
+const {
+	uploadToCloudinary,
+	cloudinary,
+	deleteFileFromCloudinary,
+} = require("../config/cloudinary"); // Updated import
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const Note = require("../models/notes.model");
@@ -165,108 +169,60 @@ module.exports.getNotesBySubject = async (req, res) => {
 	}
 };
 
-// module.exports.deleteNote = async (req, res) => {
-// 	try {
-// 		const { noteId } = req.body;
+module.exports.deleteNote = async (req, res) => {
+	try {
+		const { noteId } = req.body;
 
-// 		if (!noteId) {
-// 			return res.json(new ApiError(400, "Note ID is required"));
-// 		}
+		if (!noteId) {
+			return res.json(new ApiError(400, "Note ID is required"));
+		}
 
-// 		const note = await Note.findById(noteId);
-// 		if (!note) {
-// 			return res.json(new ApiError(404, "Note not found"));
-// 		}
+		const note = await Note.findById(noteId);
+		if (!note) {
+			return res.json(new ApiError(404, "Note not found"));
+		}
 
-// 		// Check if user is authorized to delete
-// 		if (note.tutor.toString() !== req.user.id) {
-// 			return res.json(
-// 				new ApiError(403, "Not authorized to delete this note")
-// 			);
-// 		}
+		// Check if user is authorized to delete
+		if (note.tutor.toString() !== req.user.id) {
+			return res.json(
+				new ApiError(403, "Not authorized to delete this note")
+			);
+		}
 
-// 		// Handle file deletion if a file exists
-// 		if (note.file) {
-// 			try {
-// 				const fileUrl = note.file;
+		// Handle file deletion if a file exists
+		if (note.file) {
+			try {
+				const fileDeleted = await deleteFileFromCloudinary(
+					note.file
+				);
+				if (fileDeleted) {
+					console.log(
+						"Successfully deleted note file from Cloudinary"
+					);
+				} else {
+					console.log(
+						"Warning: Could not delete note file from Cloudinary"
+					);
+				}
+			} catch (cloudinaryError) {
+				console.log(
+					"Error during Cloudinary file deletion:",
+					cloudinaryError
+				);
+				// Continue with note deletion despite Cloudinary error
+			}
+		}
 
-// 				// Parse the Cloudinary URL to extract the correct public ID
-// 				// Format example: https://res.cloudinary.com/df2qhfcyy/raw/upload/v1743592694/Omkar-TutionHub/spvwu0vcx4u2hlbzsbgo.docx
+		// Delete note from database regardless of Cloudinary result
+		await Note.findByIdAndDelete(noteId);
 
-// 				// Remove domain and resource type part
-// 				const urlWithoutPrefix = fileUrl.replace(
-// 					/^https?:\/\/res.cloudinary.com\/[^\/]+\/(raw|image|video)\/upload\//,
-// 					""
-// 				);
-
-// 				// Remove version and file extension
-// 				const publicId = urlWithoutPrefix
-// 					.replace(/^v\d+\//, "")
-// 					.replace(/\.[^.]+$/, "");
-
-// 				console.log("File URL:", fileUrl);
-// 				console.log("Extracted publicId:", publicId);
-
-// 				// Determine resource type based on file extension
-// 				const getResourceType = (fileUrl) => {
-// 					const extension = fileUrl
-// 						.split(".")
-// 						.pop()
-// 						.toLowerCase();
-// 					if (
-// 						[
-// 							"jpg",
-// 							"jpeg",
-// 							"png",
-// 							"gif",
-// 							"bmp",
-// 							"webp",
-// 						].includes(extension)
-// 					)
-// 						return "image";
-// 					if (["mp4", "mov", "avi", "webm"].includes(extension))
-// 						return "video";
-// 					return "raw"; // Default for documents and other files
-// 				};
-
-// 				const resourceType = getResourceType(fileUrl);
-// 				console.log("Using resource type:", resourceType);
-
-// 				// Delete from Cloudinary
-// 				const deleteResult = await cloudinary.uploader.destroy(
-// 					publicId,
-// 					{
-// 						resource_type: resourceType,
-// 					}
-// 				);
-
-// 				console.log("Cloudinary delete response:", deleteResult);
-
-// 				if (deleteResult.result !== "ok") {
-// 					console.log(
-// 						`Warning: Cloudinary deletion returned: ${deleteResult.result}`
-// 					);
-// 					// Continue with note deletion anyway
-// 				}
-// 			} catch (cloudinaryError) {
-// 				console.log(
-// 					"Error during Cloudinary file deletion:",
-// 					cloudinaryError
-// 				);
-// 				// Continue with note deletion despite Cloudinary error
-// 			}
-// 		}
-
-// 		// Delete note from database regardless of Cloudinary result
-// 		await Note.findByIdAndDelete(noteId);
-
-// 		return res.json(
-// 			new ApiResponse(200, {}, "Note deleted successfully")
-// 		);
-// 	} catch (error) {
-// 		console.log("Error deleting note:", error);
-// 		return res.json(
-// 			new ApiError(500, "Error deleting note: " + error.message)
-// 		);
-// 	}
-// };
+		return res.json(
+			new ApiResponse(200, {}, "Note deleted successfully")
+		);
+	} catch (error) {
+		console.log("Error deleting note:", error);
+		return res.json(
+			new ApiError(500, "Error deleting note: " + error.message)
+		);
+	}
+};

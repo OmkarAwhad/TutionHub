@@ -1,5 +1,9 @@
 const upload = require("../utils/multer.utils");
-const { uploadToCloudinary } = require("../config/cloudinary");
+const {
+	uploadToCloudinary,
+	cloudinary,
+	forceDeleteCloudinaryFile,
+} = require("../config/cloudinary");
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const Homework = require("../models/homework.model");
@@ -166,6 +170,144 @@ module.exports.getHomeworkBySubject = async (req, res) => {
 				500,
 				"Error fetching homework by subject: " + error.message
 			)
+		);
+	}
+};
+
+module.exports.deleteHomework = async (req, res) => {
+	try {
+		const { homeworkId } = req.body;
+
+		if (!homeworkId) {
+			return res.json(new ApiError(400, "Homework ID is required"));
+		}
+
+		const homework = await Homework.findById(homeworkId);
+		if (!homework) {
+			return res.json(new ApiError(404, "Homework not found"));
+		}
+
+		// Check if user is authorized to delete
+		if (homework.tutor.toString() !== req.user.id) {
+			return res.json(
+				new ApiError(403, "Not authorized to delete this homework")
+			);
+		}
+
+		// Log the homework object to see the exact fileUrl format
+		// console.log("Homework to delete:", {
+		// 	id: homework._id,
+		// 	title: homework.title,
+		// 	fileUrl: homework.fileUrl,
+		// });
+
+		// Handle file deletion if a file exists
+		let fileDeleteStatus = "No file to delete";
+		if (homework.fileUrl) {
+			// console.log(
+			// 	"Attempting to delete homework file:",
+			// 	homework.fileUrl
+			// );
+			try {
+				// Use the enhanced force delete method
+				const fileDeleted = await forceDeleteCloudinaryFile(
+					homework.fileUrl
+				);
+
+				if (fileDeleted) {
+					// console.log(
+					// 	"Successfully deleted homework file from Cloudinary"
+					// );
+					fileDeleteStatus = "File deleted successfully";
+				} else {
+					console.log(
+						"WARNING: Could not delete homework file from Cloudinary"
+					);
+					fileDeleteStatus = "File deletion failed";
+				}
+			} catch (error) {
+				console.log(
+					"Error during Cloudinary file deletion:",
+					error
+				);
+				fileDeleteStatus = `File deletion error: ${error.message}`;
+			}
+		}
+
+		// Check if there are any submissions for this homework
+		const submissions = await HomeworkSubmission.find({
+			homework: homeworkId,
+		});
+
+		let submissionResults = [];
+
+		// Delete all submissions associated with this homework
+		if (submissions.length > 0) {
+			// Delete files from Cloudinary for each submission
+			for (const submission of submissions) {
+				let submissionStatus = {
+					id: submission._id,
+					status: "No file",
+				};
+
+				if (submission.fileUrl) {
+					try {
+						// console.log(
+						// 	"Attempting to delete submission file:",
+						// 	submission.fileUrl
+						// );
+						// Use the enhanced force delete method for submissions too
+						const fileDeleted =
+							await forceDeleteCloudinaryFile(
+								submission.fileUrl
+							);
+
+						if (fileDeleted) {
+							submissionStatus.status = "File deleted";
+						} else {
+							submissionStatus.status =
+								"File deletion failed";
+							console.log(
+								`WARNING: Could not delete submission file: ${submission.fileUrl}`
+							);
+						}
+					} catch (error) {
+						submissionStatus.status = `Error: ${error.message}`;
+						console.log(
+							`Error deleting submission file: ${error.message}`
+						);
+					}
+				}
+
+				submissionResults.push(submissionStatus);
+			}
+
+			// Delete all submission records
+			await HomeworkSubmission.deleteMany({ homework: homeworkId });
+			console.log(
+				`Deleted ${submissions.length} submission(s) associated with this homework`
+			);
+		}
+
+		// Delete homework from database
+		await Homework.findByIdAndDelete(homeworkId);
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					fileDeleteStatus,
+					fileUrl: homework.fileUrl, // Include the URL in the response for debugging
+					submissionsDeleted: submissions.length,
+					submissionResults,
+				},
+				"Homework deleted successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error deleting homework:", error);
+		return res.json(
+			new ApiError(500, "Error deleting homework: " + error.message)
 		);
 	}
 };

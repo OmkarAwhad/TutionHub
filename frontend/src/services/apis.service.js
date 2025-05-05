@@ -68,3 +68,10 @@ export const feedbackApi = {
 	MAKE_A_FEEDBACK: BASE_URL + "/feedback/makeAFeedback",
 	MY_ALL_FEEDBACKS: BASE_URL + "/feedback/myFeedbacks",
 };
+
+export const notesApi = {
+	UPLOAD_NOTES: BASE_URL + "/notes/uploadNotes",
+	DELETE_NOTES: BASE_URL + "/notes/deleteNote",
+	GET_ALL_NOTES: BASE_URL + "/notes/getAllNotes",
+	GET_NOTES_BY_SUB: BASE_URL + "/notes/getNotesBySubject",
+};

@@ -176,7 +176,8 @@ module.exports.getNotesBySubject = async (req, res) => {
 
 module.exports.deleteNote = async (req, res) => {
 	try {
-		const { noteId } = req.body;
+		const { noteId } = req.params;
+		console.log(noteId)
 
 		if (!noteId) {
 			return res.json(new ApiError(400, "Note ID is required"));

@@ -4,8 +4,9 @@ import {
 	getDownloadUrl,
 } from "../../../../utils/fileUtils";
 import FileDownloadButton from "../../Students/notes/FileDownloadButton";
+import { RiDeleteBinLine } from "react-icons/ri";
 
-function TutorNotesCard({note}) {
+function TutorNotesCard({ note, handleDeleteClick }) {
 	return (
 		<div className="space-y-4 relative p-6 rounded-xl shadow shadow-medium-gray hover:shadow-xl transition-all duration-300 bg-richblack-800">
 			<div className="flex justify-between items-start">
@@ -17,6 +18,12 @@ function TutorNotesCard({note}) {
 						{note.subject.name} ({note.subject.code})
 					</p>
 				</div>
+			</div>
+			<div
+				onClick={() => handleDeleteClick(note)}
+				className="absolute top-10 right-6 bg-medium-gray text-white cursor-pointer hover:bg-charcoal-gray  border-2 hover:border-red-200 hover:text-red-200 p-3 rounded-full text-lg transition-all duration-150 "
+			>
+				<RiDeleteBinLine />
 			</div>
 			<div className="space-y-2">
 				<p className="text-richblack-200">

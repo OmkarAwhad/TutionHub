@@ -5,6 +5,8 @@ import { getMyDetails } from "../../../../services/operations/users.service";
 import toast from "react-hot-toast";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import TutorNotesCard from "./TutorNotesCard";
+import Modal from "../../extras/Modal";
+import { deleteNote } from "../../../../services/operations/notes.service";
 
 function NotesList() {
 	const { token } = useSelector((state) => state.auth);
@@ -12,20 +14,49 @@ function NotesList() {
 	const navigate = useNavigate();
 
 	const [myNotes, setMyNotes] = useState(null);
+	const [selectedNote, setSelectedNote] = useState(null);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+	const fetchMyNotes = async () => {
+		try {
+			const response = await dispatch(getMyDetails(token));
+			if (response) {
+				// console.log(response?.notes);
+				setMyNotes(response?.notes);
+			}
+		} catch (error) {
+			console.log("Error in fetching my notes", error);
+			toast.error("Error in fetching my notes");
+		}
+	};
+
+	const handleDeleteClick = (note) => {
+		setSelectedNote(note);
+		setShowDeleteModal(true);
+	};
+
+	const handleDeleteConfirm = async () => {
+		try {
+			if (!selectedNote?._id) {
+				toast.error("No note selected for deletion");
+				setShowDeleteModal(false);
+				return;
+			}
+			await dispatch(deleteNote(selectedNote._id,token));
+			await fetchMyNotes();
+			setShowDeleteModal(false);
+			setSelectedNote(null);
+		} catch (error) {
+			console.error("Error deleting lecture:", error);
+		}
+	};
+
+	const handleDeleteCancel = () => {
+		setShowDeleteModal(false);
+		setSelectedNote(null);
+	};
 
 	useEffect(() => {
-		const fetchMyNotes = async () => {
-			try {
-				const response = await dispatch(getMyDetails(token));
-				if (response) {
-					console.log(response?.notes);
-					setMyNotes(response?.notes);
-				}
-			} catch (error) {
-				console.log("Error in fetching my notes");
-				toast.error("Error in fetching my notes");
-			}
-		};
 		fetchMyNotes();
 	}, [dispatch, token]);
 
@@ -55,11 +86,28 @@ function NotesList() {
 								<TutorNotesCard
 									key={note._id}
 									note={note}
+									handleDeleteClick={
+										handleDeleteClick
+									}
 								/>
 							))}
 					</div>
 				)}
 			</div>
+			{showDeleteModal && (
+				<Modal
+					title="Delete Lecture"
+					description={`Are you sure you want to delete the Note`}
+					btn1={{
+						text: "Delete",
+						onClick: handleDeleteConfirm,
+					}}
+					btn2={{
+						text: "Cancel",
+						onClick: handleDeleteCancel,
+					}}
+				/>
+			)}
 		</div>
 	);
 }

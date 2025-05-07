@@ -113,12 +113,12 @@ module.exports.getAllHomework = async (req, res) => {
 			.populate("tutor")
 			.sort({ createdAt: -1 })
 			.exec();
-		// console.log('1')
-		
+		//
+
 		if (!homework || homework.length === 0) {
 			return res.json(new ApiResponse(200, [], "No homework found"));
 		}
-		// console.log('1')
+		//
 
 		return res.json(
 			new ApiResponse(
@@ -353,7 +353,11 @@ module.exports.submitHomework = async (req, res) => {
 				homework: homeworkId,
 				student: studentId,
 			});
+
 			if (existingSubmission) {
+				// Clean up local file if already submitted
+				if (req.file && req.file.path)
+					await fs.unlink(req.file.path);
 				return res.json(
 					new ApiError(
 						400,
@@ -362,17 +366,20 @@ module.exports.submitHomework = async (req, res) => {
 				);
 			}
 
+			if (!req.file) {
+				return res.json(
+					new ApiError(400, "A file is required for submission")
+				);
+			}
+
 			let fileUrl = null;
-			if (req.file) {
-				try {
-					fileUrl = await uploadToCloudinary(req.file.path);
-				} catch (uploadError) {
-					throw new ApiError(
-						500,
-						"Error uploading to Cloudinary: " +
-							uploadError.message
-					);
-				}
+			try {
+				fileUrl = await uploadToCloudinary(req.file.path);
+			} catch (uploadError) {
+				throw new ApiError(
+					500,
+					"Error uploading to Cloudinary: " + uploadError.message
+				);
 			}
 
 			// Determine if the submission is late
@@ -384,6 +391,10 @@ module.exports.submitHomework = async (req, res) => {
 				fileUrl,
 				submittedAt: new Date(),
 				isLate,
+			});
+
+			await User.findByIdAndUpdate(studentId, {
+				$push: { homework: homeworkId },
 			});
 
 			return res.json(
@@ -474,6 +485,34 @@ module.exports.getSubmissions = async (req, res) => {
 		console.log("Error fetching submissions: ", error);
 		return res.json(
 			new ApiError(500, "Error fetching submissions: " + error.message)
+		);
+	}
+};
+
+module.exports.HWSubmittedByStud = async (req, res) => {
+	try {
+		const studentId = req.user.id;
+		const studentDetails = await User.findById(studentId)
+			.populate("homework")
+			.exec();
+		if (!studentDetails) {
+			return res.json(new ApiError(404, "Student not found"));
+		}
+		return res.json(
+			new ApiResponse(
+				200,
+				studentDetails,
+				"Homework submitted by the student fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error fetching homework submitted by student: ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error fetching homework submitted by student: " +
+					error.message
+			)
 		);
 	}
 };

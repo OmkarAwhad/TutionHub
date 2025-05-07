@@ -43,7 +43,11 @@ function HomeworkCard({ item }) {
 				</p>
 				<p className=" text-charcoal-gray">
 					<span className=" text-medium-gray">Due Date:</span>{" "}
-					{new Date(item.dueDate).toLocaleDateString()}
+					{new Date(item.dueDate).toLocaleDateString("en-GB", {
+						day: "2-digit",
+						month: "2-digit",
+						year: "2-digit",
+					})}
 				</p>
 				{item.fileUrl && (
 					<p className="text-charcoal-gray">

@@ -83,4 +83,5 @@ export const homeworkApi = {
 	GET_ALL_HOMEWORK: BASE_URL + "/homework/getAllHomework",
 	SUBMIT_HOMEWORK: BASE_URL + "/homework/submitHomework",
 	GET_SUBMISSIONS: BASE_URL + "/homework/getSubmissions",
+	STUDENT_SUBMISSIONS: BASE_URL + "/homework/HWSubmittedByStud",
 };

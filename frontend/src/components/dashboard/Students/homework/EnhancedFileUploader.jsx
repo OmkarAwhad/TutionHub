@@ -134,6 +134,7 @@ function EnhancedFileUploader({
 
    // Handle upload
    const handleUpload = async () => {
+      // console.log("Selected file:", file);
       if (!file || !onUpload) return;
 
       try {
@@ -269,8 +270,8 @@ function EnhancedFileUploader({
                   onClick={handleUpload}
                   disabled={!file || uploadState === "uploading" || disabled}
                   className={`
-              w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200
-              ${!file || uploadState === "uploading" || disabled
+               w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200
+               ${!file || uploadState === "uploading" || disabled
                         ? "bg-gray-300 cursor-not-allowed text-gray-600"
                         : "bg-medium-gray text-white hover:bg-charcoal-gray"}
             `}

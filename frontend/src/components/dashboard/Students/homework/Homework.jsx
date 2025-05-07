@@ -37,12 +37,14 @@ function Homework() {
 	useEffect(() => {
 		const fetchAllHomework = async () => {
 			try {
-				const response = await dispatch(getAllHomework(token));
+				let response = await dispatch(getAllHomework(token));
 				if (response) {
-					// if(selectedSub !== "all"){
-					//    response = response.filter((item) => item)
-					// }
-					console.log(response);
+					if (selectedSub !== "all") {
+						response = response.filter(
+							(item) => item.subject._id === selectedSub
+						);
+					}
+					// console.log(response);
 					setAllHomework(response);
 				}
 			} catch (error) {
@@ -53,7 +55,7 @@ function Homework() {
 			}
 		};
 		fetchAllHomework();
-	}, [dispatch, token]);
+	}, [dispatch, token, selectedSub]);
 
 	return (
 		<div>
@@ -76,13 +78,19 @@ function Homework() {
 						))}
 				</select>
 			</div>
-         <div  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {
-               allHomework.map((item) => (
-                  <HomeworkCard key={item._id} item={item} />
-               ))
-            }
-         </div>
+			{allHomework.length === 0 ? (
+				<div className="w-full flex items-center justify-center ">
+					<p className="text-3xl text-medium-gray">
+						No homework available
+					</p>
+				</div>
+			) : (
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{allHomework.map((item) => (
+						<HomeworkCard key={item._id} item={item} />
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

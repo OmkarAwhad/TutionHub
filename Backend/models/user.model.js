@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
 			ref: "Announcement",
 		},
 	],
+	homework: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Homework",
+		},
+	],
 	// Marks: {
 	// 	type: mongoose.Schema.Types.ObjectId,
 	// 	ref: "Marks",

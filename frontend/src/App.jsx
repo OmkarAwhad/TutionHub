@@ -32,6 +32,7 @@ import MainMarking from "./components/dashboard/admin/attendance/MainMarking.jsx
 import MarkMarks from "./components/dashboard/admin/marks/MarkMarks.jsx";
 import MarksList from "./components/dashboard/admin/marks/MarksList.jsx";
 import ViewMarks from "./components/dashboard/admin/marks/ViewMarks.jsx";
+import ViewHomework from "./components/dashboard/Students/homework/ViewHomework.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -74,6 +75,10 @@ function App() {
 							<Route
 								path="/dashboard/get-homework"
 								element={<Homework />}
+							/>
+							<Route
+								path="/dashboard/get-homework/view-homework"
+								element={<ViewHomework />}
 							/>
 							<Route
 								path="/dashboard/get-notes"

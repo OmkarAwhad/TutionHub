@@ -109,9 +109,16 @@ module.exports.uploadHomework = async (req, res) => {
 module.exports.getAllHomework = async (req, res) => {
 	try {
 		const homework = await Homework.find({})
-			.populate("subject", "name code")
-			.populate("tutor", "name email")
-			.sort({ createdAt: -1 });
+			.populate("subject")
+			.populate("tutor")
+			.sort({ createdAt: -1 })
+			.exec();
+		// console.log('1')
+		
+		if (!homework || homework.length === 0) {
+			return res.json(new ApiResponse(200, [], "No homework found"));
+		}
+		// console.log('1')
 
 		return res.json(
 			new ApiResponse(

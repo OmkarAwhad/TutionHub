@@ -1,6 +1,10 @@
 import React from "react";
+import { getFileTypeDescription, getDownloadUrl } from "../../../../utils/fileUtils";
+import FileDownloadButton from "./FileDownloadButton";
 
 function NotesCard({ note }) {
+
+
 	return (
 		<div className="space-y-4 relative p-6 rounded-xl shadow shadow-medium-gray hover:shadow-xl transition-all duration-300 bg-richblack-800">
 			<div className="flex justify-between items-start">
@@ -22,15 +26,18 @@ function NotesCard({ note }) {
 					<span className="text-medium-gray">Uploaded:</span>{" "}
 					{new Date(note.uploadDate).toLocaleDateString()}
 				</p>
+				<p className="text-richblack-200">
+					<span className="text-medium-gray">File Type:</span>{" "}
+					{getFileTypeDescription(note.file)}
+				</p>
 			</div>
 			<div className="pt-4">
-				<a
-					href={note.file}
-					download
-					className="py-3 w-full rounded-lg bg-medium-gray text-white font-extralight text-sm hover:bg-charcoal-gray transition-all duration-200 flex items-center justify-center cursor-pointer"
-				>
-					Download Notes
-				</a>
+				<FileDownloadButton
+					fileUrl={getDownloadUrl(note.file)}
+					title={note.title}
+					buttonText="Download Notes"
+					className="py-3 w-full rounded-lg bg-medium-gray text-white font-extralight text-sm hover:bg-charcoal-gray transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+				/>
 			</div>
 		</div>
 	);

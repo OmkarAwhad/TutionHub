@@ -75,3 +75,12 @@ export const notesApi = {
 	GET_ALL_NOTES: BASE_URL + "/notes/getAllNotes",
 	GET_NOTES_BY_SUB: BASE_URL + "/notes/getNotesBySubject",
 };
+
+export const homeworkApi = {
+	UPLOAD_HOMEWORK: BASE_URL + "/homework/uploadHomework",
+	DELETE_HOMEWORK: BASE_URL + "/homework/deleteHomework",
+	GET_HOMEWORK_BY_SUB: BASE_URL + "/homework/getHomeworkBySubject",
+	GET_ALL_HOMEWORK: BASE_URL + "/homework/getAllHomework",
+	SUBMIT_HOMEWORK: BASE_URL + "/homework/submitHomework",
+	GET_SUBMISSIONS: BASE_URL + "/homework/getSubmissions",
+};

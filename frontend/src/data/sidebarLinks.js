@@ -32,14 +32,14 @@ export const sidbarLinks = [
 	},
 	{
 		id: 6,
-		name: "Upload Notes",
-		path: "/dashboard/upload-notes",
+		name: "Notes",
+		path: "/dashboard/tutor-notes",
 		type: ACCOUNT_TYPE.TUTOR,
 	},
 	{
 		id: 7,
-		name: "Upload Homework",
-		path: "/dashboard/upload-homework",
+		name: "Homework",
+		path: "/dashboard/tutor-homework",
 		type: ACCOUNT_TYPE.TUTOR,
 	},
 	{

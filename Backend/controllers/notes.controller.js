@@ -8,6 +8,7 @@ const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const Note = require("../models/notes.model");
 const Subject = require("../models/subject.model");
+const User = require("../models/user.model");
 const fs = require("fs").promises;
 
 // Multer middleware specific to this controller
@@ -77,6 +78,10 @@ module.exports.uploadNotes = async (req, res) => {
 				file: fileUrl,
 				tutor: tutorId,
 				uploadDate: new Date(),
+			});
+
+			await User.findByIdAndUpdate(tutorId, {
+				$push: { notes: newNote._id },
 			});
 
 			return res.json(

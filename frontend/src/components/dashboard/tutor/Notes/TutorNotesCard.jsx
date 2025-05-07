@@ -1,8 +1,11 @@
 import React from "react";
-import { getFileTypeDescription, getDownloadUrl } from "../../../../utils/fileUtils";
-import FileDownloadButton from "./FileDownloadButton";
+import {
+	getFileTypeDescription,
+	getDownloadUrl,
+} from "../../../../utils/fileUtils";
+import FileDownloadButton from "../../Students/notes/FileDownloadButton";
 
-function NotesCard({ note }) {
+function TutorNotesCard({note}) {
 	return (
 		<div className="space-y-4 relative p-6 rounded-xl shadow shadow-medium-gray hover:shadow-xl transition-all duration-300 bg-richblack-800">
 			<div className="flex justify-between items-start">
@@ -41,4 +44,4 @@ function NotesCard({ note }) {
 	);
 }
 
-export default NotesCard;
+export default TutorNotesCard;

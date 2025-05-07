@@ -31,3 +31,33 @@ export function getAllNotes(token) {
 		}
 	};
 }
+
+export function uploadNotes(data, token, trackProgress) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Loading...");
+		try {
+			const response = await apiConnector(
+				"POST",
+				notesApi.UPLOAD_NOTES,
+				data,
+				{
+					"Content-Type": "multipart/form-data",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!response.data.success) {
+				toast.error(response.data.message);
+				console.log(response.data.message);
+				return [];
+			}
+
+			// console.log(response.data.data);
+			return response.data.data;
+		} catch (error) {
+			console.error("Error in uploading notes ", error);
+			toast.error("Error in uploading notes ");
+		} finally {
+			toast.remove(toastId);
+		}
+	};
+}

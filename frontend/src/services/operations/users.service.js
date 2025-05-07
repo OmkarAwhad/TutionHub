@@ -118,3 +118,31 @@ export function getMyStudentsListByLec(lectureId, token) {
 	};
 }
 
+export function getMyDetails(token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Loading...");
+		try {
+			const result = await apiConnector(
+				"GET",
+				usersApi.GET_MY_DETAILS,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return [];
+			}
+			return result.data.data;
+		} catch (error) {
+			toast.error("Failed to fetch tutors");
+			console.log("Failed to fetch tutors", error);
+			return [];
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}

@@ -123,7 +123,8 @@ function EnhancedFileUploader({
    };
 
    // Clear selected file
-   const handleClearFile = () => {
+   const handleClearFile = (e) => {
+      e?.stopPropagation(); // Prevent click from bubbling up
       setFile(null);
       setErrorMessage("");
       if (fileInputRef.current) {
@@ -132,9 +133,16 @@ function EnhancedFileUploader({
       onFileSelect(null);
    };
 
+   // Handle click to open file dialog
+   const handleClick = (e) => {
+      if (disabled || file || uploadState === "uploading") return;
+      e.stopPropagation(); // Prevent multiple triggers
+      fileInputRef.current?.click();
+   };
+
    // Handle upload
-   const handleUpload = async () => {
-      // console.log("Selected file:", file);
+   const handleUpload = async (e) => {
+      e?.stopPropagation(); // Prevent click from bubbling up
       if (!file || !onUpload) return;
 
       try {
@@ -158,8 +166,7 @@ function EnhancedFileUploader({
          // Reset after success
          setTimeout(() => {
             setUploadState("idle");
-            // Optionally clear the file after successful upload
-            // handleClearFile();
+            handleClearFile(); // Clear file after successful upload
          }, 3000);
 
          return result;
@@ -195,15 +202,15 @@ function EnhancedFileUploader({
          {/* File drag & drop area */}
          <div
             className={`
-          border-2 ${isDragging ? 'border-medium-gray bg-gray-50' : 'border-dashed border-gray-300'} 
-          rounded-lg p-6 transition-all duration-200
-          ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-medium-gray cursor-pointer'}
-        `}
+            border-2 ${isDragging ? 'border-medium-gray bg-gray-50' : 'border-dashed border-gray-300'} 
+            rounded-lg p-6 transition-all duration-200
+            ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-medium-gray cursor-pointer'}
+         `}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            onClick={() => !disabled && !file && fileInputRef.current?.click()}
+            onClick={handleClick}
          >
             <input
                type="file"
@@ -249,10 +256,7 @@ function EnhancedFileUploader({
 
                   <button
                      type="button"
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        handleClearFile();
-                     }}
+                     onClick={handleClearFile}
                      className="text-gray-400 hover:text-gray-600"
                      disabled={disabled || uploadState === "uploading"}
                   >

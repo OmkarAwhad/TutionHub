@@ -75,6 +75,9 @@ module.exports.uploadHomework = async (req, res) => {
 				fileUrl,
 				dueDate,
 			});
+			await User.findByIdAndUpdate(tutorId, {
+				$push: { homework: newHomework._id },
+			});
 
 			return res.json(
 				new ApiResponse(

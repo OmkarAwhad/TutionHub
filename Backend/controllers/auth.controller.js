@@ -63,6 +63,8 @@ module.exports.login = async (req, res) => {
 
 		const userDetails = await User.findOne({ email: email })
 			.populate("profile")
+			.populate("notes")
+			.populate("announcement")
 			.exec();
 
 		if (!userDetails) {
@@ -78,7 +80,7 @@ module.exports.login = async (req, res) => {
 		// 	return res.json(new ApiError(400,"Role of the user didn't matched"))
 		// }
 
-		if (!await bcrypt.compare(password, userDetails.password)) {
+		if (!(await bcrypt.compare(password, userDetails.password))) {
 			return res.json(new ApiError(400, "Invalid password"));
 		}
 

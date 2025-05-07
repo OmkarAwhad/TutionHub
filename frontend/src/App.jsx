@@ -1,6 +1,8 @@
 import React from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ACCOUNT_TYPE } from "./utils/constants.utils.js";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -11,8 +13,6 @@ import Lecture from "./components/dashboard/Students/lecture/Lecture.jsx";
 import Homework from "./components/dashboard/Students/homework/Homework.jsx";
 import Feedback from "./components/dashboard/Students/feedback/Feedback.jsx";
 import Notes from "./components/dashboard/Students/notes/Notes.jsx";
-import { useSelector } from "react-redux";
-import { ACCOUNT_TYPE } from "./utils/constants.utils.js";
 import Attendance from "./components/dashboard/Students/attendance/Attendance.jsx";
 import Progress from "./components/dashboard/Students/progress/Progress.jsx";
 import Remarks from "./components/dashboard/Students/remarks/Remarks.jsx";
@@ -33,6 +33,13 @@ import MarkMarks from "./components/dashboard/admin/marks/MarkMarks.jsx";
 import MarksList from "./components/dashboard/admin/marks/MarksList.jsx";
 import ViewMarks from "./components/dashboard/admin/marks/ViewMarks.jsx";
 import ViewHomework from "./components/dashboard/Students/homework/ViewHomework.jsx";
+import TutorNotes from "./components/dashboard/tutor/Notes/TutorNotes.jsx";
+import UploadNote from "./components/dashboard/tutor/Notes/UploadNote.jsx";
+import NotesList from "./components/dashboard/tutor/Notes/NotesList.jsx";
+import TutorHomework from "./components/dashboard/tutor/Homework/TutorHomework.jsx";
+import StudentData from "./components/dashboard/tutor/StudentData/StudentData.jsx";
+import Metrics from "./components/dashboard/tutor/Metrics/Metrics.jsx";
+import Content from "./components/dashboard/tutor/Content/Content.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -168,6 +175,38 @@ function App() {
 							<Route
 								path="/dashboard/admin-attendance/mark-attendance/:lectureId"
 								element={<MainMarking />}
+							/>
+						</>
+					)}
+					{user?.role === ACCOUNT_TYPE.TUTOR && (
+						<>
+							<Route
+								path="/dashboard/tutor-notes"
+								element={<TutorNotes />}
+							/>
+							<Route
+								path="/dashboard/tutor-notes/upload-note"
+								element={<UploadNote />}
+							/>
+							<Route
+								path="/dashboard/tutor-notes/notes-list"
+								element={<NotesList />}
+							/>
+							<Route
+								path="/dashboard/tutor-homework"
+								element={<TutorHomework />}
+							/>
+							<Route
+								path="/dashboard/student-data"
+								element={<StudentData />}
+							/>
+							<Route
+								path="/dashboard/tutor-metrics"
+								element={<Metrics />}
+							/>
+							<Route
+								path="/dashboard/content"
+								element={<Content />}
 							/>
 						</>
 					)}

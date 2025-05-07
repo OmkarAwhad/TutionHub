@@ -5,13 +5,16 @@ const {
 	viewStudentProfile,
 	getMyStudentsList,
 	getAllStudentsList,
-	getTutors,getMyStudentsListByLec
+	getTutors,
+	getMyStudentsListByLec,
+	getMyDetails,
 } = require("../controllers/users.controller");
 
 router.get("/viewStudentProfile", auth, isTutor, viewStudentProfile);
 router.get("/getMyStudentsList", auth, getMyStudentsList);
 router.get("/getAllStudentsList", auth, getAllStudentsList);
 router.get("/getTutors", auth, isAdmin, getTutors);
+router.get("/getMyDetails", auth, getMyDetails);
 router.get("/getMyStudentsListByLec/:lectureId", auth, getMyStudentsListByLec);
 
 module.exports = router;

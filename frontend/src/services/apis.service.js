@@ -62,6 +62,7 @@ export const usersApi = {
 	GET_ALL_STUDENTS_LIST: BASE_URL + "/users/getAllStudentsList",
 	GET_TUTORS: BASE_URL + "/users/getTutors",
 	GET_STUDENTS_BY_LEC: BASE_URL + "/users/getMyStudentsListByLec",
+	GET_MY_DETAILS: BASE_URL + "/users/getMyDetails",
 };
 
 export const feedbackApi = {

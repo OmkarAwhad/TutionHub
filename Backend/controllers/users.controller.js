@@ -132,14 +132,17 @@ module.exports.getMyStudentsListByLec = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		const userDetails = await User.findById(userId);
-		
+
 		if (!userDetails) {
 			return res.json(new ApiError(404, "User not found"));
 		}
 
 		if (userDetails.role === "Tutor") {
 			return res.json(
-				new ApiError(403, "Access denied. Only tutors can access this resource")
+				new ApiError(
+					403,
+					"Access denied. Only tutors can access this resource"
+				)
 			);
 		}
 
@@ -156,12 +159,17 @@ module.exports.getMyStudentsListByLec = async (req, res) => {
 
 		const subjectId = lectureDetails.subject;
 		if (!subjectId) {
-			return res.json(new ApiError(400, "Lecture does not have an associated subject"));
+			return res.json(
+				new ApiError(
+					400,
+					"Lecture does not have an associated subject"
+				)
+			);
 		}
 
 		const studentsList = await User.find({
 			subjects: { $in: [subjectId] },
-			role: "Student"
+			role: "Student",
 		}).select("name email subjects");
 
 		if (!studentsList || studentsList.length === 0) {
@@ -212,6 +220,48 @@ module.exports.getTutors = async (req, res) => {
 		console.log("Error fetching tutors list: ", error);
 		return res.json(
 			new ApiError(500, "Error fetching tutors list: " + error.message)
+		);
+	}
+};
+
+module.exports.getMyDetails = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		const userDetails = await User.findById(userId)
+			.populate({
+				path: "notes",
+				populate: [
+					{ path: "subject", select: "name code" },
+					{ path: "tutor", select: "name email" },
+				],
+			})
+			.populate({
+				path: "announcement",
+				populate: [
+					{ path: "subject", select: "name code" },
+					{ path: "createdBy", select: "name email" },
+				],
+			})
+			.populate("profile")
+			.populate("subjects")
+			.populate({
+				path: "homework",
+				populate: [
+					{ path: "subject", select: "name code" },
+					{ path: "tutor", select: "name email" },
+				],
+			})
+			.exec();
+		if (!userDetails) {
+			return res.json(new ApiError(400, "Your details not found"));
+		}
+		return res.json(
+			new ApiResponse(200, userDetails, "My Details fetched")
+		);
+	} catch (error) {
+		console.log("Error fetching my details: ", error);
+		return res.json(
+			new ApiError(500, "Error fetching my details: " + error.message)
 		);
 	}
 };

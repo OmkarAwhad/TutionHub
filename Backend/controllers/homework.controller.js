@@ -186,7 +186,7 @@ module.exports.getHomeworkBySubject = async (req, res) => {
 
 module.exports.deleteHomework = async (req, res) => {
 	try {
-		const { homeworkId } = req.body;
+		const { homeworkId } = req.params;
 
 		if (!homeworkId) {
 			return res.json(new ApiError(400, "Homework ID is required"));

@@ -40,6 +40,8 @@ import TutorHomework from "./components/dashboard/tutor/Homework/TutorHomework.j
 import StudentData from "./components/dashboard/tutor/StudentData/StudentData.jsx";
 import Metrics from "./components/dashboard/tutor/Metrics/Metrics.jsx";
 import Content from "./components/dashboard/tutor/Content/Content.jsx";
+import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework.jsx";
+import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -195,6 +197,14 @@ function App() {
 							<Route
 								path="/dashboard/tutor-homework"
 								element={<TutorHomework />}
+							/>
+							<Route
+								path="/dashboard/tutor-homework/upload-homework"
+								element={<UploadHomework />}
+							/>
+							<Route
+								path="/dashboard/tutor-homework/homework-list"
+								element={<HomeworkList />}
 							/>
 							<Route
 								path="/dashboard/student-data"

@@ -18,6 +18,6 @@ router.get("/HWSubmittedByStud", auth, HWSubmittedByStud);
 router.post("/uploadHomework", auth, isTutor, uploadHomework);
 router.get("/getAllHomework", auth, getAllHomework);
 router.get("/getHomeworkBySubject", auth, getHomeworkBySubject);
-router.delete("/deleteHomework", auth, isTutor, deleteHomework);
+router.delete("/deleteHomework/:homeworkId", auth, isTutor, deleteHomework);
 
 module.exports = router;

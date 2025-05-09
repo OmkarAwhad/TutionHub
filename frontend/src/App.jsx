@@ -42,6 +42,8 @@ import Metrics from "./components/dashboard/tutor/Metrics/Metrics.jsx";
 import Content from "./components/dashboard/tutor/Content/Content.jsx";
 import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework.jsx";
 import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
+import ViewSubmissions from "./components/dashboard/tutor/Homework/ViewSubmissions.jsx";
+import SubmissionsOfAHW from "./components/dashboard/tutor/Homework/SubmissionsOfAHW.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -180,6 +182,7 @@ function App() {
 							/>
 						</>
 					)}
+
 					{user?.role === ACCOUNT_TYPE.TUTOR && (
 						<>
 							<Route
@@ -205,6 +208,14 @@ function App() {
 							<Route
 								path="/dashboard/tutor-homework/homework-list"
 								element={<HomeworkList />}
+							/>
+							<Route
+								path="/dashboard/tutor-homework/view-submissions"
+								element={<ViewSubmissions />}
+							/>
+							<Route
+								path="/dashboard/tutor-homework/view-submissions/:homeworkId"
+								element={<SubmissionsOfAHW />}
 							/>
 							<Route
 								path="/dashboard/student-data"

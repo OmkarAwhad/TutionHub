@@ -32,7 +32,11 @@ function TutorNotesCard({ note, handleDeleteClick }) {
 				</p>
 				<p className="text-richblack-200">
 					<span className="text-medium-gray">Uploaded:</span>{" "}
-					{new Date(note.uploadDate).toLocaleDateString()}
+					{new Date(note.uploadDate).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                     })}
 				</p>
 				<p className="text-richblack-200">
 					<span className="text-medium-gray">File Type:</span>{" "}

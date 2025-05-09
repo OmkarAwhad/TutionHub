@@ -12,7 +12,7 @@ const {
 } = require("../controllers/homework.controller");
 
 router.post("/submitHomework", auth, isStudent, submitHomework);
-router.get("/getSubmissions", auth, isTutor, getSubmissions);
+router.get("/getSubmissions/:homeworkId", auth, isTutor, getSubmissions);
 router.get("/HWSubmittedByStud", auth, HWSubmittedByStud);
 
 router.post("/uploadHomework", auth, isTutor, uploadHomework);

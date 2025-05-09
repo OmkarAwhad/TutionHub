@@ -18,7 +18,7 @@ function TutorHomeworkCard({ homework, handleDeleteClick }) {
 			</div>
 			<div
 				onClick={() => handleDeleteClick(homework)}
-				className="absolute top-10 right-6 bg-medium-gray text-white cursor-pointer hover:bg-charcoal-gray border-2 hover:border-red-200 hover:text-red-200 p-3 rounded-full text-lg transition-all duration-150"
+				className="absolute top-15 right-6 bg-medium-gray text-white cursor-pointer hover:bg-charcoal-gray border-2 hover:border-red-200 hover:text-red-200 p-3 rounded-full text-lg transition-all duration-150"
 			>
 				<RiDeleteBinLine />
 			</div>
@@ -29,11 +29,19 @@ function TutorHomeworkCard({ homework, handleDeleteClick }) {
 				</p>
 				<p className="text-richblack-200">
 					<span className="text-medium-gray">Uploaded:</span>{" "}
-					{new Date(homework.createdAt).toLocaleDateString()}
+					{new Date(homework.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                     })}
 				</p>
 				<p className="text-richblack-200">
 					<span className="text-medium-gray">Due Date:</span>{" "}
-					{new Date(homework.dueDate).toLocaleDateString()}
+					{new Date(homework.dueDate).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                     })}
 				</p>
 				{homework.description && (
 					<p className="text-richblack-200">

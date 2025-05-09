@@ -123,7 +123,11 @@ function ViewMarks() {
 							<p className="text-richblack-200">
 								{new Date(
 									markLecture.date
-								).toLocaleDateString()}
+								).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                     })}
 							</p>
 						</div>
 						<div className="text-right">

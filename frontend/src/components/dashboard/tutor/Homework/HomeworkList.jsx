@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Modal from "../../extras/Modal";
-import TutorNotesCard from "../Notes/TutorNotesCard";
 import TutorHomeworkCard from "./TutorHomeworkCard";
 import { deleteHomework } from "../../../../services/operations/homework.service";
 

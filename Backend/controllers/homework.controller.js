@@ -434,7 +434,7 @@ module.exports.submitHomework = async (req, res) => {
 
 module.exports.getSubmissions = async (req, res) => {
 	try {
-		const { homeworkId } = req.body;
+		const { homeworkId } = req.params;
 
 		if (!homeworkId) {
 			return res.json(new ApiError(400, "Homework ID is required"));

@@ -44,6 +44,11 @@ import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework
 import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
 import ViewSubmissions from "./components/dashboard/tutor/Homework/ViewSubmissions.jsx";
 import SubmissionsOfAHW from "./components/dashboard/tutor/Homework/SubmissionsOfAHW.jsx";
+import SubjectForm from "./components/dashboard/admin/subjects/SubjectForm.jsx";
+import GetAllSubjects from "./components/dashboard/admin/subjects/GetAllSubjects.jsx";
+import AssignSubjects from "./components/dashboard/admin/subjects/AssignSubjects.jsx";
+import AssignSubStudents from "./components/dashboard/admin/subjects/AssignSubStudents.jsx";
+import AssignSubTutors from "./components/dashboard/admin/subjects/AssignSubTutors.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -139,6 +144,26 @@ function App() {
 							<Route
 								path="/dashboard/admin-subjects"
 								element={<AdminSubjects />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/create-subject"
+								element={<SubjectForm />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/subjects-list"
+								element={<GetAllSubjects />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/assign-subjects"
+								element={<AssignSubjects />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/assign-subjects/students"
+								element={<AssignSubStudents />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/assign-subjects/tutors"
+								element={<AssignSubTutors />}
 							/>
 							<Route
 								path="/dashboard/admin-marks"

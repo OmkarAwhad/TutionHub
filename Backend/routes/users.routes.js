@@ -10,7 +10,7 @@ const {
 	getMyDetails,
 } = require("../controllers/users.controller");
 
-router.get("/viewStudentProfile", auth, isTutor, viewStudentProfile);
+router.get("/viewStudentProfile/:studentId", auth, isTutor, viewStudentProfile);
 router.get("/getMyStudentsList", auth, getMyStudentsList);
 router.get("/getAllStudentsList", auth, getAllStudentsList);
 router.get("/getTutors", auth, isAdmin, getTutors);

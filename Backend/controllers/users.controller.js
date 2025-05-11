@@ -1,6 +1,8 @@
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const User = require("../models/user.model");
+const Attendance = require("../models/attendance.model");
+const Marks = require("../models/marks.model");
 const Lecture = require("../models/lecture.model");
 
 module.exports.getMyStudentsList = async (req, res) => {
@@ -74,18 +76,34 @@ module.exports.viewStudentProfile = async (req, res) => {
 			return res.json(new ApiError(400, "Student ID is required"));
 		}
 
-		const student = await User.findById(studentId)
-			.populate("subjects", "name code")
-			.select("name email subjects");
+		const studentDetails = await User.findById(studentId)
+			.populate("subjects")
+			.populate("homework")
+			.populate("profile", "phoneNumber")
+			.exec();
 
-		if (!student) {
+		if (!studentDetails) {
 			return res.json(new ApiError(404, "Student not found"));
+		}
+
+		const attendanceDetails = await Attendance.find({
+			student: studentId,
+		});
+		if (!attendanceDetails) {
+			return res.json(
+				new ApiError(404, "Student attendance not found")
+			);
+		}
+
+		const marksDetails = await Marks.find({ student: studentId });
+		if (!marksDetails) {
+			return res.json(new ApiError(404, "Student marks not found"));
 		}
 
 		return res.json(
 			new ApiResponse(
 				200,
-				student,
+				{ studentDetails, attendanceDetails, marksDetails },
 				"Student profile fetched successfully"
 			)
 		);

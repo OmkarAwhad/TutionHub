@@ -187,13 +187,13 @@ module.exports.subsOfThatStud = async (req, res) => {
 
 module.exports.assignSubject = async (req, res) => {
 	try {
-		const { subjectId, studentId, isChecked } = req.body;
+		const { subjectId, userId, isChecked } = req.body;
 
-		if (!subjectId || !studentId || typeof isChecked === "undefined") {
+		if (!subjectId || !userId || typeof isChecked === "undefined") {
 			return res.json(
 				new ApiError(
 					400,
-					"Subject ID, student ID, and isChecked are required"
+					"Subject ID, user ID, and isChecked are required"
 				)
 			);
 		}
@@ -205,21 +205,21 @@ module.exports.assignSubject = async (req, res) => {
 
 		let updateOperation;
 		if (isChecked) {
-			// Add subject to student's subjects array
+			// Add subject to user's subjects array
 			updateOperation = { $addToSet: { subjects: subjectId } };
 		} else {
-			// Remove subject from student's subjects array
+			// Remove subject from user's subjects array
 			updateOperation = { $pull: { subjects: subjectId } };
 		}
 
 		const updatedUser = await User.findByIdAndUpdate(
-			studentId,
+			userId,
 			updateOperation,
 			{ new: true }
 		).populate("subjects");
 
 		if (!updatedUser) {
-			return res.json(new ApiError(404, "Student not found"));
+			return res.json(new ApiError(404, "user not found"));
 		}
 
 		return res.json(

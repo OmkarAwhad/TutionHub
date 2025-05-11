@@ -152,14 +152,14 @@ export function deleteSubject(subjectId, token) {
 	};
 }
 
-export function assignSubjectToStudent(studentId, subjectId, isChecked, token) {
+export function assignSubjectToStudent(userId, subjectId, isChecked, token) {
 	return async (dispatch) => {
 		const toastId = toast.loading("Assigning subject to student...");
 		try {
 			const result = await apiConnector(
 				"POST",
 				subjectApi.ASSIGN_SUBJECT_TO_STUDENT,
-				{ studentId, subjectId, isChecked },
+				{ userId, subjectId, isChecked },
 				{
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,

@@ -15,7 +15,7 @@ function ViewSubmissions() {
 
 	const fetchMyDetails = async () => {
 		try {
-			const response = await dispatch(getMyDetails(token));
+			let response = await dispatch(getMyDetails(token));
 			if (response) {
 				console.log(response?.homework);
 				setMyHomework(response.homework);
@@ -94,11 +94,14 @@ function ViewSubmissions() {
 											</span>{" "}
 											{new Date(
 												homework.createdAt
-											).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "2-digit",
-                     })}
+											).toLocaleDateString(
+												"en-GB",
+												{
+													day: "2-digit",
+													month: "2-digit",
+													year: "2-digit",
+												}
+											)}
 										</p>
 										<p className="text-richblack-200">
 											<span className="text-medium-gray">
@@ -106,11 +109,14 @@ function ViewSubmissions() {
 											</span>{" "}
 											{new Date(
 												homework.dueDate
-											).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "2-digit",
-                     })}
+											).toLocaleDateString(
+												"en-GB",
+												{
+													day: "2-digit",
+													month: "2-digit",
+													year: "2-digit",
+												}
+											)}
 										</p>
 									</div>
 								</div>

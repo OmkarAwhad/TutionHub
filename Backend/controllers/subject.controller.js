@@ -157,7 +157,7 @@ module.exports.getAllSubjects = async (req, res) => {
 	}
 };
 
-module.exports.subsOfThatStud = async (req, res) => {
+module.exports.subsOfThatUser = async (req, res) => {
 	try {
 		const userId = req.user.id;
 

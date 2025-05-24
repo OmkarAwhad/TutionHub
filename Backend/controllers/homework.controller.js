@@ -470,6 +470,7 @@ module.exports.getSubmissions = async (req, res) => {
 		// const subjectDetails = await Subject.findById(homework.subject);
 		const allStudents = await User.find({
 			subjects: { $in: [homework.subject] },
+			role: "Student",
 		});
 
 		const notSubmitted = allStudents.filter(

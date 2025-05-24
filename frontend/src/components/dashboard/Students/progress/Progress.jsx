@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { subjectsOfAStudent } from "../../../../services/operations/subject.service";
+import { subjectsOfAUser } from "../../../../services/operations/subject.service";
 import {
 	marksAccToSubject,
 	trackStudentProgress,
@@ -28,7 +28,7 @@ function Progress() {
 	useEffect(() => {
 		const fetchSubjects = async () => {
 			try {
-				const result = await dispatch(subjectsOfAStudent(token));
+				const result = await dispatch(subjectsOfAUser(token));
 				if (result) {
 					// console.log(result)
 					setSubjects(result);

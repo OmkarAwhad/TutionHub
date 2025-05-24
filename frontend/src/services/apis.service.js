@@ -38,7 +38,7 @@ export const remarksApi = {
 };
 
 export const subjectApi = {
-	SUBJECT_OF_STUDENT: BASE_URL + "/subject/subsOfThatStud",
+	SUBJECT_OF_USER: BASE_URL + "/subject/subsOfThatUser",
 	CREATE_SUBJECT: BASE_URL + "/subject/createSubject",
 	UPDATE_SUBJECT: BASE_URL + "/subject/updateSubject",
 	DELETE_SUBJECT: BASE_URL + "/subject/deleteSubject",

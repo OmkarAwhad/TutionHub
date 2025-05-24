@@ -2,12 +2,12 @@ import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector.service";
 import { subjectApi } from "../apis.service";
 
-export function subjectsOfAStudent(token) {
+export function subjectsOfAUser(token) {
 	return async () => {
 		try {
 			const result = await apiConnector(
 				"GET",
-				subjectApi.SUBJECT_OF_STUDENT,
+				subjectApi.SUBJECT_OF_USER,
 				{},
 				{
 					"Content-Type": "application/json",

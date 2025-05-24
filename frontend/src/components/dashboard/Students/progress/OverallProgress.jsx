@@ -32,7 +32,7 @@ function OverallProgress({ overallProgress }) {
 					? mark.totalMarks / 100
 					: 1;
 			return {
-				subject: mark.lecture.subject.name,
+				subject: mark.lecture.subject?.name,
 				marks: mark.marks * factor,
 				totalMarks: mark.totalMarks * factor,
 			};

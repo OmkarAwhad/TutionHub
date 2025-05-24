@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { subjectsOfAStudent } from "../../../../services/operations/subject.service";
+import { subjectsOfAUser } from "../../../../services/operations/subject.service";
 import { viewAttendanceOfAStud } from "../../../../services/operations/attendance.service";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import AttendChart from "./AttendChart";
@@ -38,7 +38,7 @@ function Attendance() {
 	useEffect(() => {
 		const fetchSubjects = async () => {
 			try {
-				const result = await dispatch(subjectsOfAStudent(token));
+				const result = await dispatch(subjectsOfAUser(token));
 				// console.log("result:", result);
 				if (result) {
 					setSubjects(result);

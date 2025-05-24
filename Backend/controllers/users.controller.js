@@ -7,9 +7,7 @@ const Lecture = require("../models/lecture.model");
 
 module.exports.getMyStudentsList = async (req, res) => {
 	try {
-		// console.log(req.user)
 		const userId = req.user.id;
-		// console.log("1")
 
 		const userDetails = await User.findById(userId)
 			.populate("subjects")

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllSubjects } from "../../../../services/operations/subject.service";
+import { subjectsOfAUser } from "../../../../services/operations/subject.service";
 import { uploadHomework } from "../../../../services/operations/homework.service";
 import toast from "react-hot-toast";
 import EnhancedFileUploaderNoFileRequired from "./EnhancedFileUploaderNoFileRequired";
@@ -21,7 +21,7 @@ function UploadHomework() {
 	useEffect(() => {
 		const fetchSubjects = async () => {
 			try {
-				const response = await dispatch(getAllSubjects(token));
+				const response = await dispatch(subjectsOfAUser(token));
 				if (response) {
 					setSubjects(response);
 				}

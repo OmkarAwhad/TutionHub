@@ -65,6 +65,7 @@ module.exports.login = async (req, res) => {
 			.populate("profile")
 			.populate("notes")
 			.populate("announcement")
+			.populate("subjects")
 			.exec();
 
 		if (!userDetails) {

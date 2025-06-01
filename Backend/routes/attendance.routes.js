@@ -5,6 +5,7 @@ const {
 	viewAttendanceOfAStud,
 	viewStudAttendanceForLec,
 	attendAccToSub,
+	StudAttendAccToSubForTutor,
 	studsPresentForALec,
 	checkLectureAttendance,
 	getLecturesWithAttendanceMarked,
@@ -15,6 +16,11 @@ const router = express.Router();
 router.post("/markAttendance", auth, isAdmin, markAttendance);
 router.get("/viewAttendanceOfAStud", auth, isStudent, viewAttendanceOfAStud);
 router.get("/attendAccToSub/:subjectId", auth, isStudent, attendAccToSub);
+router.post(
+	"/StudAttendAccToSubForTutor",
+	auth,
+	StudAttendAccToSubForTutor
+);
 router.get("/viewStudAttendanceForLec", auth, viewStudAttendanceForLec);
 router.get("/studsPresentForALec", auth, isAdmin, studsPresentForALec);
 router.get("/checkLectureAttendance/:lectureId", auth, checkLectureAttendance);

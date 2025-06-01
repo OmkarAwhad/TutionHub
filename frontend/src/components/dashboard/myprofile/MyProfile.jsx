@@ -231,7 +231,7 @@ function MyProfile() {
 
 			{user && user.role === ACCOUNT_TYPE.STUDENT && (
 				<>
-					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 shadow-lg shadow-slate-gray/30 transition-all duration-300 hover:shadow-xl">
+					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8  transition-all duration-300 ">
 						<NavLink
 							to={"/dashboard/my-profile/attendance"}
 							className="bg-medium-gray min-w-[30%] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"

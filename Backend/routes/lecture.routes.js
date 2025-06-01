@@ -1,5 +1,10 @@
 const express = require("express");
-const { auth, isAdmin, isStudent } = require("../middlewares/auth.middleware");
+const {
+	auth,
+	isAdmin,
+	isStudent,
+	isTutor,
+} = require("../middlewares/auth.middleware");
 const {
 	createLecture,
 	getLecturesOfWeek,
@@ -9,6 +14,7 @@ const {
 	getAllLectures,
 	getLectureBySub,
 	getLecturesByDate,
+	getTutorLecturesByDate,
 } = require("../controllers/lecture.controller");
 const router = express.Router();
 
@@ -20,5 +26,6 @@ router.delete("/deleteLecture", auth, isAdmin, deleteLecture);
 router.get("/getAllLectures", auth, isAdmin, getAllLectures);
 router.get("/getLectureBySub", auth, isAdmin, getLectureBySub);
 router.post("/getLecturesByDate", auth, isStudent, getLecturesByDate);
+router.post("/getTutorLecturesByDate", auth, isTutor, getTutorLecturesByDate);
 
 module.exports = router;

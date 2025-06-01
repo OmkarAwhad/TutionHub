@@ -31,7 +31,7 @@ function MyAnnouncement() {
       <div>
          <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-semibold text-richblack-5">
-               My Announcements
+               Announcements
             </h3>
             <button
                onClick={() => navigate(-1)}

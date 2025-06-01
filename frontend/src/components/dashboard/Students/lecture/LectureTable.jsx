@@ -164,11 +164,11 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 					</tbody>
 				</table>
 
-				{!hasLectures && (
+				{/* {!hasLectures && (
 					<div className="text-center mt-4 text-richblack-200">
 						No lectures found for this week.
 					</div>
-				)}
+				)} */}
 			</div>
 		</div>
 	);

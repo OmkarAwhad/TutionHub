@@ -12,6 +12,7 @@ export const profileApi = {
 export const attendanceApi = {
 	GET_STUDENT_ATTENDANCE: BASE_URL + "/attendance/viewAttendanceOfAStud",
 	GET_SUBJECT_ATTENDANCE: BASE_URL + "/attendance/attendAccToSub",
+	GET_SUBJECT_ATTENDANCE_BY_TUTOR: BASE_URL + "/attendance/StudAttendAccToSubForTutor",
 	MARK_ATTENDANCE: BASE_URL + "/attendance/markAttendance",
 	CHECK_LECTURE_ATTENDANCE: BASE_URL + "/attendance/checkLectureAttendance",
 	GET_LECTURES_WITH_ATTENDANCE_MARKED:
@@ -35,6 +36,7 @@ export const marksApi = {
 
 export const remarksApi = {
 	GET_STUDENT_REMARKS: BASE_URL + "/remarks/viewRemarks",
+	ADD_A_REMARK: BASE_URL + "/remarks/addARemark",
 };
 
 export const subjectApi = {
@@ -55,6 +57,7 @@ export const lectureApi = {
 	GET_LECTURES_BY_SUBJECT: BASE_URL + "/lecture/getLectureBySub",
 	DELETE_LECTURE: BASE_URL + "/lecture/deleteLecture",
 	UPDATE_LECTURE: BASE_URL + "/lecture/updateLecture",
+	GET_TUTOR_LECTURES_BY_DATE: BASE_URL + "/lecture/getTutorLecturesByDate",
 };
 
 export const usersApi = {

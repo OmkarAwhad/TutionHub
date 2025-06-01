@@ -447,13 +447,11 @@ module.exports.getLecturesByDate = async (req, res) => {
 						// Extract start time (before " to ")
 						const startTime = timeStr.split(" to ")[0].trim();
 						const [hourMinute, period] = startTime.split(" ");
-						let [hours, minutes = 0] = hourMinute
+						let [hours, minutes] = hourMinute
 							.split(":")
 							.map(Number);
-						if (period.toUpperCase() === "PM" && hours !== 12)
-							hours += 12;
-						if (period.toUpperCase() === "AM" && hours === 12)
-							hours = 0;
+						if (period.toUpperCase() === "PM" && hours !== 12) hours += 12;
+						if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
 						return hours * 60 + minutes;
 					} catch (error) {
 						console.error(
@@ -486,6 +484,165 @@ module.exports.getLecturesByDate = async (req, res) => {
 			new ApiError(
 				500,
 				"Internal server error while fetching lectures"
+			)
+		);
+	}
+};
+
+module.exports.getTutorLecturesByDate = async (req, res) => {
+	try {
+		const { date, fetchWeek = true } = req.body;
+		const tutorId = req.user.id;
+
+		if (!tutorId) {
+			return res.json(new ApiError(401, "Unauthorized: Tutor not found"));
+		}
+
+		if (!date) {
+			return res.json(new ApiError(400, "Date is required"));
+		}
+
+		const inputDate = new Date(date);
+		if (isNaN(inputDate)) {
+			return res.json(
+				new ApiError(400, "Invalid date format. Use YYYY-MM-DD")
+			);
+		}
+		inputDate.setHours(0, 0, 0, 0);
+
+		let weekStart, weekEnd;
+
+		if (fetchWeek) {
+			weekStart = new Date(inputDate);
+			weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+			weekEnd = new Date(weekStart);
+			weekEnd.setDate(weekEnd.getDate() + 6);
+			weekEnd.setHours(23, 59, 59, 999);
+		} else {
+			weekStart = new Date(inputDate);
+			weekEnd = new Date(inputDate);
+			weekEnd.setHours(23, 59, 59, 999);
+		}
+
+		const lectures = await Lecture.find({
+			date: {
+				$gte: weekStart,
+				$lte: weekEnd,
+			},
+			tutor: tutorId,
+		})
+			.populate("tutor")
+			.populate("subject")
+			.exec();
+
+		if (lectures.length === 0) {
+			return res.json(
+				new ApiResponse(
+					200,
+					{
+						weekStart: weekStart.toISOString().split("T")[0],
+						weekEnd: weekEnd.toISOString().split("T")[0],
+						lectures: {
+							Sunday: [],
+							Monday: [],
+							Tuesday: [],
+							Wednesday: [],
+							Thursday: [],
+							Friday: [],
+							Saturday: [],
+						},
+					},
+					`No lectures found for the specified ${
+						fetchWeek ? "week" : "date"
+					}`
+				)
+			);
+		}
+
+		const lectByDay = {
+			Sunday: [],
+			Monday: [],
+			Tuesday: [],
+			Wednesday: [],
+			Thursday: [],
+			Friday: [],
+			Saturday: [],
+		};
+
+		const getDayName = (date) => {
+			const days = [
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday",
+			];
+			return days[new Date(date).getDay()];
+		};
+
+		lectures.forEach((lect) => {
+			const day = getDayName(lect.date);
+			lectByDay[day].push({
+				_id: lect._id,
+				student: lect.student,
+				tutor: lect.tutor,
+				date: lect.date,
+				day,
+				time: lect.time,
+				description: lect.description,
+				subject: lect.subject,
+				marksMarked: lect.marksMarked,
+			});
+		});
+
+		Object.keys(lectByDay).forEach((day) => {
+			lectByDay[day].sort((a, b) => {
+				const parseTime = (timeStr) => {
+					try {
+						const startTime = timeStr.split(" to ")[0].trim();
+						const [hourMinute, period] = startTime.split(" ");
+						let [hours, minutes = 0] = hourMinute
+							.split(":")
+							.map(Number);
+						if (period && period.toUpperCase() === "PM" && hours !== 12)
+							hours += 12;
+						if (period && period.toUpperCase() === "AM" && hours === 12)
+							hours = 0;
+						return hours * 60 + minutes;
+					} catch (error) {
+						console.error(
+							`Error parsing time: ${timeStr}`,
+							error
+						);
+						return 0;
+					}
+				};
+				return parseTime(a.time) - parseTime(b.time);
+			});
+		});
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					weekStart: weekStart.toISOString().split("T")[0],
+					weekEnd: weekEnd.toISOString().split("T")[0],
+					lectures: lectByDay,
+				},
+				`Lectures fetched and grouped by day for the specified ${
+					fetchWeek ? "week" : "date"
+				} successfully`
+			)
+		);
+	} catch (error) {
+		console.error("Error fetching tutor lectures:", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Internal server error while fetching tutor lectures"
 			)
 		);
 	}

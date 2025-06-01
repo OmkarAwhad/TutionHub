@@ -38,7 +38,7 @@ import UploadNote from "./components/dashboard/tutor/Notes/UploadNote.jsx";
 import NotesList from "./components/dashboard/tutor/Notes/NotesList.jsx";
 import TutorHomework from "./components/dashboard/tutor/Homework/TutorHomework.jsx";
 import StudentData from "./components/dashboard/tutor/StudentData/StudentData.jsx";
-import Metrics from "./components/dashboard/tutor/Metrics/Metrics.jsx";
+import TutorLecture from "./components/dashboard/tutor/Lecture/TutorLecture.jsx";
 import Content from "./components/dashboard/tutor/Content/Content.jsx";
 import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework.jsx";
 import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
@@ -268,8 +268,8 @@ function App() {
 								element={<StudentData />}
 							/>
 							<Route
-								path="/dashboard/tutor-metrics"
-								element={<Metrics />}
+								path="/dashboard/tutor-lectures"
+								element={<TutorLecture />}
 							/>
 							<Route
 								path="/dashboard/content"

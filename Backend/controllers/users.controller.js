@@ -12,14 +12,6 @@ module.exports.getMyStudentsList = async (req, res) => {
 		const userDetails = await User.findById(userId)
 			.populate("subjects")
 			.exec();
-		if (!userDetails.role === "Student") {
-			return res.json(
-				new ApiError(
-					403,
-					"Access denied. Only students can access this resource"
-				)
-			);
-		}
 
 		if (!userDetails) {
 			return res.json(new ApiError(404, "User not found"));
@@ -281,3 +273,4 @@ module.exports.getMyDetails = async (req, res) => {
 		);
 	}
 };
+

@@ -86,7 +86,9 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 		).length;
 		const unrecordedCount = totalLectures - (presentCount + absentCount);
 		const percentage =
-			totalLectures > 0 ? (presentCount / (totalLectures-unrecordedCount)) * 100 : 0;
+			totalLectures > 0
+				? (presentCount / (totalLectures - unrecordedCount)) * 100
+				: 0;
 
 		return res.json(
 			new ApiResponse(
@@ -98,7 +100,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
-						markedLectures:totalLectures-unrecordedCount,
+						markedLectures: totalLectures - unrecordedCount,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},
@@ -161,6 +163,81 @@ module.exports.attendAccToSub = async (req, res) => {
 			new ApiResponse(
 				200,
 				{
+					attendanceDetails,
+					statistics: {
+						totalLectures,
+						present: presentCount,
+						absent: absentCount,
+						unrecorded: unrecordedCount,
+						markedLectures: totalLectures - unrecordedCount,
+						percentage: percentage.toFixed(2) + "%",
+					},
+				},
+				"Attendance fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching attendance acc to a subject ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching attendance acc to a subject "
+			)
+		);
+	}
+};
+
+module.exports.StudAttendAccToSubForTutor = async (req, res) => {
+	try {
+		const { studentId, subjectId } = req.body;
+
+		const userDetails = await User.findOne({
+			subjects: { $in: [subjectId] },
+		});
+		if (!userDetails) {
+			return res.json(
+				new ApiError(
+					400,
+					"Student is not enrolled in the specified subject"
+				)
+			);
+		}
+
+		const lectureDetails = await Lecture.find({ subject: subjectId });
+		if (!lectureDetails || lectureDetails.length === 0) {
+			return res.json(
+				new ApiError(400, "No lectures found for this subject")
+			);
+		}
+
+		const lectureIds = lectureDetails.map((lect) => lect._id);
+
+		const attendanceDetails = await Attendance.find({
+			student: studentId,
+			lecture: { $in: lectureIds },
+		})
+			.populate({ path: "lecture", populate: "subject" })
+			.populate("student", "name")
+			.exec();
+
+		const totalLectures = lectureDetails.length; // Include all lectures
+		const presentCount = attendanceDetails.filter(
+			(att) => att.status === "Present"
+		).length;
+		const absentCount = attendanceDetails.filter(
+			(att) => att.status === "Absent"
+		).length;
+		const unrecordedCount = totalLectures - (presentCount + absentCount);
+		const percentage =
+			totalLectures > 0
+				? (presentCount / (totalLectures - unrecordedCount)) * 100
+				: 0;
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					// userDetails,
 					attendanceDetails,
 					statistics: {
 						totalLectures,

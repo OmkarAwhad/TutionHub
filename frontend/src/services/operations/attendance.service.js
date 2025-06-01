@@ -232,3 +232,29 @@ export function attendAccToSub(subjectId, token) {
 		}
 	};
 }
+
+export function StudAttendAccToSubForTutor(studentId, subjectId, token) {
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"POST",
+				attendanceApi.GET_SUBJECT_ATTENDANCE_BY_TUTOR,
+				{ studentId, subjectId },
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return null;
+			}
+			// console.log(result.data.data);
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching attendance for subject");
+			console.error("Error fetching attendance for subject:", error);
+			return null;
+		}
+	};
+}

@@ -11,7 +11,7 @@ const {
 } = require("../controllers/users.controller");
 
 router.get("/viewStudentProfile/:studentId", auth, isTutor, viewStudentProfile);
-router.get("/getMyStudentsList", auth, getMyStudentsList);
+router.get("/getMyStudentsList", auth, isTutor, getMyStudentsList);
 router.get("/getAllStudentsList", auth, getAllStudentsList);
 router.get("/getTutors", auth, isAdmin, getTutors);
 router.get("/getMyDetails", auth, getMyDetails);

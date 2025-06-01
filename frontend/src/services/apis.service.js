@@ -86,3 +86,10 @@ export const homeworkApi = {
 	GET_SUBMISSIONS: BASE_URL + "/homework/getSubmissions",
 	STUDENT_SUBMISSIONS: BASE_URL + "/homework/HWSubmittedByStud",
 };
+
+export const announcementApi = {
+	CREATE_ANNOUNCEMENT: BASE_URL + "/announcement/createAnnouncement",
+	GET_MY_ANNOUNCEMENTS: BASE_URL + "/announcement/getMyAnnouncements",
+	GET_ANNOUNCEMENTS: BASE_URL + "/announcement/getAllAnnouncements",
+	DELETE_ANNOUNCEMENT: BASE_URL + "/announcement/deleteAnnouncement",
+};

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBin6Line } from "react-icons/ri";
+
 import {
 	deleteSubject,
 	getAllSubjects,
@@ -80,7 +82,7 @@ function GetAllSubjects() {
 					Get Subjects
 				</h3>
 				<button
-					onClick={() => navigate('/dashboard/admin-subjects')}
+					onClick={() => navigate("/dashboard/admin-subjects")}
 					className="flex items-center gap-2 cursor-pointer text-richblack-200 hover:text-richblack-5 transition-all duration-200"
 				>
 					<FaArrowLeftLong className="text-lg" />
@@ -104,17 +106,17 @@ function GetAllSubjects() {
 								onClick={() => {
 									handleEdit(subject);
 								}}
-								className="p-2 text-medium-gray hover:text-charcoal-gray transition-all transform hover:scale-110"
+								className="p-3 bg-medium-gray rounded-full text-xl text-white cursor-pointer hover:bg-charcoal-gray transition-all duration-150"
 							>
-								<FaEdit size={20} />
+								<FaEdit />
 							</button>
 							<button
 								onClick={() =>
 									handleDeleteClick(subject)
 								}
-								className="p-2 text-red-500 hover:text-red-700 transition-all transform hover:scale-110"
+								className="p-3 bg-medium-gray rounded-full text-xl text-white cursor-pointer hover:bg-charcoal-gray transition-all duration-150"
 							>
-								<FaTrash size={20} />
+								<RiDeleteBin6Line />
 							</button>
 						</div>
 					</div>

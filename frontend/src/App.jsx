@@ -49,6 +49,10 @@ import GetAllSubjects from "./components/dashboard/admin/subjects/GetAllSubjects
 import AssignSubjects from "./components/dashboard/admin/subjects/AssignSubjects.jsx";
 import AssignSubStudents from "./components/dashboard/admin/subjects/AssignSubStudents.jsx";
 import AssignSubTutors from "./components/dashboard/admin/subjects/AssignSubTutors.jsx";
+import AdminAnnoucement from "./components/dashboard/admin/announcement/AdminAnnoucement.jsx";
+import CreateAnnouncement from "./components/dashboard/admin/announcement/CreateAnnouncement.jsx";
+import AnnouncementList from "./components/dashboard/admin/announcement/AnnouncementList.jsx";
+import MyAnnouncement from "./components/dashboard/myprofile/MyAnnouncement.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -81,6 +85,11 @@ function App() {
 					<Route
 						path="/dashboard/my-profile"
 						element={<MyProfile />}
+					/>
+
+					<Route
+						path="/dashboard/my-announcement"
+						element={<MyAnnouncement />}
 					/>
 					{user?.role === ACCOUNT_TYPE.STUDENT && (
 						<>
@@ -204,6 +213,18 @@ function App() {
 							<Route
 								path="/dashboard/admin-attendance/mark-attendance/:lectureId"
 								element={<MainMarking />}
+							/>
+							<Route
+								path="/dashboard/admin-announcement"
+								element={<AdminAnnoucement />}
+							/>
+							<Route
+								path="/dashboard/admin-announcement/create-announcement"
+								element={<CreateAnnouncement />}
+							/>
+							<Route
+								path="/dashboard/admin-announcement/list-announcements"
+								element={<AnnouncementList />}
 							/>
 						</>
 					)}

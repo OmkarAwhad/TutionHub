@@ -90,4 +90,10 @@ export const sidbarLinks = [
 		path: "/dashboard/content",
 		type: ACCOUNT_TYPE.TUTOR,
 	},
+	{
+		id: 15,
+		name: "Announcement",
+		path: "/dashboard/admin-announcement",
+		type: ACCOUNT_TYPE.ADMIN,
+	},
 ];

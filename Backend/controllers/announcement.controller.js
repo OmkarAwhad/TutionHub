@@ -92,15 +92,46 @@ module.exports.createAnnouncement = async (req, res) => {
 	}
 };
 
-module.exports.getAnnouncements = async (req, res) => {
+module.exports.getMyAnnouncements = async (req, res) => {
 	try {
 		const userId = req.user.id;
-		console.log(userId)
-		const userDetails = await User.findById(userId).populate("announcement").exec();
+		// console.log(userId)
+		const userDetails = await User.findById(userId)
+			.populate("announcement")
+			.exec();
 		return res.json(
 			new ApiResponse(
 				200,
 				userDetails,
+				"Announcements fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error fetching announcements: ", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error fetching announcements: " + error.message
+			)
+		);
+	}
+};
+
+module.exports.getAllAnnouncements = async (req, res) => {
+	try {
+		// const userId = req.user.id;
+		// console.log(userId)
+		const announcementDetails = await Announcement.find()
+			.populate("subject")
+			.sort({ createdAt: -1 })
+			.exec();
+		if (!announcementDetails || announcementDetails.length === 0) {
+			return res.json(new ApiError(404, "No announcements found"));
+		}
+		return res.json(
+			new ApiResponse(
+				200,
+				announcementDetails,
 				"Announcements fetched successfully"
 			)
 		);

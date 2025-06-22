@@ -3,6 +3,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const authApi = {
 	SIGNUP_API: BASE_URL + "/auth/signUp",
 	LOGIN_API: BASE_URL + "/auth/login",
+	DELETE_MY_ACCOUNT: BASE_URL + "/auth/deleteMyAccount",
 };
 
 export const profileApi = {
@@ -62,8 +63,8 @@ export const lectureApi = {
 
 export const usersApi = {
 	GET_MY_STUDENTS_LIST: BASE_URL + "/users/getMyStudentsList",
-	GET_ALL_STUDENTS_LIST: BASE_URL + "/users/getAllStudentsList",
-	GET_TUTORS: BASE_URL + "/users/getTutors",
+	GET_ALL_STUDENTS_LIST: BASE_URL + "/users/getAllUsersList",
+	// GET_TUTORS: BASE_URL + "/users/getTutors",
 	GET_STUDENTS_BY_LEC: BASE_URL + "/users/getMyStudentsListByLec",
 	GET_MY_DETAILS: BASE_URL + "/users/getMyDetails",
 };

@@ -63,7 +63,7 @@ function StudentData() {
 						);
 					}
 				}
-				// console.log(data);
+				console.log(data);
 				setStudentsList(data);
 			}
 		} catch (error) {

@@ -78,16 +78,28 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 			.exec();
 
 		const totalLectures = lectureDetails.length;
-		const presentCount = attendanceDetails.filter(
-			(att) => att.status === "Present"
-		).length;
-		const absentCount = attendanceDetails.filter(
-			(att) => att.status === "Absent"
-		).length;
-		const unrecordedCount = totalLectures - (presentCount + absentCount);
+
+		// Use a Set to track unique lecture IDs for which attendance is marked
+		const markedLectureIds = new Set();
+		let presentCount = 0;
+		let absentCount = 0;
+
+		attendanceDetails.forEach((att) => {
+			if (att.lecture && att.lecture._id) {
+				const lectId = att.lecture._id.toString();
+				if (!markedLectureIds.has(lectId)) {
+					markedLectureIds.add(lectId);
+					if (att.status === "Present") presentCount++;
+					else if (att.status === "Absent") absentCount++;
+				}
+			}
+		});
+
+		const markedLectures = markedLectureIds.size;
+		const unrecordedCount = totalLectures - markedLectures;
 		const percentage =
-			totalLectures > 0
-				? (presentCount / (totalLectures - unrecordedCount)) * 100
+			markedLectures > 0
+				? (presentCount / markedLectures) * 100
 				: 0;
 
 		return res.json(
@@ -100,7 +112,7 @@ module.exports.viewAttendanceOfAStud = async (req, res) => {
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
-						markedLectures: totalLectures - unrecordedCount,
+						markedLectures: markedLectures,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},
@@ -146,17 +158,29 @@ module.exports.attendAccToSub = async (req, res) => {
 			lecture: { $in: lectureIds },
 		}).populate({ path: "lecture", populate: "subject" });
 
-		const totalLectures = lectureDetails.length; // Include all lectures
-		const presentCount = attendanceDetails.filter(
-			(att) => att.status === "Present"
-		).length;
-		const absentCount = attendanceDetails.filter(
-			(att) => att.status === "Absent"
-		).length;
-		const unrecordedCount = totalLectures - (presentCount + absentCount);
+		const totalLectures = lectureDetails.length;
+
+		// Use a Set to track unique lecture IDs for which attendance is marked
+		const markedLectureIds = new Set();
+		let presentCount = 0;
+		let absentCount = 0;
+
+		attendanceDetails.forEach((att) => {
+			if (att.lecture && att.lecture._id) {
+				const lectId = att.lecture._id.toString();
+				if (!markedLectureIds.has(lectId)) {
+					markedLectureIds.add(lectId);
+					if (att.status === "Present") presentCount++;
+					else if (att.status === "Absent") absentCount++;
+				}
+			}
+		});
+
+		const markedLectures = markedLectureIds.size;
+		const unrecordedCount = totalLectures - markedLectures;
 		const percentage =
-			totalLectures > 0
-				? (presentCount / (totalLectures - unrecordedCount)) * 100
+			markedLectures > 0
+				? (presentCount / markedLectures) * 100
 				: 0;
 
 		return res.json(
@@ -169,7 +193,7 @@ module.exports.attendAccToSub = async (req, res) => {
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
-						markedLectures: totalLectures - unrecordedCount,
+						markedLectures: markedLectures,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},
@@ -220,31 +244,42 @@ module.exports.StudAttendAccToSubForTutor = async (req, res) => {
 			.populate("student", "name")
 			.exec();
 
-		const totalLectures = lectureDetails.length; // Include all lectures
-		const presentCount = attendanceDetails.filter(
-			(att) => att.status === "Present"
-		).length;
-		const absentCount = attendanceDetails.filter(
-			(att) => att.status === "Absent"
-		).length;
-		const unrecordedCount = totalLectures - (presentCount + absentCount);
+		const totalLectures = lectureDetails.length;
+
+		// Use a Set to track unique lecture IDs for which attendance is marked
+		const markedLectureIds = new Set();
+		let presentCount = 0;
+		let absentCount = 0;
+
+		attendanceDetails.forEach((att) => {
+			if (att.lecture && att.lecture._id) {
+				const lectId = att.lecture._id.toString();
+				if (!markedLectureIds.has(lectId)) {
+					markedLectureIds.add(lectId);
+					if (att.status === "Present") presentCount++;
+					else if (att.status === "Absent") absentCount++;
+				}
+			}
+		});
+
+		const markedLectures = markedLectureIds.size;
+		const unrecordedCount = totalLectures - markedLectures;
 		const percentage =
-			totalLectures > 0
-				? (presentCount / (totalLectures - unrecordedCount)) * 100
+			markedLectures > 0
+				? (presentCount / markedLectures) * 100
 				: 0;
 
 		return res.json(
 			new ApiResponse(
 				200,
 				{
-					// userDetails,
 					attendanceDetails,
 					statistics: {
 						totalLectures,
 						present: presentCount,
 						absent: absentCount,
 						unrecorded: unrecordedCount,
-						markedLectures: totalLectures - unrecordedCount,
+						markedLectures: markedLectures,
 						percentage: percentage.toFixed(2) + "%",
 					},
 				},
@@ -409,25 +444,45 @@ module.exports.getLecturesWithAttendanceMarked = async (req, res) => {
 
 module.exports.getLecturesWithoutAttendance = async (req, res) => {
 	try {
-		const allLectures = await Lecture.find()
+		const allLectures = await Lecture.find({ subject: { $ne: null } }) // Exclude lectures with null subjects
 			.populate("subject")
 			.populate("tutor")
 			.sort({ date: -1 });
 
-		const lecturesWithAttendance = await Attendance.find().distinct(
-			"lecture"
-		);
+		const lecturesWithoutCompleteAttendance = [];
 
-		const lecturesWithoutAttendance = allLectures.filter(
-			(lecture) =>
-				!lecturesWithAttendance.includes(lecture._id.toString())
-		);
+		for (const lecture of allLectures) {
+			// Skip if subject is still null after population (shouldn't happen with the filter above)
+			if (!lecture.subject) {
+				continue;
+			}
+
+			// Get all students enrolled in this lecture's subject
+			const enrolledStudents = await User.find({
+				subjects: { $in: [lecture.subject._id] },
+				role: "Student",
+			});
+
+			// Get attendance records for this lecture
+			const attendanceRecords = await Attendance.find({
+				lecture: lecture._id,
+			});
+
+			// If no attendance records exist, or if attendance is not marked for all students
+			// then include this lecture in the result
+			if (
+				attendanceRecords.length === 0 ||
+				attendanceRecords.length < enrolledStudents.length
+			) {
+				lecturesWithoutCompleteAttendance.push(lecture);
+			}
+		}
 
 		return res.json(
 			new ApiResponse(
 				200,
-				lecturesWithoutAttendance,
-				"Lectures without attendance marked fetched successfully"
+				lecturesWithoutCompleteAttendance,
+				"Lectures without complete attendance marked fetched successfully"
 			)
 		);
 	} catch (error) {

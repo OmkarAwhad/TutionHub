@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllStudentsList } from "../../../../services/operations/users.service";
+import { getAllUsersList } from "../../../../services/operations/users.service";
 import { assignSubjectToStudent } from "../../../../services/operations/subject.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
@@ -22,8 +22,10 @@ function AssignSubStudents() {
 
 	const fetchStudents = async () => {
 		try {
-			const result = await dispatch(getAllStudentsList(token));
+			let result = await dispatch(getAllUsersList(token));
 			if (result) {
+				result = result.filter((user)=>user.role==="Student")
+				// console.log(result)
 				setStudents(result);
 			}
 		} catch (error) {
@@ -155,8 +157,8 @@ function AssignSubStudents() {
 														<label className="inline-flex items-center justify-center cursor-pointer">
 															<input
 																type="checkbox"
-																checked={student.subjects?.includes(
-																	subject._id
+																checked={student.subjects?.some(
+																	(s) => s._id === subject._id
 																)}
 																onChange={(
 																	e

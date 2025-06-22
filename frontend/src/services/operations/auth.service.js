@@ -79,3 +79,36 @@ export function logout(navigate) {
 		navigate("/login");
 	};
 }
+
+export function deleteMyAccount(token, navigate) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Deleting account...");
+		dispatch(setLoading(true));
+		try {
+			const result = await apiConnector(
+				"DELETE",
+				authApi.DELETE_MY_ACCOUNT,
+				{},
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				throw new Error(result.data.message);
+			}
+			toast.success("Account deleted successfully");
+			dispatch(setToken(null));
+			dispatch(setUser(null));
+			localStorage.removeItem("token");
+			localStorage.removeItem("user");
+			navigate("/signup");
+		} catch (error) {
+			console.log("Error deleting account");
+			toast.error("Failed to delete account");
+		}
+		dispatch(setLoading(false));
+		toast.remove(toastId);
+	};
+}

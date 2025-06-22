@@ -53,6 +53,7 @@ import AdminAnnoucement from "./components/dashboard/admin/announcement/AdminAnn
 import CreateAnnouncement from "./components/dashboard/admin/announcement/CreateAnnouncement.jsx";
 import AnnouncementList from "./components/dashboard/admin/announcement/AnnouncementList.jsx";
 import MyAnnouncement from "./components/dashboard/myprofile/MyAnnouncement.jsx";
+import UserDetails from "./components/dashboard/admin/users/UserDetails.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -133,6 +134,11 @@ function App() {
 							<Route
 								path="/dashboard/admin-users"
 								element={<AdminUsers />}
+							/>
+
+							<Route
+								path="/dashboard/admin-users/:id"
+								element={<UserDetails />}
 							/>
 							<Route
 								path="/dashboard/admin-lecture"

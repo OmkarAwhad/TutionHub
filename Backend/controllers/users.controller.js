@@ -108,29 +108,30 @@ module.exports.viewStudentProfile = async (req, res) => {
 	}
 };
 
-module.exports.getAllStudentsList = async (req, res) => {
+module.exports.getAllUsersList = async (req, res) => {
 	try {
-		const students = await User.find({ role: "Student" }).select(
-			"name email admissionDate subjects"
-		);
+		const users = await User.find({})
+			.populate("subjects")
+			.populate("profile")
+			.exec();
 
-		if (!students || students.length === 0) {
-			return res.json(new ApiResponse(200, [], "No students found"));
+		if (!users || users.length === 0) {
+			return res.json(new ApiResponse(200, [], "No users found"));
 		}
 
 		return res.json(
 			new ApiResponse(
 				200,
-				students,
-				"All students list fetched successfully"
+				users,
+				"All users list fetched successfully"
 			)
 		);
 	} catch (error) {
-		console.log("Error fetching all students list: ", error);
+		console.log("Error fetching all users list: ", error);
 		return res.json(
 			new ApiError(
 				500,
-				"Error fetching all students list: " + error.message
+				"Error fetching all users list: " + error.message
 			)
 		);
 	}
@@ -208,30 +209,6 @@ module.exports.getMyStudentsListByLec = async (req, res) => {
 	}
 };
 
-module.exports.getTutors = async (req, res) => {
-	try {
-		const tutorDetails = await User.find({ role: "Tutor" })
-			.populate("profile")
-			.exec();
-		if (!tutorDetails || tutorDetails.length === 0) {
-			return res.json(new ApiResponse(200, [], "No tutors found"));
-		}
-
-		return res.json(
-			new ApiResponse(
-				200,
-				tutorDetails,
-				"Tutors list fetched successfully"
-			)
-		);
-	} catch (error) {
-		console.log("Error fetching tutors list: ", error);
-		return res.json(
-			new ApiError(500, "Error fetching tutors list: " + error.message)
-		);
-	}
-};
-
 module.exports.getMyDetails = async (req, res) => {
 	try {
 		const userId = req.user.id;
@@ -273,4 +250,3 @@ module.exports.getMyDetails = async (req, res) => {
 		);
 	}
 };
-

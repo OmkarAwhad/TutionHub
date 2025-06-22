@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	getTutors,
-} from "../../../../services/operations/users.service";
+import { getAllUsersList } from "../../../../services/operations/users.service";
 import { assignSubjectToStudent } from "../../../../services/operations/subject.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
@@ -24,8 +22,9 @@ function AssignSubTutors() {
 
 	const fetchtutors = async () => {
 		try {
-			const result = await dispatch(getTutors(token));
+			let result = await dispatch(getAllUsersList(token));
 			if (result) {
+				result = result.filter((user) => user.role === "Tutor");
 				setTutors(result);
 			}
 		} catch (error) {
@@ -50,12 +49,7 @@ function AssignSubTutors() {
 	const handleSubjectChange = async (userId, subjectId, isChecked) => {
 		try {
 			const result = await dispatch(
-				assignSubjectToStudent(
-					userId,
-					subjectId,
-					isChecked,
-					token
-				)
+				assignSubjectToStudent(userId, subjectId, isChecked, token)
 			);
 			if (result) {
 				fetchtutors();
@@ -157,8 +151,8 @@ function AssignSubTutors() {
 														<label className="inline-flex items-center justify-center cursor-pointer">
 															<input
 																type="checkbox"
-																checked={tutor.subjects?.includes(
-																	subject._id
+																checked={tutor.subjects?.some(
+																	(s) => s._id === subject._id
 																)}
 																onChange={(
 																	e

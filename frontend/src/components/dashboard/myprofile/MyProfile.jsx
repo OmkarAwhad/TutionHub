@@ -5,31 +5,25 @@ import { GiTeacher } from "react-icons/gi";
 import { RiAdminLine } from "react-icons/ri";
 import { ACCOUNT_TYPE } from "../../../utils/constants.utils";
 import { RiEdit2Fill } from "react-icons/ri";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdDeleteForever } from "react-icons/md";
+import { FiAlertTriangle } from "react-icons/fi";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { updateProfile } from "../../../services/operations/profile.service";
 import Modal from "../extras/Modal";
-import { logout } from "../../../services/operations/auth.service";
+import { logout, deleteMyAccount } from "../../../services/operations/auth.service";
 
 function MyProfile() {
 	const { user } = useSelector((state) => state.profile);
 	const { token } = useSelector((state) => state.auth);
 
 	const [isEditing, setIsEditing] = useState(false);
+	const [showLogoutModal, setShowLogoutModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [formData, setFormData] = useState({
 		name: user?.name || "",
 		phoneNumber: user?.profile?.phoneNumber || "",
 		gender: user?.profile?.gender || "",
 	});
-
-	const handleInputChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prevState) => ({
-			...prevState,
-			[name]: value,
-		}));
-	};
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -44,6 +38,14 @@ function MyProfile() {
 		}
 	}, [user]);
 
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}));
+	};
+
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
 		try {
@@ -55,27 +57,45 @@ function MyProfile() {
 		}
 	};
 
-	const handleDeleteClick = () => {
-		setShowDeleteModal(true);
+	const handleLogoutClick = () => {
+		setShowLogoutModal(true);
 	};
 
-	const handleDeleteConfirm = async () => {
+	const handleLogoutConfirm = async () => {
 		try {
 			dispatch(logout(navigate));
-			setShowDeleteModal(false);
+			setShowLogoutModal(false);
 		} catch (error) {
-			console.error("Error deleting lecture:", error);
+			console.error("Error logging out:", error);
 		}
 	};
 
-	const handleDeleteCancel = () => {
+	const handleLogoutCancel = () => {
+		setShowLogoutModal(false);
+	};
+
+	const handleDeleteAccountClick = () => {
+		setShowDeleteModal(true);
+	};
+
+	const handleDeleteAccountConfirm = async () => {
+		try {
+			await dispatch(deleteMyAccount(token,navigate));
+		} catch (error) {
+			console.error("Error deleting account:", error);
+			alert("Failed to delete account. Please try again.");
+		}
+		setShowDeleteModal(false);
+	};
+
+	const handleDeleteAccountCancel = () => {
 		setShowDeleteModal(false);
 	};
 
 	return (
 		<div className="w-full max-w-7xl mx-auto flex flex-col gap-y-12 p-6">
 			{/* Profile Details */}
-			<div className="bg-white rounded-2xl shadow-xl shadow-slate-gray/5 overflow-hidden transition-all duration-300 hover:shadow-xl ">
+			<div className="bg-white rounded-2xl shadow-xl shadow-slate-gray/5 overflow-hidden transition-all duration-300 hover:shadow-xl">
 				{isEditing ? (
 					<form
 						onSubmit={handleFormSubmit}
@@ -145,24 +165,15 @@ function MyProfile() {
 					<div className="p-8 bg-gradient-to-b from-light-gray/20 to-white">
 						<div className="flex items-center space-x-8">
 							<div className="flex-shrink-0">
-								<div className="w-24 h-24 rounded-full bg-medium-gray flex items-center justify-center text-5xl text-white shadow-md">
-									{user.role ===
-										ACCOUNT_TYPE.STUDENT && (
-										<PiStudentFill />
-									)}
-									{user.role ===
-										ACCOUNT_TYPE.TUTOR && (
-										<GiTeacher />
-									)}
-									{user.role ===
-										ACCOUNT_TYPE.ADMIN && (
-										<RiAdminLine />
-									)}
+								<div className="w-24 h-24 rounded-full bg-medium-gray flex items-center justify-center text-white shadow-lg">
+									{user.role === ACCOUNT_TYPE.STUDENT && <PiStudentFill className="text-4xl" />}
+									{user.role === ACCOUNT_TYPE.TUTOR && <GiTeacher className="text-4xl" />}
+									{user.role === ACCOUNT_TYPE.ADMIN && <RiAdminLine className="text-4xl" />}
 								</div>
 							</div>
 							<div className="flex-grow">
-								<div className="flex items-center justify-between ">
-									<div className="min-w-[60%] ">
+								<div className="flex items-center justify-between">
+									<div className="min-w-[60%]">
 										<div className="">
 											<h2 className="text-3xl font-bold text-charcoal-gray tracking-tight">
 												{user.name}
@@ -170,6 +181,9 @@ function MyProfile() {
 											<p className="text-slate-gray text-sm">
 												{user.email}
 											</p>
+											<div className="mt-2 inline-block px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-600 text-xs font-semibold rounded-full">
+												{user.role}
+											</div>
 										</div>
 										<div className="mt-6 grid grid-cols-2 gap-6">
 											<div className="space-y-1">
@@ -177,11 +191,9 @@ function MyProfile() {
 													Phone Number
 												</p>
 												<p className="text-charcoal-gray font-semibold">
-													{user?.profile
-														?.phoneNumber || (
+													{user?.profile?.phoneNumber || (
 														<span className="text-slate-gray text-sm italic">
-															Not
-															provided
+															Not provided
 														</span>
 													)}
 												</p>
@@ -191,32 +203,36 @@ function MyProfile() {
 													Gender
 												</p>
 												<p className="text-charcoal-gray font-semibold">
-													{user?.profile
-														?.gender || (
+													{user?.profile?.gender || (
 														<span className="text-slate-gray text-sm italic">
-															Not
-															specified
+															Not specified
 														</span>
 													)}
 												</p>
 											</div>
+											{user.admissionDate && (
+												<div className="space-y-1 col-span-2">
+													<p className="text-sm text-slate-gray font-medium">
+														Admission Date
+													</p>
+													<p className="text-charcoal-gray font-semibold">
+														{new Date(user.admissionDate).toLocaleDateString()}
+													</p>
+												</div>
+											)}
 										</div>
 									</div>
-									<div className="flex flex-col gap-y-7">
+									<div className="flex flex-col gap-y-4">
 										<button
-											onClick={() =>
-												setIsEditing(true)
-											}
-											className="flex w-[8vw] items-center space-x-2 pl-8 cursor-pointer py-2.5 rounded-xl bg-medium-gray text-white font-medium hover:bg-charcoal-gray transition-all duration-300 hover:scale-105"
+											onClick={() => setIsEditing(true)}
+											className="flex w-32 items-center justify-center space-x-2 py-2.5 rounded-xl bg-medium-gray text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
 										>
 											<span>Edit</span>
 											<RiEdit2Fill />
 										</button>
 										<button
-											onClick={() =>
-												handleDeleteClick()
-											}
-											className="flex w-[8vw] items-center space-x-2 cursor-pointer px-5 py-2.5 rounded-xl bg-medium-gray text-white font-medium hover:bg-charcoal-gray transition-all duration-300 hover:scale-105"
+											onClick={handleLogoutClick}
+											className="flex w-32 items-center justify-center space-x-2 py-2.5 rounded-xl bg-medium-gray text-white font-medium  transition-all duration-300 hover:scale-105 hover:shadow-lg"
 										>
 											<span>Logout</span>
 											<MdLogout />
@@ -229,46 +245,94 @@ function MyProfile() {
 				)}
 			</div>
 
+			{/* Student Navigation */}
 			{user && user.role === ACCOUNT_TYPE.STUDENT && (
 				<>
-					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8  transition-all duration-300 ">
+					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 transition-all duration-300 shadow-lg">
 						<NavLink
 							to={"/dashboard/my-profile/attendance"}
-							className="bg-medium-gray min-w-[30%] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Attendance
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/progress"}
-							className="bg-medium-gray min-w-[30%] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Progress
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/remarks"}
-							className="bg-medium-gray min-w-[30%] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Remarks
 						</NavLink>
 					</div>
-
 					<div>
 						<Outlet />
 					</div>
 				</>
 			)}
 
-			{showDeleteModal && (
+			{/* Danger Zone */}
+			<div className="bg-white rounded-2xl p-8 border border-red-200 shadow-xl shadow-red-100/20">
+				<div className="flex items-center space-x-3 mb-6">
+					<FiAlertTriangle className="text-red-500 text-2xl" />
+					<h3 className="text-xl font-bold text-red-600">Danger Zone</h3>
+				</div>
+				<div className="bg-red-50 rounded-xl p-6 border border-red-200">
+					<div className="flex items-center justify-between">
+						<div>
+							<h4 className="text-lg font-semibold text-red-800 mb-2">
+								Delete Account
+							</h4>
+							<p className="text-red-600 text-sm mb-1">
+								Permanently delete your account and all associated data.
+							</p>
+							<p className="text-red-500 text-xs font-medium">
+								⚠️ This action cannot be undone.
+							</p>
+						</div>
+						<button
+							onClick={handleDeleteAccountClick}
+							className="flex items-center space-x-2 px-6 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+						>
+							<MdDeleteForever />
+							<span>Delete Account</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			{/* Logout Modal */}
+			{showLogoutModal && (
 				<Modal
 					title="Log out"
-					description={`Are you sure you want to logout ?`}
+					description="Are you sure you want to logout?"
 					btn1={{
 						text: "Log Out",
-						onClick: handleDeleteConfirm,
+						onClick: handleLogoutConfirm,
 					}}
 					btn2={{
 						text: "Cancel",
-						onClick: handleDeleteCancel,
+						onClick: handleLogoutCancel,
+					}}
+				/>
+			)}
+
+			{/* Delete Account Modal */}
+			{showDeleteModal && (
+				<Modal
+					title="Delete Account"
+					description="Are you absolutely sure you want to delete your account? This action will permanently remove all your data and cannot be undone."
+					btn1={{
+						text: "Delete Forever",
+						onClick: handleDeleteAccountConfirm,
+						className: "bg-red-500 hover:bg-red-600",
+					}}
+					btn2={{
+						text: "Cancel",
+						onClick: handleDeleteAccountCancel,
 					}}
 				/>
 			)}

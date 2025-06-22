@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { updateLecture } from "../../../../services/operations/lecture.service";
-import { getTutors } from "../../../../services/operations/users.service";
+import { getAllUsersList } from "../../../../services/operations/users.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { IoChevronBack } from "react-icons/io5";
@@ -39,14 +39,20 @@ function EditLecture() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const tutorsData = await dispatch(getTutors(token));
+				let tutorsData = await dispatch(getAllUsersList(token));
+				if (tutorsData) {
+					tutorsData = tutorsData.filter(
+						(user) => user.role === "Tutor"
+					);
+					setTutors(tutorsData);
+				}
 				const subjectsData = await dispatch(getAllSubjects(token));
-				setTutors(tutorsData);
 				setSubjects(subjectsData);
 
 				if (editLecture) {
 					// Parse the time string to set fromTime and toTime
-					const [timeFrom, timeTo] = editLecture.time.split(" to ");
+					const [timeFrom, timeTo] =
+						editLecture.time.split(" to ");
 					const [fromHours, fromMinutes, fromPeriod] =
 						timeFrom.split(/[: ]/);
 					const [toHours, toMinutes, toPeriod] =
@@ -66,7 +72,9 @@ function EditLecture() {
 					// Set form values
 					setValue(
 						"date",
-						new Date(editLecture.date).toISOString().split("T")[0]
+						new Date(editLecture.date)
+							.toISOString()
+							.split("T")[0]
 					);
 					setValue("tutor", editLecture.tutor._id);
 					setValue("subject", editLecture.subject._id);
@@ -75,7 +83,7 @@ function EditLecture() {
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			}
-         // console.log(editLecture)
+			// console.log(editLecture)
 		};
 		fetchData();
 	}, [dispatch, token, editLecture, setValue]);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { createLecture } from "../../../../services/operations/lecture.service";
-import { getTutors } from "../../../../services/operations/users.service";
+import { getAllUsersList } from "../../../../services/operations/users.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { IoChevronBack } from "react-icons/io5";
@@ -38,9 +38,12 @@ function CreateLecture() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const tutorsData = await dispatch(getTutors(token));
+				let tutorsData = await dispatch(getAllUsersList(token));
+				if (tutorsData) {
+					tutorsData = tutorsData.filter((user) => user.role === "Tutor")
+					setTutors(tutorsData);
+				}
 				const subjectsData = await dispatch(getAllSubjects(token));
-				setTutors(tutorsData);
 				setSubjects(subjectsData);
 			} catch (error) {
 				console.error("Error fetching data:", error);

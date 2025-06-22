@@ -199,3 +199,39 @@ input[type="checkbox"]:focus {
 	outline: none;
 	box-shadow: 0 0 0 2px rgba(50, 50, 50, 0.3);
 }
+
+/* Gradient utilities */
+.from-charcoal-gray {
+	background-image: linear-gradient(to right, var(--charcoal-gray), transparent);
+}
+.to-charcoal-gray {
+	background-image: linear-gradient(to right, transparent, var(--charcoal-gray));
+}
+
+.from-medium-gray {
+	background-image: linear-gradient(to right, var(--medium-gray), transparent);
+}
+.to-medium-gray {
+	background-image: linear-gradient(to right, transparent, var(--medium-gray));
+}
+
+.from-jet-black {
+	background-image: linear-gradient(to right, var(--jet-black), transparent);
+}
+.to-jet-black {
+	background-image: linear-gradient(to right, transparent, var(--jet-black));
+}
+
+.from-light-gray {
+	background-image: linear-gradient(to right, var(--light-gray), transparent);
+}
+.to-light-gray {
+	background-image: linear-gradient(to right, transparent, var(--light-gray));
+}
+
+.from-slate-gray {
+	background-image: linear-gradient(to right, var(--slate-gray), transparent);
+}
+.to-slate-gray {
+	background-image: linear-gradient(to right, transparent, var(--slate-gray));
+}

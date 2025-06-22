@@ -240,6 +240,14 @@ module.exports.deleteLecture = async (req, res) => {
 			return res.json(new ApiError(404, "Lecture not found"));
 		}
 
+		// Delete all attendance records for this lecture
+		await require("../models/attendance.model").deleteMany({ lecture: lectureId });
+
+		// If the lecture is a Test, delete all marks for this lecture
+		if (lecture.description === "Test") {
+			await require("../models/marks.model").deleteMany({ lecture: lectureId });
+		}
+
 		return res.json(
 			new ApiResponse(200, null, "Lecture deleted successfully")
 		);

@@ -275,27 +275,27 @@ function MyProfile() {
 			)}
 
 			{/* Danger Zone */}
-			<div className="bg-white rounded-2xl p-8 border border-red-200 shadow-xl shadow-red-100/20">
+			<div className="bg-white rounded-2xl p-8 border border-slate-gray/30 shadow-xl shadow-slate-gray/5">
 				<div className="flex items-center space-x-3 mb-6">
-					<FiAlertTriangle className="text-red-500 text-2xl" />
-					<h3 className="text-xl font-bold text-red-600">Danger Zone</h3>
+					<FiAlertTriangle className="text-charcoal-gray text-2xl" />
+					<h3 className="text-xl font-bold text-charcoal-gray">Danger Zone</h3>
 				</div>
-				<div className="bg-red-50 rounded-xl p-6 border border-red-200">
+				<div className="bg-slate-gray/10 rounded-xl p-6 border border-slate-gray/30">
 					<div className="flex items-center justify-between">
 						<div>
-							<h4 className="text-lg font-semibold text-red-800 mb-2">
+							<h4 className="text-lg font-semibold text-charcoal-gray mb-2">
 								Delete Account
 							</h4>
-							<p className="text-red-600 text-sm mb-1">
+							<p className="text-slate-gray text-sm mb-1">
 								Permanently delete your account and all associated data.
 							</p>
-							<p className="text-red-500 text-xs font-medium">
+							<p className="text-medium-gray text-xs font-medium">
 								⚠️ This action cannot be undone.
 							</p>
 						</div>
 						<button
 							onClick={handleDeleteAccountClick}
-							className="flex items-center space-x-2 px-6 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="flex items-center space-x-2 px-6 py-3 bg-charcoal-gray text-white font-semibold rounded-xl hover:bg-slate-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							<MdDeleteForever />
 							<span>Delete Account</span>
@@ -328,7 +328,7 @@ function MyProfile() {
 					btn1={{
 						text: "Delete Forever",
 						onClick: handleDeleteAccountConfirm,
-						className: "bg-red-500 hover:bg-red-600",
+						className: "bg-charcoal-gray hover:bg-slate-gray",
 					}}
 					btn2={{
 						text: "Cancel",

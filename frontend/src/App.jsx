@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "./utils/constants.utils.js";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -60,6 +60,19 @@ function App() {
 	return (
 		<div className="logo-text">
 			<Routes>
+				<Route
+					path="/"
+					element={
+						user ? (
+							<Navigate
+								to="/dashboard/my-profile"
+								replace
+							/>
+						) : (
+							<Navigate to="/login" replace />
+						)
+					}
+				/>
 				<Route
 					path="/login"
 					element={

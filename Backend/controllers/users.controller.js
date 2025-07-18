@@ -1,6 +1,7 @@
 const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const User = require("../models/user.model");
+const Profile = require("../models/profile.model");
 const Attendance = require("../models/attendance.model");
 const Marks = require("../models/marks.model");
 const Lecture = require("../models/lecture.model");
@@ -212,6 +213,7 @@ module.exports.getMyStudentsListByLec = async (req, res) => {
 module.exports.getMyDetails = async (req, res) => {
 	try {
 		const userId = req.user.id;
+
 		const userDetails = await User.findById(userId)
 			.populate({
 				path: "notes",
@@ -227,7 +229,12 @@ module.exports.getMyDetails = async (req, res) => {
 					{ path: "createdBy", select: "name email" },
 				],
 			})
-			.populate("profile")
+			.populate({
+				path: "profile",
+				populate: {
+					path: "standard",
+				},
+			})
 			.populate("subjects")
 			.populate({
 				path: "homework",
@@ -240,6 +247,7 @@ module.exports.getMyDetails = async (req, res) => {
 		if (!userDetails) {
 			return res.json(new ApiError(400, "Your details not found"));
 		}
+
 		return res.json(
 			new ApiResponse(200, userDetails, "My Details fetched")
 		);

@@ -10,9 +10,14 @@ module.exports.getProfileDetails = async (req, res) => {
 		// console.log("ID : ",id);
 
 		const userDetails = await User.findById(userId)
-			.populate("profile")
+			.populate({
+				path: "profile",
+				populate: {
+					path: "standard", // 👈 Populate standard details
+					model: "Standard",
+				},
+			})
 			.exec();
-
 		return res.json(
 			new ApiResponse(
 				200,
@@ -30,9 +35,8 @@ module.exports.getProfileDetails = async (req, res) => {
 
 module.exports.updateProfile = async (req, res) => {
 	try {
-		const { name, phoneNumber, gender } = req.body;
+		const { name, phoneNumber, gender, standardId } = req.body; // 👈 Change to standardId
 		const userId = req.user.id;
-		// console.log(userId);
 
 		const userDetails = await User.findById(userId)
 			.populate("profile")
@@ -47,6 +51,7 @@ module.exports.updateProfile = async (req, res) => {
 
 		profileDetails.phoneNumber = phoneNumber;
 		profileDetails.gender = gender;
+		profileDetails.standard = standardId; // 👈 Use standardId (ObjectId) not standardName
 
 		await profileDetails.save();
 
@@ -57,11 +62,27 @@ module.exports.updateProfile = async (req, res) => {
 			},
 			{ new: true }
 		)
-			.populate("profile")
+			.populate({
+				path: "profile",
+				populate: {
+					path: "standard",
+					select: "standardName", // 👈 Add select to get standardName
+				},
+			})
 			.exec();
 
 		return res.json(new ApiResponse(201, { User: updatedUserDetails }));
 	} catch (error) {
+		// 👈 Add validation error handling
+		if (error.name === "ValidationError") {
+			const message = Object.values(error.errors)
+				.map((err) => err.message)
+				.join(", ");
+			return res.json(
+				new ApiError(400, `Validation Error: ${message}`)
+			);
+		}
+
 		console.log("Error in updating profile details ", error);
 		return res.json(
 			new ApiError(500, "Error in updating profile details ")

@@ -97,3 +97,9 @@ export const announcementApi = {
 	GET_ANNOUNCEMENTS: BASE_URL + "/announcement/getAllAnnouncements",
 	DELETE_ANNOUNCEMENT: BASE_URL + "/announcement/deleteAnnouncement",
 };
+
+export const standardApi = {
+	GET_ALL_STANDARDS: BASE_URL + "/standard/getAllStandards",
+	GET_STANDARD_BY_ID: BASE_URL + "/standard/getStandardById",
+	CREATE_STANDARD: BASE_URL + "/standard/createStandard", 
+};

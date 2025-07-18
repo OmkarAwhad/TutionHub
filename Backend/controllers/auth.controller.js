@@ -30,6 +30,7 @@ module.exports.signUp = async (req, res) => {
 			gender: null,
 			phoneNumber: null,
 			allFeesPaid: false,
+			standard:null,
 		});
 
 		const userData = await User.create({

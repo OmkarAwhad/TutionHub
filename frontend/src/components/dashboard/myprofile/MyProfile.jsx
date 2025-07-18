@@ -9,8 +9,13 @@ import { MdLogout, MdDeleteForever } from "react-icons/md";
 import { FiAlertTriangle } from "react-icons/fi";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { updateProfile } from "../../../services/operations/profile.service";
+import { getMyDetails } from "../../../services/operations/users.service";
 import Modal from "../extras/Modal";
-import { logout, deleteMyAccount } from "../../../services/operations/auth.service";
+import {
+	logout,
+	deleteMyAccount,
+} from "../../../services/operations/auth.service";
+import { getAllStandards } from "../../../services/operations/standard.service";
 
 function MyProfile() {
 	const { user } = useSelector((state) => state.profile);
@@ -19,14 +24,48 @@ function MyProfile() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [standards, setStandards] = useState([]);
+	const [userDetails, setUserDetails] = useState(null);
+
 	const [formData, setFormData] = useState({
 		name: user?.name || "",
 		phoneNumber: user?.profile?.phoneNumber || "",
 		gender: user?.profile?.gender || "",
+		standardId: user?.profile?.standard?._id || "", // 👈 Fixed: Changed to standardId
 	});
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		const fetchStandards = async () => {
+			try {
+				const response = await dispatch(getAllStandards(token));
+				if (response && response.standards) {
+					setStandards(response.standards);
+				}
+			} catch (error) {
+				console.error("Error fetching standards:", error);
+			}
+		};
+		fetchStandards();
+	}, [dispatch, token]);
+
+	useEffect(() => {
+		const fetchUserDetails = async () => {
+			try {
+				const response = await dispatch(getMyDetails(token));
+				if (response) {
+					setUserDetails(response);
+				}
+			} catch (error) {
+				console.error("Error fetching user details:", error);
+			}
+		};
+		if (token) {
+			fetchUserDetails();
+		}
+	}, [dispatch, token]);
 
 	useEffect(() => {
 		if (user) {
@@ -34,6 +73,7 @@ function MyProfile() {
 				name: user.name,
 				phoneNumber: user?.profile?.phoneNumber || "",
 				gender: user?.profile?.gender || "",
+				standardId: user?.profile?.standard?._id || "", // 👈 Fixed: Changed to standardId
 			});
 		}
 	}, [user]);
@@ -80,7 +120,7 @@ function MyProfile() {
 
 	const handleDeleteAccountConfirm = async () => {
 		try {
-			await dispatch(deleteMyAccount(token,navigate));
+			await dispatch(deleteMyAccount(token, navigate));
 		} catch (error) {
 			console.error("Error deleting account:", error);
 			alert("Failed to delete account. Please try again.");
@@ -145,6 +185,33 @@ function MyProfile() {
 								<option value="Other">Other</option>
 							</select>
 						</div>
+						{user && user.role === "Student" ? (
+							<div className="space-y-3">
+								<label className="block text-charcoal-gray text-sm font-semibold tracking-wide">
+									Standard
+								</label>
+								<select
+									name="standardId" // 👈 Fixed: Changed to standardId
+									value={formData.standardId} // 👈 Fixed: Changed to standardId
+									onChange={handleInputChange}
+									className="w-full px-5 py-3 rounded-xl bg-light-gray/50 text-charcoal-gray border border-slate-gray/50 focus:outline-none focus:ring-2 focus:ring-medium-gray/50 transition-all duration-300"
+								>
+									<option value="" disabled>
+										Select Standard
+									</option>
+									{standards.map((standard) => (
+										<option
+											key={standard._id}
+											value={standard._id}
+										>
+											{standard.standardName}
+										</option>
+									))}
+								</select>
+							</div>
+						) : (
+							<></>
+						)}
 						<div className="flex justify-end space-x-4 pt-6">
 							<button
 								type="button"
@@ -166,9 +233,18 @@ function MyProfile() {
 						<div className="flex items-center space-x-8">
 							<div className="flex-shrink-0">
 								<div className="w-24 h-24 rounded-full bg-medium-gray flex items-center justify-center text-white shadow-lg">
-									{user.role === ACCOUNT_TYPE.STUDENT && <PiStudentFill className="text-4xl" />}
-									{user.role === ACCOUNT_TYPE.TUTOR && <GiTeacher className="text-4xl" />}
-									{user.role === ACCOUNT_TYPE.ADMIN && <RiAdminLine className="text-4xl" />}
+									{user.role ===
+										ACCOUNT_TYPE.STUDENT && (
+										<PiStudentFill className="text-4xl" />
+									)}
+									{user.role ===
+										ACCOUNT_TYPE.TUTOR && (
+										<GiTeacher className="text-4xl" />
+									)}
+									{user.role ===
+										ACCOUNT_TYPE.ADMIN && (
+										<RiAdminLine className="text-4xl" />
+									)}
 								</div>
 							</div>
 							<div className="flex-grow">
@@ -185,15 +261,17 @@ function MyProfile() {
 												{user.role}
 											</div>
 										</div>
-										<div className="mt-6 grid grid-cols-2 gap-6">
+										<div className="mt-6 grid grid-cols-3 gap-6">
 											<div className="space-y-1">
 												<p className="text-sm text-slate-gray font-medium">
 													Phone Number
 												</p>
 												<p className="text-charcoal-gray font-semibold">
-													{user?.profile?.phoneNumber || (
+													{user?.profile
+														?.phoneNumber || (
 														<span className="text-slate-gray text-sm italic">
-															Not provided
+															Not
+															provided
 														</span>
 													)}
 												</p>
@@ -203,20 +281,47 @@ function MyProfile() {
 													Gender
 												</p>
 												<p className="text-charcoal-gray font-semibold">
-													{user?.profile?.gender || (
+													{user?.profile
+														?.gender || (
 														<span className="text-slate-gray text-sm italic">
-															Not specified
+															Not
+															specified
 														</span>
 													)}
 												</p>
 											</div>
+											{user &&
+											user.role ===
+												"Student" ? (
+												<div className="space-y-1">
+													<p className="text-sm text-slate-gray font-medium">
+														Standard
+													</p>
+													<p className="text-charcoal-gray font-semibold">
+														{user
+															?.profile
+															?.standard
+															?.standardName || (
+															<span className="text-slate-gray text-sm italic">
+																Not
+																specified
+															</span>
+														)}
+													</p>
+												</div>
+											) : (
+												<></>
+											)}
 											{user.admissionDate && (
 												<div className="space-y-1 col-span-2">
 													<p className="text-sm text-slate-gray font-medium">
-														Admission Date
+														Admission
+														Date
 													</p>
 													<p className="text-charcoal-gray font-semibold">
-														{new Date(user.admissionDate).toLocaleDateString()}
+														{new Date(
+															user.admissionDate
+														).toLocaleDateString()}
 													</p>
 												</div>
 											)}
@@ -224,14 +329,18 @@ function MyProfile() {
 									</div>
 									<div className="flex flex-col gap-y-4">
 										<button
-											onClick={() => setIsEditing(true)}
+											onClick={() =>
+												setIsEditing(true)
+											}
 											className="flex w-32 items-center justify-center space-x-2 py-2.5 rounded-xl bg-medium-gray text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
 										>
 											<span>Edit</span>
 											<RiEdit2Fill />
 										</button>
 										<button
-											onClick={handleLogoutClick}
+											onClick={
+												handleLogoutClick
+											}
 											className="flex w-32 items-center justify-center space-x-2 py-2.5 rounded-xl bg-medium-gray text-white font-medium  transition-all duration-300 hover:scale-105 hover:shadow-lg"
 										>
 											<span>Logout</span>
@@ -278,7 +387,9 @@ function MyProfile() {
 			<div className="bg-white rounded-2xl p-8 border border-slate-gray/30 shadow-xl shadow-slate-gray/5">
 				<div className="flex items-center space-x-3 mb-6">
 					<FiAlertTriangle className="text-charcoal-gray text-2xl" />
-					<h3 className="text-xl font-bold text-charcoal-gray">Danger Zone</h3>
+					<h3 className="text-xl font-bold text-charcoal-gray">
+						Danger Zone
+					</h3>
 				</div>
 				<div className="bg-slate-gray/10 rounded-xl p-6 border border-slate-gray/30">
 					<div className="flex items-center justify-between">
@@ -287,7 +398,8 @@ function MyProfile() {
 								Delete Account
 							</h4>
 							<p className="text-slate-gray text-sm mb-1">
-								Permanently delete your account and all associated data.
+								Permanently delete your account and all
+								associated data.
 							</p>
 							<p className="text-medium-gray text-xs font-medium">
 								⚠️ This action cannot be undone.

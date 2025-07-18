@@ -24,14 +24,14 @@ module.exports.uploadNotes = async (req, res) => {
 		}
 
 		try {
-			const { title, subject } = req.body;
+			const { title, subject, standard } = req.body;
 			const tutorId = req.user.id;
 
 			if (!req.file) {
 				return res.json(new ApiError(400, "File is required"));
 			}
 
-			if (!title || !subject) {
+			if (!title || !subject || !standard) {
 				return res.json(
 					new ApiError(400, "Title and subject are required")
 				);
@@ -177,7 +177,7 @@ module.exports.getNotesBySubject = async (req, res) => {
 module.exports.deleteNote = async (req, res) => {
 	try {
 		const { noteId } = req.params;
-		console.log(noteId)
+		console.log(noteId);
 
 		if (!noteId) {
 			return res.json(new ApiError(400, "Note ID is required"));

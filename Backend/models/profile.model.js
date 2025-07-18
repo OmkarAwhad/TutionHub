@@ -10,6 +10,10 @@ const profileSchema = new mongoose.Schema({
 	allFeesPaid: {
 		type: Boolean,
 	},
+	standard: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Standard",
+	},
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

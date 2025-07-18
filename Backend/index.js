@@ -18,6 +18,7 @@ const homeworkRoutes = require("./routes/homework.routes");
 const announcementRoutes = require("./routes/announcement.routes");
 const remarksRoutes = require("./routes/remarks.routes");
 const usersRoutes = require("./routes/users.routes");
+const standardRoutes = require("./routes/standard.routes");
 
 const PORT = process.env.PORT || 5001;
 
@@ -56,6 +57,7 @@ app.use("/api/v1/lecture", lectureRoutes);
 app.use("/api/v1/subject", subjectRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/standard", standardRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

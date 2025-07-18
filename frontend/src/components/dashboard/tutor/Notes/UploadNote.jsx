@@ -14,6 +14,7 @@ function UploadNote() {
 
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSub, setSelectedSub] = useState("");
+	const [selectedStandard, setSelectedStandard] = useState("");
 	const [title, setTitle] = useState("");
 
 	useEffect(() => {
@@ -44,12 +45,17 @@ function UploadNote() {
 			toast.error("Please select a subject.");
 			return;
 		}
+		if (!selectedStandard) {
+			toast.error("Please select the standard.");
+			return;
+		}
 
 		try {
 			// Create form data
 			const formData = new FormData();
 			formData.append("title", title);
 			formData.append("subject", selectedSub);
+			formData.append("standard", selectedStandard);
 			formData.append("file", file);
 
 			// Debug FormData contents
@@ -116,6 +122,23 @@ function UploadNote() {
 									{item.name}
 								</option>
 							))}
+					</select>
+				</label>
+				<label>
+					<p className="ml-2 text-lg">Standard</p>
+					<select
+						className="border-2 text-gray-500 outline-none border-gray-300 w-full px-3 py-2 rounded-lg"
+						value={selectedStandard}
+						onChange={(e) => setSelectedStandard(e.target.value)}
+					>
+						<option value="" disabled>
+							Select Standard
+						</option>
+						{["11th", "12th"].map((std) => (
+							<option key={std} value={std}>
+								{std}
+							</option>
+						))}
 					</select>
 				</label>
 				<label>

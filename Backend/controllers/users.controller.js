@@ -12,6 +12,7 @@ module.exports.getMyStudentsList = async (req, res) => {
 
 		const userDetails = await User.findById(userId)
 			.populate("subjects")
+			.populate("profile")
 			.exec();
 
 		if (!userDetails) {
@@ -27,7 +28,15 @@ module.exports.getMyStudentsList = async (req, res) => {
 			const students = await User.find({
 				subjects: { $in: subjectIds },
 				role: "Student",
-			}).select("name email admissionDate subjects");
+			})
+				.select("name email profile admissionDate subjects")
+				.populate({
+					path: "profile",
+					populate: {
+						path: "standard",
+						select: "standardName",
+					},
+				});
 
 			if (!students || students.length === 0) {
 				return res.json(
@@ -220,6 +229,7 @@ module.exports.getMyDetails = async (req, res) => {
 				populate: [
 					{ path: "subject", select: "name code" },
 					{ path: "tutor", select: "name email" },
+					{ path: "standard" },
 				],
 			})
 			.populate({
@@ -233,6 +243,7 @@ module.exports.getMyDetails = async (req, res) => {
 				path: "profile",
 				populate: {
 					path: "standard",
+					select: "standardName",
 				},
 			})
 			.populate("subjects")
@@ -241,6 +252,7 @@ module.exports.getMyDetails = async (req, res) => {
 				populate: [
 					{ path: "subject", select: "name code" },
 					{ path: "tutor", select: "name email" },
+					{ path: "standard" },
 				],
 			})
 			.exec();

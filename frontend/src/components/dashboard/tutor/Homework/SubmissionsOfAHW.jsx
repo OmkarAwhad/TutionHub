@@ -20,13 +20,23 @@ function SubmissionsOfAHW() {
 	useEffect(() => {
 		const fetchSubmissions = async () => {
 			try {
-				const response = await dispatch(
+				let response = await dispatch(
 					getSubmissions(homeworkId, token)
 				);
 				if (response) {
-					console.log(response);
-					setSubmitted(response.submissions);
-					setNotSubmitted(response.notSubmitted);
+					const filteredSubmissions = response.submissions.filter(submission => {
+						if (!selectHomework?.standard?._id) return true; // Show all if no standard set
+						return submission.student.profile?.standard?._id === selectHomework.standard._id;
+					});
+
+					// 👈 Filter not submitted students based on homework's standard
+					const filteredNotSubmitted = response.notSubmitted.filter(student => {
+						if (!selectHomework?.standard?._id) return true; // Show all if no standard set
+						return student.profile?.standard?._id === selectHomework.standard._id;
+					});
+
+					setSubmitted(filteredSubmissions);
+					setNotSubmitted(filteredNotSubmitted);
 				}
 			} catch (error) {
 				toast.error("Error in fetching submissions ");
@@ -61,6 +71,12 @@ function SubmissionsOfAHW() {
 								{selectHomework?.subject?.name} (
 								{selectHomework?.subject?.code})
 							</span>
+						</p>
+						<p className="text-richblack-200">
+							<span className="text-medium-gray">
+								Standard:
+							</span>{" "}
+							{selectHomework?.standard?.standardName}
 						</p>
 						<p className="text-medium-gray">
 							Uploaded At :{" "}
@@ -142,11 +158,10 @@ function SubmissionsOfAHW() {
 											Submitted
 										</th>
 										<th
-											className={`py-3 px-4 text-base text-center ${
-												!stud.isLate
+											className={`py-3 px-4 text-base text-center ${!stud.isLate
 													? "text-green-500"
 													: "text-red-500"
-											} `}
+												} `}
 										>
 											{!stud.isLate
 												? "On time"

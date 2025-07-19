@@ -8,6 +8,7 @@ const { ApiError } = require("../utils/ApiError.utils");
 const { ApiResponse } = require("../utils/ApiResponse.utils");
 const Note = require("../models/notes.model");
 const Subject = require("../models/subject.model");
+const Standard = require("../models/standard.model");
 const User = require("../models/user.model");
 const fs = require("fs").promises;
 
@@ -24,22 +25,32 @@ module.exports.uploadNotes = async (req, res) => {
 		}
 
 		try {
-			const { title, subject, standard } = req.body;
+			const { title, subject, standardId } = req.body;
 			const tutorId = req.user.id;
 
 			if (!req.file) {
 				return res.json(new ApiError(400, "File is required"));
 			}
 
-			if (!title || !subject || !standard) {
+			if (!title || !subject || !standardId) {
 				return res.json(
 					new ApiError(400, "Title and subject are required")
 				);
 			}
 
+			const standardExists = await Standard.findById(standardId);
+			if (!standardExists) {
+				// Clean up local file if standard not found
+				if (req.file && req.file.path) {
+					await fs.unlink(req.file.path);
+				}
+				return res.json(new ApiError(404, "Standard not found"));
+			}
+
 			const alreadyExists = await Note.findOne({
 				subject: subject,
 				title: title,
+				standard: standardId,
 			});
 			if (alreadyExists) {
 				// Clean up local file if note already exists
@@ -77,6 +88,7 @@ module.exports.uploadNotes = async (req, res) => {
 				subject,
 				file: fileUrl,
 				tutor: tutorId,
+				standard: standardId,
 				uploadDate: new Date(),
 			});
 
@@ -115,6 +127,7 @@ module.exports.getAllNotes = async (req, res) => {
 		const notes = await Note.find({})
 			.populate("subject", "name code")
 			.populate("tutor", "name email")
+			.populate("standard")
 			.sort({ uploadDate: -1 });
 
 		return res.json(
@@ -144,6 +157,7 @@ module.exports.getNotesBySubject = async (req, res) => {
 		const notes = await Note.find({ subject: subjectId })
 			.populate("tutor", "name email")
 			.populate("subject", "name code")
+			.populate("standard")
 			.sort({ uploadDate: -1 });
 
 		if (notes.length === 0) {

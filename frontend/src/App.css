@@ -200,19 +200,73 @@ input[type="checkbox"]:focus {
 	box-shadow: 0 0 0 2px rgba(50, 50, 50, 0.3);
 }
 
+/* Radio Button Styles (matching checkbox aesthetics) */
+input[type="radio"] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	border: 2px solid #323232;
+	background-color: white;
+	cursor: pointer;
+	position: relative;
+}
+
+input[type="radio"]:checked {
+	background-color: #323232;
+}
+
+input[type="radio"]:checked::after {
+	content: "";
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: white;
+}
+
+input[type="radio"]:hover {
+	border-color: #4a4a4a;
+}
+
+input[type="radio"]:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(50, 50, 50, 0.3);
+}
+
 /* Gradient utilities */
 .from-charcoal-gray {
-	background-image: linear-gradient(to right, var(--charcoal-gray), transparent);
+	background-image: linear-gradient(
+		to right,
+		var(--charcoal-gray),
+		transparent
+	);
 }
 .to-charcoal-gray {
-	background-image: linear-gradient(to right, transparent, var(--charcoal-gray));
+	background-image: linear-gradient(
+		to right,
+		transparent,
+		var(--charcoal-gray)
+	);
 }
 
 .from-medium-gray {
-	background-image: linear-gradient(to right, var(--medium-gray), transparent);
+	background-image: linear-gradient(
+		to right,
+		var(--medium-gray),
+		transparent
+	);
 }
 .to-medium-gray {
-	background-image: linear-gradient(to right, transparent, var(--medium-gray));
+	background-image: linear-gradient(
+		to right,
+		transparent,
+		var(--medium-gray)
+	);
 }
 
 .from-jet-black {
@@ -223,15 +277,31 @@ input[type="checkbox"]:focus {
 }
 
 .from-light-gray {
-	background-image: linear-gradient(to right, var(--light-gray), transparent);
+	background-image: linear-gradient(
+		to right,
+		var(--light-gray),
+		transparent
+	);
 }
 .to-light-gray {
-	background-image: linear-gradient(to right, transparent, var(--light-gray));
+	background-image: linear-gradient(
+		to right,
+		transparent,
+		var(--light-gray)
+	);
 }
 
 .from-slate-gray {
-	background-image: linear-gradient(to right, var(--slate-gray), transparent);
+	background-image: linear-gradient(
+		to right,
+		var(--slate-gray),
+		transparent
+	);
 }
 .to-slate-gray {
-	background-image: linear-gradient(to right, transparent, var(--slate-gray));
+	background-image: linear-gradient(
+		to right,
+		transparent,
+		var(--slate-gray)
+	);
 }

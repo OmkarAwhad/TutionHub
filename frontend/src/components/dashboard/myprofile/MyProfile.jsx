@@ -15,7 +15,10 @@ import {
 	logout,
 	deleteMyAccount,
 } from "../../../services/operations/auth.service";
-import { getAllStandards } from "../../../services/operations/standard.service";
+import {
+	getAllStandards,
+	getMyStandard,
+} from "../../../services/operations/standard.service";
 
 function MyProfile() {
 	const { user } = useSelector((state) => state.profile);
@@ -31,7 +34,6 @@ function MyProfile() {
 		name: user?.name || "",
 		phoneNumber: user?.profile?.phoneNumber || "",
 		gender: user?.profile?.gender || "",
-		standardId: user?.profile?.standard?._id || "", // 👈 Fixed: Changed to standardId
 	});
 
 	const navigate = useNavigate();
@@ -41,8 +43,8 @@ function MyProfile() {
 		const fetchStandards = async () => {
 			try {
 				const response = await dispatch(getAllStandards(token));
-				if (response && response.standards) {
-					setStandards(response.standards);
+				if (response) {
+					setStandards(response);
 				}
 			} catch (error) {
 				console.error("Error fetching standards:", error);
@@ -73,7 +75,6 @@ function MyProfile() {
 				name: user.name,
 				phoneNumber: user?.profile?.phoneNumber || "",
 				gender: user?.profile?.gender || "",
-				standardId: user?.profile?.standard?._id || "", // 👈 Fixed: Changed to standardId
 			});
 		}
 	}, [user]);
@@ -185,33 +186,7 @@ function MyProfile() {
 								<option value="Other">Other</option>
 							</select>
 						</div>
-						{user && user.role === "Student" ? (
-							<div className="space-y-3">
-								<label className="block text-charcoal-gray text-sm font-semibold tracking-wide">
-									Standard
-								</label>
-								<select
-									name="standardId" // 👈 Fixed: Changed to standardId
-									value={formData.standardId} // 👈 Fixed: Changed to standardId
-									onChange={handleInputChange}
-									className="w-full px-5 py-3 rounded-xl bg-light-gray/50 text-charcoal-gray border border-slate-gray/50 focus:outline-none focus:ring-2 focus:ring-medium-gray/50 transition-all duration-300"
-								>
-									<option value="" disabled>
-										Select Standard
-									</option>
-									{standards.map((standard) => (
-										<option
-											key={standard._id}
-											value={standard._id}
-										>
-											{standard.standardName}
-										</option>
-									))}
-								</select>
-							</div>
-						) : (
-							<></>
-						)}
+
 						<div className="flex justify-end space-x-4 pt-6">
 							<button
 								type="button"
@@ -298,7 +273,7 @@ function MyProfile() {
 														Standard
 													</p>
 													<p className="text-charcoal-gray font-semibold">
-														{user
+														{userDetails
 															?.profile
 															?.standard
 															?.standardName || (

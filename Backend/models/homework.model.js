@@ -10,6 +10,10 @@ const homeworkSchema = new mongoose.Schema({
 		ref: "Subject",
 		required: true,
 	},
+	standard: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Standard",
+	},
 	tutor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",

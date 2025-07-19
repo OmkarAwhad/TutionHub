@@ -13,7 +13,8 @@ export const profileApi = {
 export const attendanceApi = {
 	GET_STUDENT_ATTENDANCE: BASE_URL + "/attendance/viewAttendanceOfAStud",
 	GET_SUBJECT_ATTENDANCE: BASE_URL + "/attendance/attendAccToSub",
-	GET_SUBJECT_ATTENDANCE_BY_TUTOR: BASE_URL + "/attendance/StudAttendAccToSubForTutor",
+	GET_SUBJECT_ATTENDANCE_BY_TUTOR:
+		BASE_URL + "/attendance/StudAttendAccToSubForTutor",
 	MARK_ATTENDANCE: BASE_URL + "/attendance/markAttendance",
 	CHECK_LECTURE_ATTENDANCE: BASE_URL + "/attendance/checkLectureAttendance",
 	GET_LECTURES_WITH_ATTENDANCE_MARKED:
@@ -101,5 +102,7 @@ export const announcementApi = {
 export const standardApi = {
 	GET_ALL_STANDARDS: BASE_URL + "/standard/getAllStandards",
 	GET_STANDARD_BY_ID: BASE_URL + "/standard/getStandardById",
-	CREATE_STANDARD: BASE_URL + "/standard/createStandard", 
+	CREATE_STANDARD: BASE_URL + "/standard/createStandard",
+	ASSIGN_STANDARD_TO_STUDENT: BASE_URL + "/standard/assignStandardToStudent",
+	GET_MY_STANDARD: BASE_URL + "/standard/getMyStandard",
 };

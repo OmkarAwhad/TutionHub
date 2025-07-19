@@ -6,6 +6,7 @@ import { subjectsOfAUser } from "../../../../services/operations/subject.service
 import { uploadHomework } from "../../../../services/operations/homework.service";
 import toast from "react-hot-toast";
 import EnhancedFileUploaderNoFileRequired from "./EnhancedFileUploaderNoFileRequired";
+import { getAllStandards } from "../../../../services/operations/standard.service";
 
 function UploadHomework() {
 	const { token } = useSelector((state) => state.auth);
@@ -14,6 +15,8 @@ function UploadHomework() {
 
 	const [subjects, setSubjects] = useState([]);
 	const [selectedSub, setSelectedSub] = useState("");
+	const [standardsList, setStandardsList] = useState([]);
+	const [selectedStandard, setSelectedStandard] = useState("");
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [dueDate, setDueDate] = useState("");
@@ -33,6 +36,22 @@ function UploadHomework() {
 		fetchSubjects();
 	}, [dispatch, token]);
 
+	useEffect(() => {
+		const fetchStandards = async () => {
+			try {
+				const response = await dispatch(getAllStandards(token));
+				if (response) {
+					// console.log(response)
+					setStandardsList(response);
+				}
+			} catch (error) {
+				console.error("Error in fetching standards:", error);
+				toast.error("Error in fetching standards");
+			}
+		};
+		fetchStandards();
+	}, [dispatch, token]);
+
 	const handleUpload = async (file, trackProgress) => {
 		if (!title) {
 			toast.error("Please enter a title.");
@@ -42,12 +61,17 @@ function UploadHomework() {
 			toast.error("Please select a subject.");
 			return;
 		}
+		if (!selectedStandard) {
+			toast.error("Please select the standard.");
+			return;
+		}
 
 		try {
 			// Create form data
 			const formData = new FormData();
 			formData.append("title", title);
 			formData.append("subject", selectedSub);
+			formData.append("standardId", selectedStandard);
 			formData.append("description", description);
 			formData.append("dueDate", dueDate);
 			formData.append("file", file);
@@ -143,7 +167,26 @@ function UploadHomework() {
 						/>
 					</label>
 				</div>
-
+				<label>
+					<p className="ml-2 text-lg">Standard</p>
+					<select
+						className="border-2 text-gray-500 mb-4 outline-none border-gray-300 w-full px-3 py-2 rounded-lg"
+						value={selectedStandard}
+						onChange={(e) =>
+							setSelectedStandard(e.target.value)
+						}
+					>
+						<option value="" disabled>
+							Select Standard
+						</option>
+						{standardsList &&
+							standardsList.map((std) => (
+								<option key={std._id} value={std._id}>
+									{std.standardName}
+								</option>
+							))}
+					</select>
+				</label>
 				<label>
 					<div className="space-y-4 bg-gray-50 border border-gray-200 rounded-lg p-6">
 						<p className="text-sm text-gray-600">

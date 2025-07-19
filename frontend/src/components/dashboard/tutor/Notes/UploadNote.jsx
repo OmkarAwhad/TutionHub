@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import EnhancedFileUploader from "../../Students/homework/EnhancedFileUploader";
 import { uploadNotes } from "../../../../services/operations/notes.service";
+import { getAllStandards } from "../../../../services/operations/standard.service";
 
 function UploadNote() {
 	const { token } = useSelector((state) => state.auth);
@@ -13,6 +14,7 @@ function UploadNote() {
 	const navigate = useNavigate();
 
 	const [subjects, setSubjects] = useState([]);
+	const [standardsList, setStandardsList] = useState([]);
 	const [selectedSub, setSelectedSub] = useState("");
 	const [selectedStandard, setSelectedStandard] = useState("");
 	const [title, setTitle] = useState("");
@@ -30,6 +32,22 @@ function UploadNote() {
 			}
 		};
 		fetchSubjects();
+	}, [dispatch, token]);
+
+	useEffect(() => {
+		const fetchStandards = async () => {
+			try {
+				const response = await dispatch(getAllStandards(token));
+				if (response) {
+					// console.log(response)
+					setStandardsList(response);
+				}
+			} catch (error) {
+				console.error("Error in fetching standards:", error);
+				toast.error("Error in fetching standards");
+			}
+		};
+		fetchStandards();
 	}, [dispatch, token]);
 
 	const handleUpload = async (file, trackProgress) => {
@@ -55,13 +73,15 @@ function UploadNote() {
 			const formData = new FormData();
 			formData.append("title", title);
 			formData.append("subject", selectedSub);
-			formData.append("standard", selectedStandard);
+			formData.append("standardId", selectedStandard);
 			formData.append("file", file);
 
 			// Debug FormData contents
 			// for (const [key, value] of formData.entries()) {
 			// 	console.log(`${key}:`, value);
 			// }
+
+			// console.log(selectedStandard)
 
 			const response = await dispatch(
 				uploadNotes(formData, token, trackProgress)
@@ -93,7 +113,7 @@ function UploadNote() {
 				</div>
 			</div>
 			<form
-				className="w-2/3 mx-auto text-medium-gray mt-10 p-8 rounded-3xl shadow-xl shadow-medium-gray flex flex-col gap-4"
+				className="w-2/3 mx-auto text-medium-gray mt-10 p-8 rounded-3xl shadow-xl shadow-medium-gray flex flex-col gap-2"
 				onSubmit={(e) => e.preventDefault()}
 			>
 				<label>
@@ -127,16 +147,18 @@ function UploadNote() {
 				<label>
 					<p className="ml-2 text-lg">Standard</p>
 					<select
-						className="border-2 text-gray-500 outline-none border-gray-300 w-full px-3 py-2 rounded-lg"
+						className="border-2 text-gray-500 mb-4 outline-none border-gray-300 w-full px-3 py-2 rounded-lg"
 						value={selectedStandard}
-						onChange={(e) => setSelectedStandard(e.target.value)}
+						onChange={(e) =>
+							setSelectedStandard(e.target.value)
+						}
 					>
 						<option value="" disabled>
 							Select Standard
 						</option>
-						{["11th", "12th"].map((std) => (
-							<option key={std} value={std}>
-								{std}
+						{standardsList && standardsList.map((std) => (
+							<option key={std._id} value={std._id}>
+								{std.standardName}
 							</option>
 						))}
 					</select>

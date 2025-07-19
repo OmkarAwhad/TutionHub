@@ -78,9 +78,7 @@ module.exports.updateProfile = async (req, res) => {
 			const message = Object.values(error.errors)
 				.map((err) => err.message)
 				.join(", ");
-			return res.json(
-				new ApiError(400, `Validation Error: ${message}`)
-			);
+			return res.json(new ApiError(400, `Validation Error: ${message}`));
 		}
 
 		console.log("Error in updating profile details ", error);
@@ -89,3 +87,4 @@ module.exports.updateProfile = async (req, res) => {
 		);
 	}
 };
+

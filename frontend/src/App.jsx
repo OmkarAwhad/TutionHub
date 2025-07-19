@@ -54,6 +54,7 @@ import CreateAnnouncement from "./components/dashboard/admin/announcement/Create
 import AnnouncementList from "./components/dashboard/admin/announcement/AnnouncementList.jsx";
 import MyAnnouncement from "./components/dashboard/myprofile/MyAnnouncement.jsx";
 import UserDetails from "./components/dashboard/admin/users/UserDetails.jsx";
+import AssignStandard from "./components/dashboard/admin/subjects/AssignStandard.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -156,6 +157,10 @@ function App() {
 							<Route
 								path="/dashboard/admin-lecture"
 								element={<AdminLecture />}
+							/>
+							<Route
+								path="/dashboard/admin-subjects/assign-standard"
+								element={<AssignStandard />}
 							/>
 							<Route
 								path="/dashboard/admin-lecture/create-lecture"

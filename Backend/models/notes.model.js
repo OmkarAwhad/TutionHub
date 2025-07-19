@@ -9,6 +9,10 @@ const noteSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Subject",
 	},
+	standard: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Standard",
+	},
 	file: {
 		type: String,
 		required: true,

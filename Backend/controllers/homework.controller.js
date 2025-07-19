@@ -10,6 +10,7 @@ const Homework = require("../models/homework.model");
 const HomeworkSubmission = require("../models/homeworkSubmission.model");
 const Subject = require("../models/subject.model");
 const User = require("../models/user.model");
+const Standard = require("../models/standard.model");
 const fs = require("fs").promises;
 
 const uploadMiddleware = upload.single("file");
@@ -24,7 +25,8 @@ module.exports.uploadHomework = async (req, res) => {
 		}
 
 		try {
-			const { title, subject, description, dueDate } = req.body;
+			const { title, subject, description, dueDate, standardId } =
+				req.body;
 			const tutorId = req.user.id;
 
 			if (!title || !subject || !dueDate) {
@@ -34,6 +36,15 @@ module.exports.uploadHomework = async (req, res) => {
 						"Title, subject, and due date are required"
 					)
 				);
+			}
+
+			const standardExists = await Standard.findById(standardId);
+			if (!standardExists) {
+				// Clean up local file if standard not found
+				if (req.file && req.file.path) {
+					await fs.unlink(req.file.path);
+				}
+				return res.json(new ApiError(404, "Standard not found"));
 			}
 
 			// Ensure at least one of file or description is provided
@@ -71,6 +82,7 @@ module.exports.uploadHomework = async (req, res) => {
 				title,
 				subject,
 				tutor: tutorId,
+				standard: standardId,
 				description,
 				fileUrl,
 				dueDate,
@@ -114,6 +126,7 @@ module.exports.getAllHomework = async (req, res) => {
 		const homework = await Homework.find({})
 			.populate("subject")
 			.populate("tutor")
+			.populate("standard")
 			.sort({ createdAt: -1 })
 			.exec();
 		//
@@ -154,6 +167,7 @@ module.exports.getHomeworkBySubject = async (req, res) => {
 		const homework = await Homework.find({ subject: subjectId })
 			.populate("tutor", "name email")
 			.populate("subject", "name code")
+			.populate("standard")
 			.sort({ createdAt: -1 });
 
 		if (homework.length === 0) {
@@ -460,18 +474,36 @@ module.exports.getSubmissions = async (req, res) => {
 		const submissions = await HomeworkSubmission.find({
 			homework: homeworkId,
 		})
-			.populate("student", "name email")
+			.populate({
+				path: "student",
+				select: "name email profile",
+				populate: {
+					path: "profile",
+					populate: {
+						path: "standard",
+						select: "standardName",
+					},
+				},
+			})
 			.sort({ submittedAt: -1 });
 
 		// Get a list of students who have not submitted
 		const submittedStudentIds = submissions.map((sub) =>
 			sub.student._id.toString()
 		);
-		// const subjectDetails = await Subject.findById(homework.subject);
+
 		const allStudents = await User.find({
 			subjects: { $in: [homework.subject] },
 			role: "Student",
-		});
+		})
+			.populate({
+				path: "profile",
+				populate: {
+					path: "standard",
+					select: "standardName",
+				},
+			})
+			.select("name email profile");
 
 		const notSubmitted = allStudents.filter(
 			(student) =>

@@ -80,7 +80,7 @@ export const sidbarLinks = [
 	},
 	{
 		id: 14,
-		name: "Subjects",
+		name: "Subjects & Standard",
 		path: "/dashboard/admin-subjects",
 		type: ACCOUNT_TYPE.ADMIN,
 	},

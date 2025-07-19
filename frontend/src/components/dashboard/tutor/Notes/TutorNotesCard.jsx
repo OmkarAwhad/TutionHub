@@ -1,58 +1,108 @@
 import React from "react";
 import {
-	getFileTypeDescription,
-	getDownloadUrl,
+   getFileTypeDescription,
+   getDownloadUrl,
 } from "../../../../utils/fileUtils";
 import FileDownloadButton from "../../Students/notes/FileDownloadButton";
 import { RiDeleteBinLine } from "react-icons/ri";
+import {
+   FaUser,
+   FaGraduationCap,
+   FaFile,
+   FaBook,
+   FaDownload,
+} from "react-icons/fa6";
+import { FaCalendarAlt } from "react-icons/fa";
 
 function TutorNotesCard({ note, handleDeleteClick }) {
-	return (
-		<div className="space-y-4 relative p-6 rounded-xl shadow shadow-medium-gray hover:shadow-xl transition-all duration-300 bg-richblack-800">
-			<div className="flex justify-between items-start">
-				<div>
-					<h3 className="text-xl font-semibold text-richblack-5">
-						{note.title}
-					</h3>
-					<p className="text-medium-gray">
-						{note.subject.name} ({note.subject.code})
-					</p>
-				</div>
-			</div>
-			<div
-				onClick={() => handleDeleteClick(note)}
-				className="absolute top-10 right-6 bg-medium-gray text-white cursor-pointer hover:bg-charcoal-gray  border-2 hover:border-red-200 hover:text-red-200 p-3 rounded-full text-lg transition-all duration-150 "
-			>
-				<RiDeleteBinLine />
-			</div>
-			<div className="space-y-2">
-				<p className="text-richblack-200">
-					<span className="text-medium-gray">Tutor:</span>{" "}
-					{note.tutor.name}
-				</p>
-				<p className="text-richblack-200">
-					<span className="text-medium-gray">Uploaded:</span>{" "}
-					{new Date(note.uploadDate).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "2-digit",
-                     })}
-				</p>
-				<p className="text-richblack-200">
-					<span className="text-medium-gray">File Type:</span>{" "}
-					{getFileTypeDescription(note.file)}
-				</p>
-			</div>
-			<div className="pt-4">
-				<FileDownloadButton
-					fileUrl={getDownloadUrl(note.file)}
-					title={note.title}
-					buttonText="Download Notes"
-					className="py-3 w-full rounded-lg bg-medium-gray text-white font-extralight text-sm hover:bg-charcoal-gray transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
-				/>
-			</div>
-		</div>
-	);
+   return (
+      <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-light-gray">
+         {/* Header */}
+         <div className="flex justify-between items-start mb-4">
+            <div className="flex-1 pr-4">
+               <h3 className="text-lg font-semibold text-charcoal-gray mb-2 line-clamp-2">
+                  {note.title}
+               </h3>
+               <div className="flex items-center gap-2 text-medium-gray">
+                  <FaBook className="text-sm" />
+                  <span className="text-sm">
+                     {note.subject.name} ({note.subject.code})
+                  </span>
+               </div>
+            </div>
+
+            <button
+               onClick={() => handleDeleteClick(note)}
+               className="p-2 group cursor-pointer bg-light-gray text-slate-gray hover:bg-charcoal-gray hover:text-white rounded-lg transition-colors duration-200"
+               title="Delete Note"
+            >
+               <RiDeleteBinLine className="text-lg group-hover:text-white" />
+            </button>
+         </div>
+
+         {/* Info Section */}
+         <div className="space-y-3 mb-4">
+            {/* Tutor */}
+            <div className="flex items-center gap-3 p-3 shadow rounded-lg">
+               <FaUser className="text-charcoal-gray" />
+               <div>
+                  <p className="text-xs text-slate-gray">Tutor</p>
+                  <p className="text-sm font-medium text-charcoal-gray">
+                     {note.tutor.name}
+                  </p>
+               </div>
+            </div>
+
+            {/* Date and Standard */}
+            <div className="grid grid-cols-2 gap-3">
+               <div className="flex items-center gap-2 p-3 shadow rounded-lg">
+                  <FaCalendarAlt className="text-medium-gray" />
+                  <div>
+                     <p className="text-xs text-slate-gray">Date</p>
+                     <p className="text-sm font-medium text-charcoal-gray">
+                        {new Date(note.uploadDate).toLocaleDateString("en-GB", {
+                           day: "2-digit",
+                           month: "short",
+                           year: "numeric",
+                        })}
+                     </p>
+                  </div>
+               </div>
+
+               <div className="flex items-center gap-2 p-3 shadow rounded-lg">
+                  <FaGraduationCap className="text-medium-gray" />
+                  <div>
+                     <p className="text-xs text-slate-gray">Standard</p>
+                     <p className="text-sm font-medium text-charcoal-gray">
+                        {note.standard.standardName}
+                     </p>
+                  </div>
+               </div>
+            </div>
+
+            {/* File Type */}
+            <div className="flex items-center gap-3 p-3 shadow rounded-lg">
+               <FaFile className="text-medium-gray" />
+               <div>
+                  <p className="text-xs text-slate-gray">File Type</p>
+                  <p className="text-sm font-medium text-charcoal-gray">
+                     {getFileTypeDescription(note.file)}
+                  </p>
+               </div>
+            </div>
+         </div>
+
+         {/* Download Button */}
+         <FileDownloadButton
+            fileUrl={getDownloadUrl(note.file)}
+            title={note.title}
+            buttonText={
+                  <span>Download Notes</span>
+            }
+            className="w-full flex items-center justify-center gap-4 cursor-pointer py-3 px-4 bg-charcoal-gray text-white font-medium rounded-lg hover:bg-medium-gray transition-colors duration-200"
+         />
+      </div>
+   );
 }
 
 export default TutorNotesCard;

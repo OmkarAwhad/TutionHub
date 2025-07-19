@@ -21,7 +21,7 @@ export function getAllNotes(token) {
 				return [];
 			}
 
-			// console.log(response.data.data);
+			console.log(response.data.data);
 			return response.data.data;
 		} catch (error) {
 			console.error("GET_ALL_NOTES API Error:", error);
@@ -51,7 +51,7 @@ export function uploadNotes(data, token, trackProgress) {
 				return [];
 			}
 
-			// console.log(response.data.data);
+			// console.log(response);
 			return response.data.data;
 		} catch (error) {
 			console.error("Error in uploading notes ", error);

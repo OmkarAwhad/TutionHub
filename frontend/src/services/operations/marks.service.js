@@ -66,114 +66,133 @@ export function markStudentMarks(
 	};
 }
 
-export const editMarks = async (
-	lectureId,
-	studentId,
-	marks,
-	totalMarks,
-	description,
-	token
-) => {
-	try {
-		const response = await apiConnector(
-			"POST",
-			marksApi.EDIT_MARKS,
-			{
-				lectureId,
-				studentId,
-				marks: Number(marks),
-				totalMarks: Number(totalMarks),
-				description: description || "",
-			},
-			{
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			}
-		);
+export function getMarksForEdit(lectureId, token) {
+   return async (dispatch) => {
+      try {
+         const result = await apiConnector(
+            "GET",
+            `${marksApi.GET_MARKS_FOR_EDIT}/${lectureId}`,
+            null,
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
 
-		if (!response.data.success) {
-			throw new Error(response.data.message);
-		}
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return null;
+         }
+         return result.data.data;
+      } catch (error) {
+         toast.error("Error fetching marks data for editing");
+         console.error("Error fetching marks for edit:", error);
+         return null;
+      }
+   };
+}
 
-		return response.data.data;
-	} catch (error) {
-		console.error("Error editing marks:", error);
-		throw error;
-	}
+export function updateMarksInBulk(lectureId, marksData, totalMarks, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Updating marks...");
+      try {
+         const result = await apiConnector(
+            "PUT",
+            `${marksApi.UPDATE_MARKS_BULK}/${lectureId}`,
+            { marksData, totalMarks },
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return false;
+         }
+
+         toast.success("Marks updated successfully");
+         return true;
+      } catch (error) {
+         toast.error("Failed to update marks");
+         console.error("Error updating marks:", error);
+         return false;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}
+
+export function deleteMarksForLecture(lectureId, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Deleting marks...");
+      try {
+         const result = await apiConnector(
+            "DELETE",
+            `${marksApi.DELETE_MARKS}/${lectureId}`,
+            null,
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return false;
+         }
+
+         toast.success("Marks deleted successfully");
+         return true;
+      } catch (error) {
+         toast.error("Failed to delete marks");
+         console.error("Error deleting marks:", error);
+         return false;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}
+
+export const getStudentAnalytics = async (token) => {
+   try {
+      const response = await apiConnector(
+         "GET",
+         marksApi.GET_STUDENT_ANALYTICS,
+         null,
+         {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+         }
+      );
+      if (!response?.data?.success) {
+         throw new Error(response?.data?.message || "Failed to fetch analytics");
+      }
+      return response.data.data;
+   } catch (error) {
+      console.error("Error in getStudentAnalytics:", error);
+      throw error;
+   }
 };
 
-// Fetch marks for a specific subject
-export const marksAccToSubject = async (subjectId, token) => {
-	try {
-		// console.log(`${marksApi.GET_SUBJECT_MARKS}/${subjectId}`)
-		const response = await apiConnector(
-			"GET",
-			`${marksApi.GET_SUBJECT_MARKS}/${subjectId}`,
-			null,
-			{
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			}
-		);
-		if (!response?.data?.success) {
-			throw new Error(
-				response?.data?.message || "Failed to fetch marks"
-			);
-		}
-		return response.data.data;
-	} catch (error) {
-		console.error("Error in marksAccToSubject:", error);
-		throw error;
-	}
+export const getPerformanceComparison = async (subjectId, token) => {
+   try {
+      const response = await apiConnector(
+         "GET",
+         `${marksApi.GET_PERFORMANCE_COMPARISON}/${subjectId}`,
+         null,
+         {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+         }
+      );
+      if (!response?.data?.success) {
+         throw new Error(response?.data?.message || "Failed to fetch comparison");
+      }
+      return response.data.data;
+   } catch (error) {
+      console.error("Error in getPerformanceComparison:", error);
+      throw error;
+   }
 };
 
-// Fetch overall student progress
-export const trackStudentProgress = async (token) => {
-	try {
-		const response = await apiConnector(
-			"GET",
-			marksApi.GET_STUDENT_PROGRESS,
-			null,
-			{
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			}
-		);
-		if (!response?.data?.success) {
-			throw new Error(
-				response?.data?.message || "Failed to track progress"
-			);
-		}
-		// console.log(response.data.data)
-		return response.data.data;
-	} catch (error) {
-		console.error("Error in trackStudentProgress:", error);
-		throw error;
-	}
-};
-
-// Fetch progress for a specific subject
-export const trackProgressBySubject = async (subjectId, token) => {
-	try {
-		const response = await apiConnector(
-			"GET",
-			`${marksApi.GET_SUBJECT_PROGRESS}/${subjectId}`,
-			null,
-			{
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			}
-		);
-		if (!response?.data?.success) {
-			throw new Error(
-				response?.data?.message ||
-					"Failed to track progress by subject"
-			);
-		}
-		// console.log(response.data.data);
-		return response.data.data;
-	} catch (error) {
-		console.error("Error in trackProgressBySubject:", error);
-		throw error;
-	}
-};

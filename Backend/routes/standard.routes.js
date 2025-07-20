@@ -10,7 +10,7 @@ const {
 } = require("../controllers/standard.controller");
 
 router.get("/getAllStandards", auth, getAllStandards);
-router.get("/getStandardById/:id", auth, getStandardById);
+router.get("/getStandardById/:standardId", auth, getStandardById);
 router.post("/createStandard", auth, isAdmin, createStandard);
 router.post("/assignStandardToStudent", auth, isAdmin, assignStandardToStudent);
 router.get("/getMyStandard", auth, getMyStandard);

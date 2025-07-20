@@ -332,22 +332,22 @@ function MyProfile() {
 			{/* Student Navigation */}
 			{user && user.role === ACCOUNT_TYPE.STUDENT && (
 				<>
-					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 transition-all duration-300 shadow-lg">
+					<div className="bg-white rounded-2xl py-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 transition-all duration-300 ">
 						<NavLink
 							to={"/dashboard/my-profile/attendance"}
-							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[300px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Attendance
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/progress"}
-							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[300px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Progress
 						</NavLink>
 						<NavLink
 							to={"/dashboard/my-profile/remarks"}
-							className="bg-medium-gray min-w-[200px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
+							className="bg-medium-gray min-w-[300px] px-16 py-12 text-white text-center font-bold text-2xl rounded-xl hover:bg-charcoal-gray transition-all duration-300 hover:scale-105 hover:shadow-lg"
 						>
 							Remarks
 						</NavLink>

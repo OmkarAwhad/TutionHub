@@ -21,6 +21,10 @@ const lectureSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Subject",
 	},
+	standard: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Standard",
+	},
 	description: {
 		type: String,
 		enum: ["Test", "Lecture"],

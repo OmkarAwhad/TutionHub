@@ -121,20 +121,22 @@ module.exports.uploadHomework = async (req, res) => {
 	});
 };
 
-module.exports.getAllHomework = async (req, res) => {
+module.exports.getStudentsAllHomework = async (req, res) => {
 	try {
-		const homework = await Homework.find({})
+		const userId = req.user.id;
+		const userDetails = await User.findById(userId).populate("profile");
+		const standardId = userDetails.profile.standard;
+
+		const homework = await Homework.find({ standard: standardId })
 			.populate("subject")
 			.populate("tutor")
 			.populate("standard")
 			.sort({ createdAt: -1 })
 			.exec();
-		//
 
 		if (!homework || homework.length === 0) {
 			return res.json(new ApiResponse(200, [], "No homework found"));
 		}
-		//
 
 		return res.json(
 			new ApiResponse(

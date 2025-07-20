@@ -33,7 +33,7 @@ function StudentData() {
 	const fetchStandards = async () => {
 		try {
 			const response = await dispatch(getAllStandards(token));
-			console.log("Standards response:", response);
+			// console.log("Standards response:", response);
 
 			if (response) {
 				const standardsArray = response.standards || response;
@@ -42,10 +42,10 @@ function StudentData() {
 				// Set first standard as active by default
 				if (standardsArray && standardsArray.length > 0) {
 					setActiveStandard(standardsArray[0]._id);
-					console.log(
-						"Active standard set to:",
-						standardsArray[0]._id
-					);
+					// console.log(
+					// 	"Active standard set to:",
+					// 	standardsArray[0]._id
+					// );
 				}
 			}
 		} catch (error) {
@@ -76,7 +76,7 @@ function StudentData() {
 		setLoading(true);
 		try {
 			const response = await dispatch(getMyStudentsList(token));
-			console.log("Students response:", response);
+			// console.log("Students response:", response);
 
 			if (response && response.length > 0) {
 				const data = {};
@@ -105,7 +105,7 @@ function StudentData() {
 					}
 				}
 
-				console.log("All students data:", data);
+				// console.log("All students data:", data);
 				setAllStudentsData(data);
 			}
 		} catch (error) {
@@ -118,12 +118,12 @@ function StudentData() {
 
 	// Filter students based on active standard
 	const getFilteredStudents = () => {
-		console.log("Filtering students...");
-		console.log("Active standard:", activeStandard);
-		console.log("All students data:", allStudentsData);
+		// console.log("Filtering students...");
+		// console.log("Active standard:", activeStandard);
+		// console.log("All students data:", allStudentsData);
 
 		if (!allStudentsData || !activeStandard) {
-			console.log("No data or active standard");
+			// console.log("No data or active standard");
 			return [];
 		}
 
@@ -131,7 +131,7 @@ function StudentData() {
 			([studentId, data]) => {
 				// Check if attendance data exists and has valid structure
 				if (!data || !data.attendanceDetails) {
-					console.log(`No attendance data for ${studentId}`);
+					// console.log(`No attendance data for ${studentId}`);
 					return false;
 				}
 
@@ -140,7 +140,7 @@ function StudentData() {
 					!Array.isArray(data.attendanceDetails) ||
 					data.attendanceDetails.length === 0
 				) {
-					console.log(`No attendance details for ${studentId}`);
+					// console.log(`No attendance details for ${studentId}`);
 					return false;
 				}
 
@@ -152,22 +152,22 @@ function StudentData() {
 					studentName.trim() === "" ||
 					studentName === "N/A"
 				) {
-					console.log(`Invalid name for ${studentId}`);
+					// console.log(`Invalid name for ${studentId}`);
 					return false;
 				}
 
 				// Filter by standard
 				const studentStandardId =
 					data.studentInfo?.profile?.standard?._id;
-				console.log(
-					`Student ${studentName} standard:`,
-					studentStandardId,
-					"vs active:",
-					activeStandard
-				);
+				// console.log(
+				// 	`Student ${studentName} standard:`,
+				// 	studentStandardId,
+				// 	"vs active:",
+				// 	activeStandard
+				// );
 
 				if (studentStandardId !== activeStandard) {
-					console.log(`Standard mismatch for ${studentName}`);
+					// console.log(`Standard mismatch for ${studentName}`);
 					return false;
 				}
 
@@ -175,7 +175,7 @@ function StudentData() {
 			}
 		);
 
-		console.log("Filtered students:", filtered);
+		// console.log("Filtered students:", filtered);
 		return filtered;
 	};
 
@@ -212,7 +212,7 @@ function StudentData() {
 	};
 
 	const handleStandardClick = (standardId) => {
-		console.log("Standard clicked:", standardId);
+		// console.log("Standard clicked:", standardId);
 		setActiveStandard(standardId);
 	};
 
@@ -224,10 +224,10 @@ function StudentData() {
 
 	useEffect(() => {
 		if (subject && activeStandard) {
-			console.log(
-				"Subject and activeStandard ready, fetching students:",
-				{ subject, activeStandard }
-			);
+			// console.log(
+			// 	"Subject and activeStandard ready, fetching students:",
+			// 	{ subject, activeStandard }
+			// );
 			fetchStudentsList();
 		}
 	}, [subject, activeStandard]);

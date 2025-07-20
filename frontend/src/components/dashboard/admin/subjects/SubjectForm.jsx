@@ -7,7 +7,8 @@ import {
 } from "../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import { FaArrowLeftLong, FaBook, FaPlus } from "react-icons/fa6";
+import { FaEdit } from "react-icons/fa";
 import { clearEditingSubject } from "../../../../slices/subject.slice";
 
 function SubjectForm() {
@@ -20,13 +21,11 @@ function SubjectForm() {
 	} = useForm();
 
 	const { editingSubject } = useSelector((state) => state.subject);
-
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { token } = useSelector((state) => state.auth);
 
 	useEffect(() => {
-		console.log(editingSubject);
 		if (editingSubject) {
 			setValue("name", editingSubject.name);
 			setValue("code", editingSubject.code);
@@ -43,14 +42,11 @@ function SubjectForm() {
 					)
 				);
 				if (result) {
-					// toast.success("Subject updated successfully");
 					navigate("/dashboard/admin-subjects/subjects-list");
-					setEditingSubject(null);
 				}
 			} else {
 				const result = await dispatch(createSubject(data, token));
 				if (result) {
-					// toast.success("Subject created successfully");
 					reset();
 					navigate("/dashboard/admin-subjects/subjects-list");
 				}
@@ -65,90 +61,156 @@ function SubjectForm() {
 		return () => {
 			dispatch(clearEditingSubject());
 		};
-	}, []);
+	}, [dispatch]);
 
 	return (
-		<>
-			<div className="flex justify-between items-center mb-6">
-				<h3 className="text-3xl font-semibold text-richblack-5">
-					{editingSubject ? "Edit Subject" : "Create Subject"}
-				</h3>
+		<div className="p-6">
+			{/* Header */}
+			<div className="flex items-center justify-between mb-8">
+				<div className="flex items-center gap-3">
+					{editingSubject ? (
+						<FaEdit className="text-charcoal-gray text-2xl" />
+					) : (
+						<FaPlus className="text-charcoal-gray text-2xl" />
+					)}
+					<h1 className="text-3xl font-bold text-charcoal-gray">
+						{editingSubject
+							? "Edit Subject"
+							: "Create Subject"}
+					</h1>
+				</div>
+
 				<button
 					onClick={() => navigate("/dashboard/admin-subjects")}
-					className="flex items-center gap-2 cursor-pointer text-richblack-200 hover:text-richblack-5 transition-all duration-200"
+					className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200"
 				>
-					<FaArrowLeftLong className="text-lg" />
-					Back
+					<FaArrowLeftLong className="text-sm" />
+					<span>Back</span>
 				</button>
 			</div>
-			<div className="bg-white shadow shadow-slate-gray p-6 mt-15 rounded-lg w-full max-w-2xl mx-auto animate-slide-in">
-				<form
-					onSubmit={handleSubmit(submitHandler)}
-					className="flex flex-col p-5 gap-4"
-				>
-					<label>
-						<p className="pl-2 text-base text-medium-gray pb-1">
-							Subject Name
-						</p>
-						<input
-							type="text"
-							placeholder="Enter subject name"
-							{...register("name", {
-								required: true,
-							})}
-							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md"
-						/>
-						{errors.name && (
-							<p className="text-red-200 text-sm ml-2">
-								Subject name is required
-							</p>
-						)}
-					</label>
-					<label>
-						<p className="pl-2 text-base text-medium-gray pb-1">
-							Subject Code
-						</p>
-						<input
-							type="text"
-							placeholder="Enter subject code"
-							{...register("code", {
-								required: true,
-							})}
-							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md"
-						/>
-						{errors.code && (
-							<p className="text-red-200 text-sm ml-2">
-								Subject code is required
-							</p>
-						)}
-					</label>
-					<div className="flex gap-4">
-						<button
-							className="bg-slate-gray text-white w-fit px-6 py-2 rounded-sm mt-4 hover:bg-slate-700 transition-all transform hover:scale-105"
-							type="submit"
-						>
-							{editingSubject
-								? "Update Subject"
-								: "Create Subject"}
-						</button>
-						<button
-							onClick={() => {
-								reset();
-								// setEditingSubject(null);
-								dispatch(clearEditingSubject());
-								navigate(
-									"/dashboard/admin-subjects/subjects-list"
-								);
-							}}
-							className="bg-gray-300 text-slate-gray w-fit px-6 py-2 rounded-sm mt-4 hover:bg-gray-400 transition-all transform hover:scale-105"
-							type="button"
-						>
-							Cancel
-						</button>
+
+			{/* Form Card */}
+			<div className="max-w-2xl mx-auto">
+				<div className="bg-white p-8 rounded-lg shadow-md border border-light-gray">
+					<div className="flex items-center gap-3 mb-6">
+						<FaBook className="text-charcoal-gray text-xl" />
+						<h2 className="text-xl font-semibold text-charcoal-gray">
+							Subject Information
+						</h2>
 					</div>
-				</form>
+
+					<form
+						onSubmit={handleSubmit(submitHandler)}
+						className="space-y-6"
+					>
+						{/* Subject Name */}
+						<div>
+							<label className="block text-sm font-medium text-charcoal-gray mb-2">
+								Subject Name
+							</label>
+							<input
+								type="text"
+								placeholder="Enter subject name (e.g., Mathematics)"
+								{...register("name", {
+									required:
+										"Subject name is required",
+								})}
+								className={`w-full px-4 py-3 border rounded-lg text-charcoal-gray placeholder-slate-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200 ${
+									errors.name
+										? "border-red-400 focus:border-red-400"
+										: "border-light-gray"
+								}`}
+							/>
+							{errors.name && (
+								<p className="text-red-500 text-sm mt-1">
+									{errors.name.message}
+								</p>
+							)}
+						</div>
+
+						{/* Subject Code */}
+						<div>
+							<label className="block text-sm font-medium text-charcoal-gray mb-2">
+								Subject Code
+							</label>
+							<input
+								type="text"
+								placeholder="Enter subject code (e.g., MATH101)"
+								{...register("code", {
+									required:
+										"Subject code is required",
+								})}
+								className={`w-full px-4 py-3 border rounded-lg text-charcoal-gray placeholder-slate-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200 ${
+									errors.code
+										? "border-red-400 focus:border-red-400"
+										: "border-light-gray"
+								}`}
+							/>
+							{errors.code && (
+								<p className="text-red-500 text-sm mt-1">
+									{errors.code.message}
+								</p>
+							)}
+						</div>
+
+						{/* Action Buttons */}
+						<div className="flex items-center gap-4 pt-4">
+							<button
+								type="submit"
+								className="flex items-center gap-2 px-6 py-3 bg-charcoal-gray text-white font-medium rounded-lg hover:bg-medium-gray transition-colors duration-200"
+							>
+								{editingSubject ? (
+									<>
+										<FaEdit className="text-sm" />
+										Update Subject
+									</>
+								) : (
+									<>
+										<FaPlus className="text-sm" />
+										Create Subject
+									</>
+								)}
+							</button>
+
+							<button
+								type="button"
+								onClick={() => {
+									reset();
+									dispatch(clearEditingSubject());
+									navigate(
+										"/dashboard/admin-subjects/subjects-list"
+									);
+								}}
+								className="px-6 py-3 bg-light-gray text-charcoal-gray font-medium rounded-lg hover:bg-slate-gray hover:text-white transition-colors duration-200"
+							>
+								Cancel
+							</button>
+						</div>
+					</form>
+				</div>
+
+				{/* Help Text */}
+				<div className="mt-6 p-4 bg-light-gray rounded-lg">
+					<h3 className="text-sm font-medium text-charcoal-gray mb-2">
+						Tips:
+					</h3>
+					<ul className="text-sm text-slate-gray space-y-1">
+						<li>
+							• Subject name should be descriptive (e.g.,
+							Advanced Mathematics, English Literature)
+						</li>
+						<li>
+							• Subject code should be unique and follow
+							your institution's format
+						</li>
+						<li>
+							• Both fields are required and cannot be
+							empty
+						</li>
+					</ul>
+				</div>
 			</div>
-		</>
+		</div>
 	);
 }
 

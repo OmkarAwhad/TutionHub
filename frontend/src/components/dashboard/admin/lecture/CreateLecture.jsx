@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { createLecture } from "../../../../services/operations/lecture.service";
 import { getAllUsersList } from "../../../../services/operations/users.service";
 import { getAllSubjects } from "../../../../services/operations/subject.service";
+import { getAllStandards } from "../../../../services/operations/standard.service";
 import { toast } from "react-hot-toast";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 function CreateLecture() {
 	const [loading, setLoading] = useState(false);
+	const [standardsList, setStandardsList]  = useState(null);
 	const [tutors, setTutors] = useState([]);
 	const [subjects, setSubjects] = useState([]);
 	const dispatch = useDispatch();
@@ -34,6 +36,21 @@ function CreateLecture() {
 		reset,
 		setValue,
 	} = useForm();
+
+	useEffect(()=>{
+		const fetchStandards = async()=>{
+			try {
+				const response = await dispatch(getAllStandards(token));
+				if(response){
+					setStandardsList(response);
+				}
+			} catch (error) {
+				console.error("Error fetching standards:", error);
+				toast.error("Failed to fetch standards");
+			}
+		}
+		fetchStandards();
+	},[dispatch,token])
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -76,6 +93,7 @@ function CreateLecture() {
 				reset();
 				setFromTime({ hours: "", minutes: "", period: "AM" });
 				setToTime({ hours: "", minutes: "", period: "AM" });
+				navigate(-1);
 			}
 		} catch (error) {
 			console.error("Error creating lecture:", error);
@@ -96,7 +114,7 @@ function CreateLecture() {
 				</h1>
 				<form
 					onSubmit={handleSubmit(submitHandler)}
-					className="flex flex-col gap-4 w-full "
+					className="flex flex-col gap-2 w-full "
 				>
 					<label className="w-full ">
 						<p className="pl-2 text-base text-medium-gray pb-1">
@@ -274,6 +292,31 @@ function CreateLecture() {
 						{errors.subject && (
 							<p className="text-red-200 text-sm ml-2">
 								Subject is required
+							</p>
+						)}
+					</label>
+
+					<label>
+						<p className="pl-2 text-base text-medium-gray pb-1">
+							Standard
+						</p>
+						<select
+							{...register("standardId", { required: true })}
+							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md"
+						>
+							<option value="">Select Standard</option>
+							{standardsList && standardsList.map((standard) => (
+								<option
+									key={standard._id}
+									value={standard._id}
+								>
+									{standard.standardName}
+								</option>
+							))}
+						</select>
+						{errors.standard && (
+							<p className="text-red-200 text-sm ml-2">
+								Standard is required
 							</p>
 						)}
 					</label>

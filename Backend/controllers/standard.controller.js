@@ -118,18 +118,18 @@ module.exports.createStandard = async (req, res) => {
 
 module.exports.getStandardById = async (req, res) => {
 	try {
-		const { id } = req.params;
+		const { standardId } = req.params;
+		
+		const standardDetails = await Standard.findById(standardId).exec();
 
-		const standard = await Standard.findById(id).exec();
-
-		if (!standard) {
+		if (!standardDetails) {
 			return res.json(new ApiError(404, "Standard not found"));
 		}
 
 		return res.json(
 			new ApiResponse(
 				200,
-				{ standard: standard },
+				standardDetails,
 				"Standard fetched successfully"
 			)
 		);
@@ -151,7 +151,7 @@ module.exports.getMyStandard = async (req, res) => {
 			return res.json(new ApiError(404, "Profile not found"));
 		}
 
-		console.log("user.profile.standard : ",user.profile)
+		console.log("user.profile.standard : ", user.profile);
 
 		if (!user.profile) {
 			return res.json(new ApiError(404, "Standard not assigned"));

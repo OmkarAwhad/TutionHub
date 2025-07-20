@@ -25,15 +25,19 @@ export const attendanceApi = {
 	GET_ATTENDANCE_BY_SUBJECT: BASE_URL + "/attendance/attendAccToSub",
 	GET_LECTURES_WITHOUT_ATTENDANCE:
 		BASE_URL + "/attendance/getLecturesWithoutAttendance",
+	GET_ATTENDANCE_FOR_EDIT: BASE_URL + "/attendance/getAttendanceForEdit",
+	UPDATE_ATTENDANCE: BASE_URL + "/attendance/updateAttendance",
+	DELETE_ATTENDANCE: BASE_URL + "/attendance/deleteAttendance",
 };
 
 export const marksApi = {
-	GET_SUBJECT_MARKS: BASE_URL + "/marks/marksAccToSubject",
-	GET_STUDENT_PROGRESS: BASE_URL + "/marks/trackStudentProgress",
-	GET_SUBJECT_PROGRESS: BASE_URL + "/marks/trackProgressBySubject",
-	MARK_STUDENT_MARKS: BASE_URL + "/marks/markStudentMarks",
-	GET_MARKS_DETAILS_BY_LEC: BASE_URL + "/marks/getMarksDetailsByALec",
-	EDIT_MARKS: BASE_URL + "/marks/editMarks",
+   GET_MARKS_FOR_EDIT: BASE_URL + "/marks/getMarksForEdit",
+   UPDATE_MARKS_BULK: BASE_URL + "/marks/updateMarksInBulk",
+   DELETE_MARKS: BASE_URL + "/marks/deleteMarks",
+   MARK_STUDENT_MARKS: BASE_URL + "/marks/markStudentMarks",
+   GET_MARKS_DETAILS_BY_LEC: BASE_URL + "/marks/getMarksDetailsByALec",
+	GET_STUDENT_ANALYTICS: BASE_URL + "/marks/getStudentAnalytics",
+   GET_PERFORMANCE_COMPARISON: BASE_URL + "/marks/getPerformanceComparison",
 };
 
 export const remarksApi = {
@@ -53,7 +57,7 @@ export const subjectApi = {
 export const lectureApi = {
 	CREATE_LECTURE: BASE_URL + "/lecture/createLecture",
 	GET_WEEK_LECTURES: BASE_URL + "/lecture/getLecturesOfWeek",
-	GET_WEEK_LECTURES_BY_DATE: BASE_URL + "/lecture/getLecturesByDate",
+	GET_WEEK_LECTURES_BY_DATE: BASE_URL + "/lecture/getMyLecturesByDate",
 	GET_TEST_DAYS: BASE_URL + "/lecture/getLectByDesc",
 	GET_ALL_LECTURES: BASE_URL + "/lecture/getAllLectures",
 	GET_LECTURES_BY_SUBJECT: BASE_URL + "/lecture/getLectureBySub",
@@ -78,7 +82,7 @@ export const feedbackApi = {
 export const notesApi = {
 	UPLOAD_NOTES: BASE_URL + "/notes/uploadNotes",
 	DELETE_NOTE: BASE_URL + "/notes/deleteNote",
-	GET_ALL_NOTES: BASE_URL + "/notes/getAllNotes",
+	GET_ALL_NOTES: BASE_URL + "/notes/getStudentsAllNotes",
 	GET_NOTES_BY_SUB: BASE_URL + "/notes/getNotesBySubject",
 };
 
@@ -86,7 +90,7 @@ export const homeworkApi = {
 	UPLOAD_HOMEWORK: BASE_URL + "/homework/uploadHomework",
 	DELETE_HOMEWORK: BASE_URL + "/homework/deleteHomework",
 	GET_HOMEWORK_BY_SUB: BASE_URL + "/homework/getHomeworkBySubject",
-	GET_ALL_HOMEWORK: BASE_URL + "/homework/getAllHomework",
+	GET_ALL_HOMEWORK: BASE_URL + "/homework/getStudentsAllHomework",
 	SUBMIT_HOMEWORK: BASE_URL + "/homework/submitHomework",
 	GET_SUBMISSIONS: BASE_URL + "/homework/getSubmissions",
 	STUDENT_SUBMISSIONS: BASE_URL + "/homework/HWSubmittedByStud",

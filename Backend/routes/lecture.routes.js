@@ -13,7 +13,7 @@ const {
 	deleteLecture,
 	getAllLectures,
 	getLectureBySub,
-	getLecturesByDate,
+	getMyLecturesByDate,
 	getTutorLecturesByDate,
 } = require("../controllers/lecture.controller");
 const router = express.Router();
@@ -25,7 +25,7 @@ router.put("/updateLecture/:lectureId", auth, isAdmin, updateLecture);
 router.delete("/deleteLecture", auth, isAdmin, deleteLecture);
 router.get("/getAllLectures", auth, isAdmin, getAllLectures);
 router.get("/getLectureBySub", auth, isAdmin, getLectureBySub);
-router.post("/getLecturesByDate", auth, isStudent, getLecturesByDate);
+router.post("/getMyLecturesByDate", auth, isStudent, getMyLecturesByDate);
 router.post("/getTutorLecturesByDate", auth, isTutor, getTutorLecturesByDate);
 
 module.exports = router;

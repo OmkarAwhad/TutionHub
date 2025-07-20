@@ -3,7 +3,7 @@ const router = express.Router();
 const { auth, isTutor, isStudent } = require("../middlewares/auth.middleware");
 const {
 	uploadHomework,
-	getAllHomework,
+	getStudentsAllHomework,
 	getHomeworkBySubject,
 	submitHomework,
 	getSubmissions,
@@ -16,7 +16,7 @@ router.get("/getSubmissions/:homeworkId", auth, isTutor, getSubmissions);
 router.get("/HWSubmittedByStud", auth, HWSubmittedByStud);
 
 router.post("/uploadHomework", auth, isTutor, uploadHomework);
-router.get("/getAllHomework", auth, getAllHomework);
+router.get("/getStudentsAllHomework", auth, getStudentsAllHomework);
 router.get("/getHomeworkBySubject", auth, getHomeworkBySubject);
 router.delete("/deleteHomework/:homeworkId", auth, isTutor, deleteHomework);
 

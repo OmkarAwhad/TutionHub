@@ -258,3 +258,94 @@ export function StudAttendAccToSubForTutor(studentId, subjectId, token) {
 		}
 	};
 }
+
+// Get attendance data for editing
+export function getAttendanceForEdit(lectureId, token) {
+   return async (dispatch) => {
+      try {
+         const result = await apiConnector(
+            "GET",
+            `${attendanceApi.GET_ATTENDANCE_FOR_EDIT}/${lectureId}`,
+            null,
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return null;
+         }
+         return result.data.data;
+      } catch (error) {
+         toast.error("Error fetching attendance data for editing");
+         console.error("Error fetching attendance for edit:", error);
+         return null;
+      }
+   };
+}
+
+// Update attendance
+export function updateAttendance(lectureId, attendanceData, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Updating attendance...");
+      try {
+         const result = await apiConnector(
+            "PUT",
+            `${attendanceApi.UPDATE_ATTENDANCE}/${lectureId}`,
+            { attendanceData },
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return false;
+         }
+
+         toast.success("Attendance updated successfully");
+         return true;
+      } catch (error) {
+         toast.error("Failed to update attendance");
+         console.error("Error updating attendance:", error);
+         return false;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}
+
+// Delete attendance for lecture
+export function deleteAttendanceForLecture(lectureId, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Deleting attendance...");
+      try {
+         const result = await apiConnector(
+            "DELETE",
+            `${attendanceApi.DELETE_ATTENDANCE}/${lectureId}`,
+            null,
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return false;
+         }
+
+         toast.success("Attendance deleted successfully");
+         return true;
+      } catch (error) {
+         toast.error("Failed to delete attendance");
+         console.error("Error deleting attendance:", error);
+         return false;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}

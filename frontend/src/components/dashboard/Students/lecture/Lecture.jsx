@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { FaCalendarWeek } from "react-icons/fa6";
+import { FaChalkboardTeacher } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import LectureTable from "./LectureTable";
-import { getLecturesByDate } from "../../../../services/operations/lecture.service";
+import { getMyLecturesByDate } from "../../../../services/operations/lecture.service";
 
 function Lecture() {
 	const { token } = useSelector((state) => state.auth);
@@ -13,18 +15,15 @@ function Lecture() {
 	const [loading, setLoading] = useState(false);
 	const [currentDate, setCurrentDate] = useState(new Date());
 
-	// Initialize with current date
 	useEffect(() => {
 		fetchLecturesOfWeek();
 	}, []);
 
-	// Function to fetch lectures for the current week
 	const fetchLecturesOfWeek = async () => {
 		setLoading(true);
 		try {
-			// Format date as YYYY-MM-DD
 			const formattedDate = currentDate.toISOString().split('T')[0];
-			const response = await getLecturesByDate(token, formattedDate, true);
+			const response = await getMyLecturesByDate(token, formattedDate, true);
 
 			if (response) {
 				setLectList(response.lectures || {});
@@ -39,17 +38,14 @@ function Lecture() {
 		}
 	};
 
-	// Handle navigation between weeks
 	const handleWeekShift = (direction) => {
 		setLoading(true);
-		// Create new date by shifting the current date
 		const newDate = new Date(currentDate);
 		newDate.setDate(newDate.getDate() + (direction * 7));
 		setCurrentDate(newDate);
 
-		// Fetch lectures for the new date
 		const formattedDate = newDate.toISOString().split('T')[0];
-		getLecturesByDate(token, formattedDate, true)
+		getMyLecturesByDate(token, formattedDate, true)
 			.then(response => {
 				if (response) {
 					setLectList(response.lectures || {});
@@ -67,34 +63,51 @@ function Lecture() {
 	};
 
 	return (
-		<div className="py-4">
-			<div className="mb-10 flex items-center justify-between pr-10">
-				<h1 className="text-3xl font-bold text-richblack-5">Schedule</h1>
-				<div className="flex gap-1">
-					<button
-						onClick={() => handleWeekShift(-1)}
-						className="p-2 text-2xl bg-slate-gray text-white rounded-md cursor-pointer disabled:opacity-50"
-						disabled={loading}
-						aria-label="Previous week"
-					>
-						<IoIosArrowBack />
-					</button>
-					<button
-						onClick={() => handleWeekShift(1)}
-						className="p-2 text-2xl bg-slate-gray text-white rounded-md cursor-pointer disabled:opacity-50"
-						disabled={loading}
-						aria-label="Next week"
-					>
-						<IoIosArrowForward />
-					</button>
+		<div className="p-6">
+			{/* Header */}
+			<div className="flex items-center justify-between mb-8">
+				<div className="flex items-center gap-3">
+					<FaChalkboardTeacher className="text-charcoal-gray text-2xl" />
+					<h1 className="text-3xl font-bold text-charcoal-gray">Weekly Schedule</h1>
+				</div>
+
+				{/* Navigation Controls */}
+				<div className="flex items-center gap-3">
+					<div className="flex items-center gap-2 text-medium-gray">
+						<FaCalendarWeek className="text-lg" />
+						<span className="text-sm font-medium">Navigate Weeks</span>
+					</div>
+					<div className="flex gap-2">
+						<button
+							onClick={() => handleWeekShift(-1)}
+							className="p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+							disabled={loading}
+							aria-label="Previous week"
+						>
+							<IoIosArrowBack className="text-lg" />
+						</button>
+						<button
+							onClick={() => handleWeekShift(1)}
+							className="p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+							disabled={loading}
+							aria-label="Next week"
+						>
+							<IoIosArrowForward className="text-lg" />
+						</button>
+					</div>
 				</div>
 			</div>
 
-			{loading ? (
-				<div className="text-richblack-200 text-center py-4">
-					Loading lectures...
+			{/* Loading State */}
+			{loading && (
+				<div className="text-center py-8">
+					<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-charcoal-gray mx-auto mb-4"></div>
+					<p className="text-medium-gray">Loading lectures...</p>
 				</div>
-			) : (
+			)}
+
+			{/* Lecture Table */}
+			{!loading && (
 				<LectureTable
 					weekStart={weekStart}
 					weekEnd={weekEnd}

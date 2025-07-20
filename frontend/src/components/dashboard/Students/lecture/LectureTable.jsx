@@ -91,7 +91,7 @@ function LectureTable({ weekStart, weekEnd, lectList = {} }) {
 																}
 																className={`${
 																	isToday
-																		? " border-2 border-green-300"
+																		? " border-2 border-gray-400"
 																		: ""
 																} text-center bg-white p-3 min-h-[140px] rounded-lg flex flex-col justify-between`}
 															>

@@ -7,6 +7,7 @@ import { getAllSubjects } from "../../../../services/operations/subject.service"
 import { toast } from "react-hot-toast";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { getAllStandards } from "../../../../services/operations/standard.service";
 
 function EditLecture() {
 	const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ function EditLecture() {
 	const { token } = useSelector((state) => state.auth);
 	const { editLecture } = useSelector((state) => state.lecture);
 	const navigate = useNavigate();
+	const [standardsList, setStandardsList]  = useState(null);
 
 	const [fromTime, setFromTime] = useState({
 		hours: "",
@@ -35,6 +37,21 @@ function EditLecture() {
 		reset,
 		setValue,
 	} = useForm();
+
+	useEffect(()=>{
+			const fetchStandards = async()=>{
+				try {
+					const response = await dispatch(getAllStandards(token));
+					if(response){
+						setStandardsList(response);
+					}
+				} catch (error) {
+					console.error("Error fetching standards:", error);
+					toast.error("Failed to fetch standards");
+				}
+			}
+			fetchStandards();
+		},[dispatch,token])
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -312,6 +329,31 @@ function EditLecture() {
 						{errors.subject && (
 							<p className="text-red-200 text-sm ml-2">
 								Subject is required
+							</p>
+						)}
+					</label>
+
+					<label>
+						<p className="pl-2 text-base text-medium-gray pb-1">
+							Standard
+						</p>
+						<select
+							{...register("standardId", { required: true })}
+							className="px-4 py-2 w-full outline-none border-[2px] border-gray-200 rounded-md"
+						>
+							<option value="">Select Standard</option>
+							{standardsList && standardsList.map((standard) => (
+								<option
+									key={standard._id}
+									value={standard._id}
+								>
+									{standard.standardName}
+								</option>
+							))}
+						</select>
+						{errors.standard && (
+							<p className="text-red-200 text-sm ml-2">
+								Standard is required
 							</p>
 						)}
 					</label>

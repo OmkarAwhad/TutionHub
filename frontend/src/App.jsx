@@ -55,6 +55,8 @@ import AnnouncementList from "./components/dashboard/admin/announcement/Announce
 import MyAnnouncement from "./components/dashboard/myprofile/MyAnnouncement.jsx";
 import UserDetails from "./components/dashboard/admin/users/UserDetails.jsx";
 import AssignStandard from "./components/dashboard/admin/subjects/AssignStandard.jsx";
+import EditAttendance from "./components/dashboard/admin/attendance/EditAttendance.jsx";
+import EditMarks from "./components/dashboard/admin/marks/EditMarks.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -215,6 +217,10 @@ function App() {
 								element={<MarksList />}
 							/>
 							<Route
+								path="/dashboard/admin-marks/edit-marks/:lectureId"
+								element={<EditMarks />}
+							/>
+							<Route
 								path="/dashboard/admin-marks/view-marks/:lectureId"
 								element={<ViewMarks />}
 							/>
@@ -237,6 +243,10 @@ function App() {
 							<Route
 								path="/dashboard/admin-attendance/mark-attendance/:lectureId"
 								element={<MainMarking />}
+							/>
+							<Route
+								path="/dashboard/admin-attendance/edit-attendance/:lectureId"
+								element={<EditAttendance />}
 							/>
 							<Route
 								path="/dashboard/admin-announcement"

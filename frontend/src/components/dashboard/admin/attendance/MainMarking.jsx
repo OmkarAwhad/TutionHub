@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { clearmarkLecture } from "../../../../slices/attendance.slice";
-import { IoArrowBack } from "react-icons/io5";
+import { FaArrowLeftLong, FaUser, FaClock, FaBook } from "react-icons/fa6";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 function MainMarking() {
@@ -104,93 +106,142 @@ function MainMarking() {
 		return null;
 	}
 
+	const presentCount =
+		Object.values(attendanceStatus).filter(Boolean).length;
+	const absentCount = studentsList.length - presentCount;
+
 	return (
-		<div className="p-8">
-			<div className="flex justify-between items-center mb-6">
-				<h3 className="text-2xl font-semibold text-richblack-5">
-					Mark Attendance
-				</h3>
+		<div className="p-6">
+			{/* Header */}
+			<div className="flex items-center justify-between mb-8">
+				<div className="flex items-center gap-3">
+					<FaChalkboardTeacher className="text-charcoal-gray text-2xl" />
+					<h1 className="text-3xl font-bold text-charcoal-gray">
+						Mark Attendance
+					</h1>
+				</div>
+
 				<button
 					onClick={() =>
 						navigate(
 							"/dashboard/admin-attendance/mark-attendance"
 						)
 					}
-					className="flex items-center gap-2 cursor-pointer text-richblack-200 hover:text-richblack-5 transition-all duration-200"
+					className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200"
 				>
-					<IoArrowBack className="text-lg" />
-					Back
+					<FaArrowLeftLong className="text-sm" />
+					<span>Back</span>
 				</button>
 			</div>
 
 			{/* Lecture Details Card */}
 			{markLecture && (
-				<div className="bg-richblack-800 p-6 rounded-xl shadow-lg mb-8">
-					<div className="flex justify-between items-start">
-						<div>
-							<h2 className="text-2xl font-bold text-richblack-5 mb-2">
-								{markLecture.subject?.name}
-							</h2>
-							<p className="text-richblack-200">
-								{format(
-									new Date(
-										markLecture.date
-									),
-									"PPP"
-								)}
-							</p>
+				<div className="bg-white p-6 rounded-lg shadow-md border border-light-gray mb-6">
+					<h2 className="text-xl font-semibold text-charcoal-gray mb-4">
+						Lecture Details
+					</h2>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						{/* Subject */}
+						<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
+							<FaBook className="text-charcoal-gray" />
+							<div>
+								<p className="text-xs text-slate-gray">
+									Subject
+								</p>
+								<p className="text-sm font-semibold text-charcoal-gray">
+									{markLecture.subject?.name}
+								</p>
+							</div>
 						</div>
-						<div className="text-right">
-							<p className="text-richblack-200">
-								<span className="text-medium-gray">
-									Time:{" "}
-								</span>
-								{markLecture.time}
-							</p>
-							<p className="text-richblack-200">
-								<span className="text-medium-gray">
-									Tutor:{" "}
-								</span>
-								{markLecture.tutor?.name}
-							</p>
+
+						{/* Date */}
+						<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
+							<FaCalendarAlt className="text-medium-gray" />
+							<div>
+								<p className="text-xs text-slate-gray">
+									Date
+								</p>
+								<p className="text-sm font-semibold text-charcoal-gray">
+									{format(
+										new Date(markLecture.date),
+										"dd MMM yyyy"
+									)}
+								</p>
+							</div>
+						</div>
+
+						{/* Time */}
+						<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
+							<FaClock className="text-medium-gray" />
+							<div>
+								<p className="text-xs text-slate-gray">
+									Time
+								</p>
+								<p className="text-sm font-semibold text-charcoal-gray">
+									{markLecture.time}
+								</p>
+							</div>
+						</div>
+
+						{/* Tutor */}
+						<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
+							<FaUser className="text-charcoal-gray" />
+							<div>
+								<p className="text-xs text-slate-gray">
+									Tutor
+								</p>
+								<p className="text-sm font-semibold text-charcoal-gray">
+									{markLecture.tutor?.name}
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			)}
 
 			{/* Attendance Table */}
-			<div className="bg-richblack-800 rounded-xl shadow-lg overflow-hidden">
+			<div className="bg-white rounded-lg shadow-md border border-light-gray overflow-hidden">
 				<div className="p-6">
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="text-lg font-semibold text-charcoal-gray">
+							Student Attendance
+						</h3>
+						<div className="flex items-center gap-2">
+							<label className="text-sm text-medium-gray">
+								Select All Present:
+							</label>
+							<input
+								type="checkbox"
+								checked={selectAll}
+								onChange={handleSelectAll}
+								className="h-4 w-4 rounded border-light-gray text-charcoal-gray focus:ring-charcoal-gray"
+							/>
+						</div>
+					</div>
+
 					<div className="overflow-x-auto">
 						<table className="w-full">
 							<thead>
-								<tr className="border-b bg-gray-200 rounded-2xl border-richblack-700">
-									<th className="py-3 px-4 text-left text-richblack-200">
+								<tr className="bg-light-gray">
+									<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
 										Student Name
 									</th>
-									<th className="py-3 px-4 text-left text-richblack-200 flex items-center gap-2 ">
-										Status
-										<input
-											type="checkbox"
-											checked={selectAll}
-											onChange={
-												handleSelectAll
-											}
-											className="h-4 w-4 rounded border-richblack-300 text-yellow-50 focus:ring-yellow-50"
-										/>
+									<th className="py-3 px-4 text-center text-sm font-semibold text-charcoal-gray">
+										Present
 									</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody className="divide-y divide-light-gray">
 								{studentsList.map((student) => (
 									<tr
 										key={student._id}
-										className="border-b border-richblack-700"
+										className="hover:bg-light-gray/30"
 									>
-										<td className="py-3 px-4 text-richblack-5  ">
+										<td className="py-3 px-4 text-sm text-charcoal-gray font-medium">
 											{student.name}
 										</td>
-										<td className="py-3 px-4 pl-10 ">
+										<td className="py-3 px-4 text-center">
 											<input
 												type="checkbox"
 												checked={
@@ -204,7 +255,7 @@ function MainMarking() {
 														student._id
 													)
 												}
-												className="h-4 w-4 rounded border-richblack-300 text-yellow-50 focus:ring-yellow-50"
+												className="h-4 w-4 rounded border-light-gray text-charcoal-gray focus:ring-charcoal-gray"
 											/>
 										</td>
 									</tr>
@@ -212,20 +263,50 @@ function MainMarking() {
 							</tbody>
 						</table>
 					</div>
+
+					{/* Submit Button */}
 					<div className="mt-6 flex justify-end">
 						<button
 							onClick={handleSubmitAttendance}
 							disabled={isSubmitting}
-							className={`px-4 py-2 rounded-lg font-medium text-white ${
+							className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
 								isSubmitting
-									? "bg-richblack-700 text-richblack-300 cursor-not-allowed"
-									: "bg-medium-gray text-richblack-900 hover:bg-charcoal-gray"
-							} transition-all duration-200`}
+									? "bg-light-gray text-slate-gray cursor-not-allowed"
+									: "bg-charcoal-gray text-white hover:bg-medium-gray"
+							}`}
 						>
 							{isSubmitting
 								? "Submitting..."
 								: "Submit Attendance"}
 						</button>
+					</div>
+
+					{/* Attendance Stats */}
+					<div className="grid grid-cols-3 mt-10 gap-4 mb-6">
+						<div className="bg-light-gray p-4 rounded-lg text-center">
+							<p className="text-xs text-slate-gray">
+								Total Students
+							</p>
+							<p className="text-lg font-bold text-charcoal-gray">
+								{studentsList.length}
+							</p>
+						</div>
+						<div className="bg-light-gray p-4 rounded-lg text-center">
+							<p className="text-xs text-slate-gray">
+								Present
+							</p>
+							<p className="text-lg font-bold text-charcoal-gray">
+								{presentCount}
+							</p>
+						</div>
+						<div className="bg-light-gray p-4 rounded-lg text-center">
+							<p className="text-xs text-slate-gray">
+								Absent
+							</p>
+							<p className="text-lg font-bold text-medium-gray">
+								{absentCount}
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>

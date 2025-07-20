@@ -7,9 +7,17 @@ const Marks = require("../models/marks.model");
 
 module.exports.createLecture = async (req, res) => {
 	try {
-		const { date, time, tutor, subject, description } = req.body;
+		const { date, time, tutor, subject, description, standardId } =
+			req.body;
 
-		if (!date || !time || !tutor || !subject || !description) {
+		if (
+			!date ||
+			!time ||
+			!tutor ||
+			!subject ||
+			!description ||
+			!standardId
+		) {
 			return res.json(new ApiError(400, "All fields are required"));
 		}
 
@@ -52,6 +60,7 @@ module.exports.createLecture = async (req, res) => {
 			date: inputDate,
 			time: time,
 			tutor: tutorDetails._id,
+			standard: standardId,
 			subject: subjectDetails._id,
 			day: dayOfWeek,
 			description: description,
@@ -180,7 +189,8 @@ module.exports.getLectByDesc = async (req, res) => {
 module.exports.updateLecture = async (req, res) => {
 	try {
 		const { lectureId } = req.params;
-		const { date, time, tutor, subject, description } = req.body;
+		const { date, time, tutor, subject, description, standardId } =
+			req.body;
 
 		const lecture = await Lecture.findById(lectureId);
 		if (!lecture) {
@@ -219,6 +229,7 @@ module.exports.updateLecture = async (req, res) => {
 			lecture.subject = subjectDetails._id;
 		}
 		if (description) lecture.description = description;
+		if (standardId) lecture.standard = standardId;
 
 		await lecture.save();
 
@@ -241,11 +252,15 @@ module.exports.deleteLecture = async (req, res) => {
 		}
 
 		// Delete all attendance records for this lecture
-		await require("../models/attendance.model").deleteMany({ lecture: lectureId });
+		await require("../models/attendance.model").deleteMany({
+			lecture: lectureId,
+		});
 
 		// If the lecture is a Test, delete all marks for this lecture
 		if (lecture.description === "Test") {
-			await require("../models/marks.model").deleteMany({ lecture: lectureId });
+			await require("../models/marks.model").deleteMany({
+				lecture: lectureId,
+			});
 		}
 
 		return res.json(
@@ -262,6 +277,7 @@ module.exports.getAllLectures = async (req, res) => {
 		const lectures = await Lecture.find()
 			.populate("tutor")
 			.populate("subject")
+			.populate("standard")
 			.sort({ date: -1, time: 1 });
 
 		// Add marksMarked property to indicate if marks are marked for the lecture
@@ -329,172 +345,176 @@ module.exports.getLectureBySub = async (req, res) => {
 	}
 };
 
-module.exports.getLecturesByDate = async (req, res) => {
-	try {
-		const { date, fetchWeek = true } = req.body;
+module.exports.getMyLecturesByDate = async (req, res) => {
+   try {
+      const { date, fetchWeek = true } = req.body;
 
-		// Validate input
-		if (!date) {
-			return res.json(new ApiError(400, "Date is required"));
-		}
+      // Validate input
+      if (!date) {
+         return res.json(new ApiError(400, "Date is required"));
+      }
 
-		// Parse and validate date
-		const inputDate = new Date(date);
-		if (isNaN(inputDate)) {
-			return res.json(
-				new ApiError(400, "Invalid date format. Use YYYY-MM-DD")
-			);
-		}
-		inputDate.setHours(0, 0, 0, 0);
+      const userId = req.user.id;
+      const userDetails = await User.findById(userId).populate("profile").exec();
+      if (!userDetails) {
+         return res.json(new ApiError(404, "User not found"));
+      }
+      
+      const standardId = userDetails.profile?.standard; // 👈 Add optional chaining
+      if (!standardId) {
+         return res.json(new ApiError(400, "User has no standard assigned"));
+      }
 
-		let weekStart, weekEnd;
+      // Parse and validate date
+      const inputDate = new Date(date);
+      if (isNaN(inputDate)) {
+         return res.json(
+            new ApiError(400, "Invalid date format. Use YYYY-MM-DD")
+         );
+      }
+      inputDate.setHours(0, 0, 0, 0);
 
-		if (fetchWeek) {
-			// Calculate week start (Sunday) and end (Saturday)
-			weekStart = new Date(inputDate);
-			weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      let weekStart, weekEnd;
 
-			weekEnd = new Date(weekStart);
-			weekEnd.setDate(weekEnd.getDate() + 6);
-			weekEnd.setHours(23, 59, 59, 999);
-		} else {
-			// Fetch lectures for the specific date
-			weekStart = new Date(inputDate);
-			weekEnd = new Date(inputDate);
-			weekEnd.setHours(23, 59, 59, 999);
-		}
+      if (fetchWeek) {
+         // Calculate week start (Sunday) and end (Saturday)
+         weekStart = new Date(inputDate);
+         weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-		// console.log(
-		// 	`Searching for lectures between ${weekStart.toISOString()} and ${weekEnd.toISOString()}`
-		// );
+         weekEnd = new Date(weekStart);
+         weekEnd.setDate(weekEnd.getDate() + 6);
+         weekEnd.setHours(23, 59, 59, 999);
+      } else {
+         // Fetch lectures for the specific date
+         weekStart = new Date(inputDate);
+         weekEnd = new Date(inputDate);
+         weekEnd.setHours(23, 59, 59, 999);
+      }
 
-		// Query lectures with populated tutor and subject
-		const lectures = await Lecture.find({
-			date: {
-				$gte: weekStart,
-				$lte: weekEnd,
-			},
-		})
-			.populate("tutor")
-			.populate("subject")
-			.exec();
+      // 👈 Query lectures with all populated fields including standard
+      const lectures = await Lecture.find({
+         date: {
+            $gte: weekStart,
+            $lte: weekEnd,
+         },
+         standard: standardId,
+      })
+         .populate("tutor", "name email") // 👈 Select specific fields
+         .populate("subject", "name code")
+         .populate("standard", "standardName") // 👈 Add standard population
+         .exec();
 
-		// console.log(`Found ${lectures.length} lectures`);
+      // If no lectures found, return empty structure
+      if (lectures.length === 0) {
+         return res.json(
+            new ApiResponse(
+               200,
+               {
+                  weekStart: weekStart.toISOString().split("T")[0],
+                  weekEnd: weekEnd.toISOString().split("T")[0],
+                  lectures: {
+                     Sunday: [],
+                     Monday: [],
+                     Tuesday: [],
+                     Wednesday: [],
+                     Thursday: [],
+                     Friday: [],
+                     Saturday: [],
+                  },
+               },
+               `No lectures found for the specified ${
+                  fetchWeek ? "week" : "date"
+               }`
+            )
+         );
+      }
 
-		// If no lectures found, return a specific message
-		if (lectures.length === 0) {
-			return res.json(
-				new ApiResponse(
-					200,
-					{
-						weekStart: weekStart.toISOString().split("T")[0],
-						weekEnd: weekEnd.toISOString().split("T")[0],
-						lectures: {
-							Sunday: [],
-							Monday: [],
-							Tuesday: [],
-							Wednesday: [],
-							Thursday: [],
-							Friday: [],
-							Saturday: [],
-						},
-					},
-					`No lectures found for the specified ${
-						fetchWeek ? "week" : "date"
-					}`
-				)
-			);
-		}
+      // Group lectures by day
+      const lectByDay = {
+         Sunday: [],
+         Monday: [],
+         Tuesday: [],
+         Wednesday: [],
+         Thursday: [],
+         Friday: [],
+         Saturday: [],
+      };
 
-		// Group lectures by day
-		const lectByDay = {
-			Sunday: [],
-			Monday: [],
-			Tuesday: [],
-			Wednesday: [],
-			Thursday: [],
-			Friday: [],
-			Saturday: [],
-		};
+      // Helper function to get day name from date
+      const getDayName = (date) => {
+         const days = [
+            "Sunday",
+            "Monday", 
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+         ];
+         return days[new Date(date).getDay()];
+      };
 
-		// Helper function to get day name from date
-		const getDayName = (date) => {
-			const days = [
-				"Sunday",
-				"Monday",
-				"Tuesday",
-				"Wednesday",
-				"Thursday",
-				"Friday",
-				"Saturday",
-			];
-			return days[new Date(date).getDay()];
-		};
+      // Process each lecture
+      lectures.forEach((lect) => {
+         const day = getDayName(lect.date);
+         lectByDay[day].push({
+            _id: lect._id,
+            tutor: lect.tutor,
+            date: lect.date,
+            standard: lect.standard, // 👈 Now populated with standardName
+            day,
+            time: lect.time,
+            description: lect.description,
+            subject: lect.subject,
+            marksMarked: lect.marksMarked,
+            // 👈 Removed student field as it seems unused in this context
+         });
+      });
 
-		// Process each lecture
-		lectures.forEach((lect) => {
-			const day = getDayName(lect.date);
-			lectByDay[day].push({
-				_id: lect._id,
-				student: lect.student,
-				tutor: lect.tutor,
-				date: lect.date,
-				day,
-				time: lect.time,
-				description: lect.description,
-				subject: lect.subject,
-				marksMarked: lect.marksMarked,
-			});
-		});
+      // Sort lectures by start time within each day
+      Object.keys(lectByDay).forEach((day) => {
+         lectByDay[day].sort((a, b) => {
+            const parseTime = (timeStr) => {
+               try {
+                  const startTime = timeStr.split(" to ")[0].trim();
+                  const [hourMinute, period] = startTime.split(" ");
+                  let [hours, minutes] = hourMinute.split(":").map(Number);
+                  
+                  if (period.toUpperCase() === "PM" && hours !== 12) hours += 12;
+                  if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
+                  
+                  return hours * 60 + minutes;
+               } catch (error) {
+                  console.error(`Error parsing time: ${timeStr}`, error);
+                  return 0;
+               }
+            };
+            return parseTime(a.time) - parseTime(b.time);
+         });
+      });
 
-		// Sort lectures by start time within each day
-		Object.keys(lectByDay).forEach((day) => {
-			lectByDay[day].sort((a, b) => {
-				const parseTime = (timeStr) => {
-					try {
-						// Extract start time (before " to ")
-						const startTime = timeStr.split(" to ")[0].trim();
-						const [hourMinute, period] = startTime.split(" ");
-						let [hours, minutes] = hourMinute
-							.split(":")
-							.map(Number);
-						if (period.toUpperCase() === "PM" && hours !== 12) hours += 12;
-						if (period.toUpperCase() === "AM" && hours === 12) hours = 0;
-						return hours * 60 + minutes;
-					} catch (error) {
-						console.error(
-							`Error parsing time: ${timeStr}`,
-							error
-						);
-						return 0; // Fallback to prevent sorting errors
-					}
-				};
-				return parseTime(a.time) - parseTime(b.time);
-			});
-		});
-
-		return res.json(
-			new ApiResponse(
-				200,
-				{
-					weekStart: weekStart.toISOString().split("T")[0],
-					weekEnd: weekEnd.toISOString().split("T")[0],
-					lectures: lectByDay,
-				},
-				`Lectures fetched and grouped by day for the specified ${
-					fetchWeek ? "week" : "date"
-				} successfully`
-			)
-		);
-	} catch (error) {
-		console.error("Error fetching lectures:", error);
-		return res.json(
-			new ApiError(
-				500,
-				"Internal server error while fetching lectures"
-			)
-		);
-	}
+      return res.json(
+         new ApiResponse(
+            200,
+            {
+               weekStart: weekStart.toISOString().split("T")[0],
+               weekEnd: weekEnd.toISOString().split("T")[0],
+               lectures: lectByDay,
+            },
+            `Lectures fetched and grouped by day for the specified ${
+               fetchWeek ? "week" : "date"
+            } successfully`
+         )
+      );
+   } catch (error) {
+      console.error("Error fetching lectures:", error);
+      return res.json(
+         new ApiError(
+            500,
+            "Internal server error while fetching lectures"
+         )
+      );
+   }
 };
 
 module.exports.getTutorLecturesByDate = async (req, res) => {
@@ -503,7 +523,9 @@ module.exports.getTutorLecturesByDate = async (req, res) => {
 		const tutorId = req.user.id;
 
 		if (!tutorId) {
-			return res.json(new ApiError(401, "Unauthorized: Tutor not found"));
+			return res.json(
+				new ApiError(401, "Unauthorized: Tutor not found")
+			);
 		}
 
 		if (!date) {
@@ -615,9 +637,17 @@ module.exports.getTutorLecturesByDate = async (req, res) => {
 						let [hours, minutes = 0] = hourMinute
 							.split(":")
 							.map(Number);
-						if (period && period.toUpperCase() === "PM" && hours !== 12)
+						if (
+							period &&
+							period.toUpperCase() === "PM" &&
+							hours !== 12
+						)
 							hours += 12;
-						if (period && period.toUpperCase() === "AM" && hours === 12)
+						if (
+							period &&
+							period.toUpperCase() === "AM" &&
+							hours === 12
+						)
 							hours = 0;
 						return hours * 60 + minutes;
 					} catch (error) {

@@ -122,9 +122,13 @@ module.exports.uploadNotes = async (req, res) => {
 	});
 };
 
-module.exports.getAllNotes = async (req, res) => {
+module.exports.getStudentsAllNotes = async (req, res) => {
 	try {
-		const notes = await Note.find({})
+		const userId = req.user.id;
+		const userDetails = await User.findById(userId).populate("profile");
+		const standardId = userDetails.profile.standard;
+
+		const notes = await Note.find({ standard: standardId })
 			.populate("subject", "name code")
 			.populate("tutor", "name email")
 			.populate("standard")

@@ -60,7 +60,7 @@ export const getLecturesOfWeek = async (token) => {
 	}
 };
 
-export const getLecturesByDate = async (token, date, fetchWeek = true) => {
+export const getMyLecturesByDate = async (token, date, fetchWeek = true) => {
 	const toastId = toast.loading("Fetching lectures...");
 	try {
 		const response = await apiConnector(

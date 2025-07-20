@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector.service";
 import { homeworkApi } from "../apis.service";
 
-export function getAllHomework(token) {
+export function getStudentsAllHomework(token) {
 	return async (dispatch) => {
 		const toastId = toast.loading("Loading...");
 		try {

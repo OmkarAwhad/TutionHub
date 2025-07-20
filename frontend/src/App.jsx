@@ -39,7 +39,7 @@ import NotesList from "./components/dashboard/tutor/Notes/NotesList.jsx";
 import TutorHomework from "./components/dashboard/tutor/Homework/TutorHomework.jsx";
 import StudentData from "./components/dashboard/tutor/StudentData/StudentData.jsx";
 import TutorLecture from "./components/dashboard/tutor/Lecture/TutorLecture.jsx";
-import Content from "./components/dashboard/tutor/Content/Content.jsx";
+// import Content from "./components//dashboard/tutor/Content/Content.jsx";
 import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework.jsx";
 import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
 import ViewSubmissions from "./components/dashboard/tutor/Homework/ViewSubmissions.jsx";
@@ -57,6 +57,9 @@ import UserDetails from "./components/dashboard/admin/users/UserDetails.jsx";
 import AssignStandard from "./components/dashboard/admin/subjects/AssignStandard.jsx";
 import EditAttendance from "./components/dashboard/admin/attendance/EditAttendance.jsx";
 import EditMarks from "./components/dashboard/admin/marks/EditMarks.jsx";
+import CreateFeedback from "./components/dashboard/Students/feedback/CreateFeedback.jsx";
+import FeedbackList from "./components/dashboard/Students/feedback/FeedbackList.jsx";
+import NotFound from "./components/auth/NotFound.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -129,6 +132,14 @@ function App() {
 							<Route
 								path="/dashboard/feedback"
 								element={<Feedback />}
+							/>
+							<Route
+								path="/dashboard/feedback/submit-feedback"
+								element={<CreateFeedback />}
+							/>
+							<Route
+								path="/dashboard/feedback/feedback-list"
+								element={<FeedbackList />}
 							/>
 							<Route
 								path="/dashboard/my-profile/attendance"
@@ -305,13 +316,14 @@ function App() {
 								path="/dashboard/tutor-lectures"
 								element={<TutorLecture />}
 							/>
-							<Route
+							{/* <Route
 								path="/dashboard/content"
 								element={<Content />}
-							/>
+							/> */}
 						</>
 					)}
 				</Route>
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</div>
 	);

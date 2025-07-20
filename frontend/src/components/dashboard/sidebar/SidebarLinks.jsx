@@ -2,32 +2,56 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 function SidebarLinks({ item }) {
-	const location = useLocation();
+   const location = useLocation();
 
-	const matchRoute = (route) => {
-		// Check if the current path starts with the given route
-		return location.pathname.startsWith(route);
-	};
+   const matchRoute = (route) => {
+      // Check if the current path starts with the given route
+      return location.pathname.startsWith(route);
+   };
 
-	return (
-		<NavLink
-			to={item.path}
-			className={`relative block px-8 py-1 rounded-r-lg text-sm mr-2 font-medium text-white ${
-				matchRoute(item.path)
-					? "bg-slate-gray" // Active state
-					: "bg-transparent hover:bg-[#3a3838] transition-all duration-100" // Inactive state with hover effect
-			}`}
-		>
-			<span
-				className={`absolute left-0 top-0 h-full w-[0.2rem] bg-yellow-50 ${
-					matchRoute(item.path) ? "opacity-100" : "opacity-0"
-				}`}
-			></span>
-			<div className="flex items-center gap-x-2 py-3 ">
-				<span className="text-lg">{item.name}</span>
-			</div>
-		</NavLink>
-	);
+   const isActive = matchRoute(item.path);
+
+   return (
+      <NavLink
+         to={item.path}
+         className={`relative block mx-2 mb-2 rounded-lg font-medium transition-all duration-300 group ${
+            isActive
+               ? "bg-charcoal-gray text-white shadow-lg" 
+               : "text-light-gray hover:bg-charcoal-gray/50 hover:text-white"
+         }`}
+      >
+         {/* Active indicator bar */}
+         <span
+            className={`absolute left-0 top-0 h-full w-1 bg-white rounded-r-lg transition-all duration-300 ${
+               isActive ? "opacity-100" : "opacity-0"
+            }`}
+         ></span>
+
+         {/* Link content */}
+         <div className="flex items-center gap-x-3 px-6 py-4">
+            {/* Icon */}
+            {/* {item.icon && (
+               <span className={`text-xl transition-all duration-300 ${
+                  isActive ? "text-white" : "text-light-gray group-hover:text-white"
+               }`}>
+                  {item.icon}
+               </span>
+            )} */}
+            
+            {/* Text */}
+            <span className={`text-base font-medium transition-all duration-300 ${
+               isActive ? "text-white" : "text-light-gray group-hover:text-white"
+            }`}>
+               {item.name}
+            </span>
+         </div>
+
+         {/* Hover effect overlay */}
+         <div className={`absolute inset-0 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+            isActive ? "hidden" : ""
+         }`}></div>
+      </NavLink>
+   );
 }
 
 export default SidebarLinks;

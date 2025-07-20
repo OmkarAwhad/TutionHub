@@ -10,6 +10,10 @@ const AnnouncementSchema = new mongoose.Schema({
 		enum: ["All", "Students", "Tutors"],
 		required: true,
 	},
+	standard: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Standard",
+	},
 	subject: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Subject",

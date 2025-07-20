@@ -21,7 +21,6 @@ export function makeAFeedback(data, token) {
 				);
 			}
 
-			toast.success("Feedback submitted successfully");
 			return response.data;
 		} catch (error) {
 			console.error("Error in making feedback:", error);

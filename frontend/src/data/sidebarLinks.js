@@ -84,12 +84,12 @@ export const sidbarLinks = [
 		path: "/dashboard/admin-subjects",
 		type: ACCOUNT_TYPE.ADMIN,
 	},
-	{
-		id: 15,
-		name: "Content",
-		path: "/dashboard/content",
-		type: ACCOUNT_TYPE.TUTOR,
-	},
+	// {
+	// 	id: 15,
+	// 	name: "Content",
+	// 	path: "/dashboard/content",
+	// 	type: ACCOUNT_TYPE.TUTOR,
+	// },
 	{
 		id: 16,
 		name: "Announcement",

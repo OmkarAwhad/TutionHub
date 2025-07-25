@@ -26,7 +26,6 @@ function MarkMarks() {
       try {
          setLoading(true);
          
-         // Get all data in parallel
          const [allLecturesResponse, lecturesWithAttendance, subjectsResponse, standardsResponse] = await Promise.all([
             dispatch(getAllLectures(token)),
             dispatch(getLecturesWithAttendanceMarked(token)),
@@ -43,13 +42,9 @@ function MarkMarks() {
          }
          
          if (allLecturesResponse) {
-            // Filter only test lectures
             const testLectures = allLecturesResponse.filter((lect) => lect.description === "Test");
-            
-            // Create a Set of lecture IDs that have attendance marked
             const attendanceMarkedIds = new Set(lecturesWithAttendance.map(lecture => lecture._id));
             
-            // Separate lectures based on attendance and marks status
             const availableForMarks = testLectures.filter(
                (lect) => attendanceMarkedIds.has(lect._id) && lect.marksMarked === false
             );
@@ -69,16 +64,13 @@ function MarkMarks() {
       }
    };
 
-   // Filter function
    const applyFilters = () => {
       let filtered = [...testLectures];
       
-      // Filter by subject
       if (selectedSubject !== "all") {
          filtered = filtered.filter(lecture => lecture.subject?._id === selectedSubject);
       }
       
-      // Filter by standard
       if (selectedStandard !== "All") {
          filtered = filtered.filter(lecture => 
             lecture.standard === selectedStandard ||
@@ -93,7 +85,6 @@ function MarkMarks() {
       fetchTestLec();
    }, []);
 
-   // Apply filters when filters change
    useEffect(() => {
       applyFilters();
    }, [testLectures, selectedSubject, selectedStandard]);
@@ -107,39 +98,41 @@ function MarkMarks() {
    }
 
    return (
-      <div className="p-6">
-         {/* Header */}
-         <div className="flex items-center justify-between mb-8">
+      <div className="p-3 sm:p-4 lg:p-6">
+         {/* Header - Responsive */}
+         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <div className="flex items-center gap-3">
-               <FaChalkboardTeacher className="text-charcoal-gray text-2xl" />
-               <h1 className="text-3xl font-bold text-charcoal-gray">Add Marks</h1>
+               <FaChalkboardTeacher className="text-charcoal-gray text-xl sm:text-2xl" />
+               <h1 className="text-2xl sm:text-3xl font-bold text-charcoal-gray">Add Marks</h1>
             </div>
 
             <button
                onClick={() => navigate("/dashboard/admin-marks")}
-               className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200"
+               className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
             >
                <FaArrowLeftLong className="text-sm" />
                <span>Back</span>
             </button>
          </div>
 
-         {/* Filters */}
-         <div className="flex items-center justify-between mb-6">
-            <div className="flex-1">
-               <div className="flex gap-4 flex-wrap">
+         {/* Filters - Responsive Layout */}
+         <div className="mb-6">
+            {/* Standards Filter - Responsive Grid */}
+            <div className="mb-4">
+               <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-4">
                   {/* All Standards Button */}
                   <button
                      onClick={() => setSelectedStandard("All")}
-                     className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg ${
+                     className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg ${
                         selectedStandard === "All"
                            ? "bg-charcoal-gray text-white shadow-xl shadow-charcoal-gray/30"
                            : "bg-white text-medium-gray border-2 border-light-gray hover:border-charcoal-gray hover:shadow-xl"
                      }`}
                   >
-                     <div className="flex items-center gap-2">
-                        <FaGraduationCap className="text-sm" />
-                        All Standards
+                     <div className="flex items-center justify-center gap-2">
+                        <FaGraduationCap className="text-xs sm:text-sm" />
+                        <span className="hidden sm:inline">All Standards</span>
+                        <span className="sm:hidden">All</span>
                      </div>
                   </button>
 
@@ -149,30 +142,31 @@ function MarkMarks() {
                         <button
                            key={standard._id}
                            onClick={() => setSelectedStandard(standard._id)}
-                           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg ${
+                           className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg ${
                               selectedStandard === standard._id
                                  ? "bg-charcoal-gray text-white shadow-xl shadow-charcoal-gray/30"
                                  : "bg-white text-medium-gray border-2 border-light-gray hover:border-charcoal-gray hover:shadow-xl"
                            }`}
                         >
-                           <div className="flex items-center gap-2">
-                              <FaGraduationCap className="text-sm" />
-                              {standard.standardName}
+                           <div className="flex items-center justify-center gap-2">
+                              <FaGraduationCap className="text-xs sm:text-sm" />
+                              <span className="truncate">{standard.standardName}</span>
                            </div>
                         </button>
                      ))}
                </div>
             </div>
-            <div className="flex items-center gap-4">
-               {/* Subject Filter */}
-               <div>
+
+            {/* Subject Filter - Responsive */}
+            <div className="flex justify-end">
+               <div className="w-full sm:w-auto">
                   <label className="block text-xs text-slate-gray mb-1">
                      Subject
                   </label>
                   <select
                      value={selectedSubject}
                      onChange={(e) => setSelectedSubject(e.target.value)}
-                     className="px-4 py-2 border-2 border-light-gray rounded-lg bg-white text-charcoal-gray font-medium focus:outline-none focus:border-charcoal-gray transition-all duration-200 min-w-[140px]"
+                     className="w-full sm:min-w-[140px] px-4 py-2 border-2 border-light-gray rounded-lg bg-white text-charcoal-gray font-medium focus:outline-none focus:border-charcoal-gray transition-all duration-200"
                   >
                      <option value="all">All Subjects</option>
                      {subjects.map((subject) => (
@@ -185,13 +179,13 @@ function MarkMarks() {
             </div>
          </div>
 
-         {/* Warning Section for Unmarked Attendance */}
+         {/* Warning Section - Responsive */}
          {unMarkedAttendanceLectures.length > 0 && (
             <div className="mb-6">
-               <div className="bg-light-gray/50 border border-light-gray rounded-lg p-4">
+               <div className="bg-light-gray/50 border border-light-gray rounded-lg p-3 sm:p-4">
                   <div className="flex items-start gap-3">
-                     <FaExclamationTriangle className="text-charcoal-gray text-lg mt-0.5" />
-                     <div className="flex-1">
+                     <FaExclamationTriangle className="text-charcoal-gray text-lg mt-0.5 flex-shrink-0" />
+                     <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-semibold text-charcoal-gray mb-2">
                            Attendance Required First
                         </h3>
@@ -200,9 +194,9 @@ function MarkMarks() {
                         </p>
                         <div className="space-y-2">
                            {unMarkedAttendanceLectures.map((lecture) => (
-                              <div key={lecture._id} className="flex items-center justify-between bg-white p-3 rounded-lg border border-light-gray">
-                                 <div>
-                                    <p className="text-sm font-medium text-charcoal-gray">
+                              <div key={lecture._id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded-lg border border-light-gray gap-3">
+                                 <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-charcoal-gray truncate">
                                        {lecture.subject?.name} ({lecture.subject?.code})
                                     </p>
                                     <p className="text-xs text-medium-gray">
@@ -212,13 +206,13 @@ function MarkMarks() {
                                           year: "numeric",
                                        })} • {lecture.time} • {lecture.standard?.standardName}
                                     </p>
-                                    <p className="text-xs text-slate-gray">
+                                    <p className="text-xs text-slate-gray truncate">
                                        Tutor: {lecture.tutor?.name}
                                     </p>
                                  </div>
                                  <button
                                     onClick={() => navigate("/dashboard/admin-attendance/mark-attendance")}
-                                    className="px-3 py-1 bg-charcoal-gray text-white text-xs font-medium rounded-lg hover:bg-medium-gray transition-colors duration-200"
+                                    className="w-full sm:w-auto px-3 py-1 bg-charcoal-gray text-white text-xs font-medium rounded-lg hover:bg-medium-gray transition-colors duration-200 flex-shrink-0"
                                  >
                                     Mark Attendance
                                  </button>
@@ -233,14 +227,14 @@ function MarkMarks() {
 
          {/* Results Count */}
          <div className="mb-6">
-            <p className="text-medium-gray font-medium">
+            <p className="text-medium-gray font-medium text-sm sm:text-base">
                Showing: <span className="text-charcoal-gray font-semibold">{filteredLectures.length}</span> of <span className="text-charcoal-gray font-semibold">{testLectures.length}</span> test lectures ready for marking
             </p>
          </div>
 
-         {/* Lectures Grid */}
+         {/* Lectures Grid - Responsive */}
          {filteredLectures.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                {filteredLectures.map((item) => (
                   <PastDateCard
                      key={item._id}
@@ -250,15 +244,15 @@ function MarkMarks() {
                ))}
             </div>
          ) : (
-            <div className="text-center py-12">
-               <FaChalkboardTeacher className="mx-auto h-16 w-16 text-slate-gray mb-4" />
-               <p className="text-medium-gray text-xl mb-2">
+            <div className="text-center py-8 sm:py-12">
+               <FaChalkboardTeacher className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-slate-gray mb-4" />
+               <p className="text-medium-gray text-lg sm:text-xl mb-2 px-4">
                   {testLectures.length > 0 
                      ? "No test lectures found for the selected filters"
                      : "No test lectures ready for marking"
                   }
                </p>
-               <p className="text-slate-gray">
+               <p className="text-slate-gray text-sm sm:text-base px-4">
                   {testLectures.length > 0
                      ? "Try changing your filters to see more results"
                      : unMarkedAttendanceLectures.length > 0 

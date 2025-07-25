@@ -8,7 +8,6 @@ import { getStudentAnalytics } from "../../../../services/operations/marks.servi
 import OverallDashboard from "./OverallDashboard";
 import SubjectCards from "./SubjectCards";
 import PerformanceCharts from "./PerformanceCharts";
-// import RecentTests from "./RecentTests";
 
 function Progress() {
    const { token } = useSelector((state) => state.auth);
@@ -42,24 +41,24 @@ function Progress() {
 
    if (loading) {
       return (
-         <div className="flex items-center justify-center h-screen">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-charcoal-gray"></div>
+         <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-charcoal-gray"></div>
          </div>
       );
    }
 
    return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
          {/* Header */}
-         <div className="flex items-center justify-between mb-8">
+         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
             <div className="flex items-center gap-3">
-               <FaTrophy className="text-charcoal-gray text-2xl" />
-               <h1 className="text-3xl font-bold text-charcoal-gray">Academic Progress</h1>
+               <FaTrophy className="text-charcoal-gray text-xl sm:text-2xl" />
+               <h1 className="text-2xl sm:text-3xl font-bold text-charcoal-gray">Academic Progress</h1>
             </div>
             
             <button
                onClick={() => navigate(-1)}
-               className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200"
+               className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
             >
                <FaArrowLeftLong className="text-sm" />
                <span>Back</span>
@@ -67,7 +66,7 @@ function Progress() {
          </div>
 
          {/* Navigation Tabs */}
-         <div className="flex items-center gap-4 mb-6 bg-white p-2 rounded-lg shadow-md border border-light-gray">
+         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6 bg-white p-3 sm:p-2 rounded-lg shadow-md border border-light-gray">
             {[
                { id: 'overview', label: 'Overview', icon: FaChartLine },
                { id: 'subjects', label: 'Subjects', icon: FaChalkboardTeacher },
@@ -76,14 +75,15 @@ function Progress() {
                <button
                   key={id}
                   onClick={() => setSelectedView(id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                  className={`flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
                      selectedView === id
                         ? 'bg-charcoal-gray text-white'
                         : 'text-charcoal-gray hover:bg-light-gray'
                   }`}
                >
                   <Icon className="text-sm" />
-                  {label}
+                  <span >{label}</span>
+                  {/* <span className="xs:hidden sm:hidden">{label}</span> */}
                </button>
             ))}
          </div>

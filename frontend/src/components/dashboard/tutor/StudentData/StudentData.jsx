@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowRoundBack, IoMdSend } from "react-icons/io";
 import { FaGraduationCap } from "react-icons/fa6";
+import { FaSearch , FaTimes} from "react-icons/fa";
 import {
 	attendAccToSub,
 	StudAttendAccToSubForTutor,
@@ -22,6 +23,7 @@ function StudentData() {
 	const [activeStandard, setActiveStandard] = useState("");
 	const [allStudentsData, setAllStudentsData] = useState({});
 	const [loading, setLoading] = useState(true);
+	const [searchTerm, setSearchTerm] = useState(""); // New search state
 
 	const { token } = useSelector((state) => state.auth);
 	const { user } = useSelector((state) => state.profile);
@@ -33,7 +35,6 @@ function StudentData() {
 	const fetchStandards = async () => {
 		try {
 			const response = await dispatch(getAllStandards(token));
-			// console.log("Standards response:", response);
 
 			if (response) {
 				const standardsArray = response.standards || response;
@@ -42,10 +43,6 @@ function StudentData() {
 				// Set first standard as active by default
 				if (standardsArray && standardsArray.length > 0) {
 					setActiveStandard(standardsArray[0]._id);
-					// console.log(
-					// 	"Active standard set to:",
-					// 	standardsArray[0]._id
-					// );
 				}
 			}
 		} catch (error) {
@@ -76,7 +73,6 @@ function StudentData() {
 		setLoading(true);
 		try {
 			const response = await dispatch(getMyStudentsList(token));
-			// console.log("Students response:", response);
 
 			if (response && response.length > 0) {
 				const data = {};
@@ -105,7 +101,6 @@ function StudentData() {
 					}
 				}
 
-				// console.log("All students data:", data);
 				setAllStudentsData(data);
 			}
 		} catch (error) {
@@ -116,14 +111,9 @@ function StudentData() {
 		}
 	};
 
-	// Filter students based on active standard
+	// Filter students based on active standard and search term
 	const getFilteredStudents = () => {
-		// console.log("Filtering students...");
-		// console.log("Active standard:", activeStandard);
-		// console.log("All students data:", allStudentsData);
-
 		if (!allStudentsData || !activeStandard) {
-			// console.log("No data or active standard");
 			return [];
 		}
 
@@ -131,7 +121,6 @@ function StudentData() {
 			([studentId, data]) => {
 				// Check if attendance data exists and has valid structure
 				if (!data || !data.attendanceDetails) {
-					// console.log(`No attendance data for ${studentId}`);
 					return false;
 				}
 
@@ -140,7 +129,6 @@ function StudentData() {
 					!Array.isArray(data.attendanceDetails) ||
 					data.attendanceDetails.length === 0
 				) {
-					// console.log(`No attendance details for ${studentId}`);
 					return false;
 				}
 
@@ -152,30 +140,32 @@ function StudentData() {
 					studentName.trim() === "" ||
 					studentName === "N/A"
 				) {
-					// console.log(`Invalid name for ${studentId}`);
 					return false;
 				}
 
 				// Filter by standard
 				const studentStandardId =
 					data.studentInfo?.profile?.standard?._id;
-				// console.log(
-				// 	`Student ${studentName} standard:`,
-				// 	studentStandardId,
-				// 	"vs active:",
-				// 	activeStandard
-				// );
 
 				if (studentStandardId !== activeStandard) {
-					// console.log(`Standard mismatch for ${studentName}`);
 					return false;
+				}
+
+				// Filter by search term
+				if (searchTerm.trim() !== "") {
+					const searchLower = searchTerm.toLowerCase().trim();
+					const nameMatch = studentName
+						.toLowerCase()
+						.includes(searchLower);
+					if (!nameMatch) {
+						return false;
+					}
 				}
 
 				return true;
 			}
 		);
 
-		// console.log("Filtered students:", filtered);
 		return filtered;
 	};
 
@@ -212,8 +202,15 @@ function StudentData() {
 	};
 
 	const handleStandardClick = (standardId) => {
-		// console.log("Standard clicked:", standardId);
 		setActiveStandard(standardId);
+	};
+
+	const handleSearchChange = (e) => {
+		setSearchTerm(e.target.value);
+	};
+
+	const clearSearch = () => {
+		setSearchTerm("");
 	};
 
 	// useEffects
@@ -224,10 +221,6 @@ function StudentData() {
 
 	useEffect(() => {
 		if (subject && activeStandard) {
-			// console.log(
-			// 	"Subject and activeStandard ready, fetching students:",
-			// 	{ subject, activeStandard }
-			// );
 			fetchStudentsList();
 		}
 	}, [subject, activeStandard]);
@@ -237,28 +230,71 @@ function StudentData() {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center h-[60vh]">
-				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-charcoal-gray"></div>
+				<div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-charcoal-gray"></div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="p-6">
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-3xl font-bold">Students</h1>
+		<div className="p-4 sm:p-6">
+			<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
+				<h1 className="text-2xl sm:text-3xl font-bold text-charcoal-gray">
+					Students
+				</h1>
 			</div>
 
-			{/* Standards Filter Buttons + Subject Info in Flex Layout */}
-			<div className="mb-8 flex gap-6">
+			{/* Search Bar */}
+			<div className="mb-4 sm:mb-6">
+				<div className="max-w-md">
+					<label className="block text-sm font-medium text-charcoal-gray mb-2">
+						Search Students
+					</label>
+					<div className="relative">
+						<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+							<FaSearch className="h-4 w-4 text-slate-gray" />
+						</div>
+						<input
+							type="text"
+							placeholder="Search by student name..."
+							value={searchTerm}
+							onChange={handleSearchChange}
+							className="block w-full pl-10 pr-10 py-2 sm:py-3 border border-light-gray rounded-lg focus:ring-2 focus:ring-medium-gray focus:border-medium-gray outline-none transition-colors duration-200 text-sm sm:text-base"
+						/>
+						{searchTerm && (
+							<div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+								<button
+									onClick={clearSearch}
+									className="text-slate-gray hover:text-charcoal-gray transition-colors duration-200"
+									title="Clear search"
+								>
+									<FaTimes className="h-4 w-4" />
+								</button>
+							</div>
+						)}
+					</div>
+					{searchTerm && (
+						<p className="mt-1 text-xs sm:text-sm text-slate-gray">
+							Searching for: "
+							<span className="font-medium">
+								{searchTerm}
+							</span>
+							"
+						</p>
+					)}
+				</div>
+			</div>
+
+			{/* Standards Filter Section + Subject Info */}
+			<div className="mb-6 sm:mb-8 flex flex-col xl:flex-row gap-4 xl:gap-6">
 				{/* Standards Filter Buttons - Left Side */}
 				<div className="flex-1">
-					<div className="flex items-center gap-3 mb-4">
-						<FaGraduationCap className="text-charcoal-gray text-xl" />
-						<h2 className="text-xl font-semibold text-charcoal-gray">
+					<div className="flex items-center gap-3 mb-3 sm:mb-4">
+						<FaGraduationCap className="text-charcoal-gray text-lg sm:text-xl" />
+						<h2 className="text-lg sm:text-xl font-semibold text-charcoal-gray">
 							Filter by Standard
 						</h2>
 					</div>
-					<div className="flex gap-4">
+					<div className="flex flex-wrap gap-2 sm:gap-4">
 						{standards &&
 							standards.map((standard) => (
 								<button
@@ -268,7 +304,7 @@ function StudentData() {
 											standard._id
 										)
 									}
-									className={`px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 hover:scale-105 shadow-lg ${
+									className={`px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg ${
 										activeStandard ===
 										standard._id
 											? "bg-charcoal-gray text-white shadow-xl shadow-charcoal-gray/30 ring-4 ring-charcoal-gray/20"
@@ -276,8 +312,10 @@ function StudentData() {
 									}`}
 								>
 									<div className="flex items-center gap-2">
-										<FaGraduationCap className="text-lg" />
-										{standard.standardName}
+										<FaGraduationCap className="text-sm sm:text-lg" />
+										<span className="truncate">
+											{standard.standardName}
+										</span>
 									</div>
 								</button>
 							))}
@@ -285,15 +323,15 @@ function StudentData() {
 				</div>
 
 				{/* Subject Info Cards - Right Side */}
-				<div className="flex-1">
-					<div className="grid grid-cols-3 gap-4 h-full">
+				<div className="flex-1 xl:max-w-md">
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
 						{/* Subject Info Card */}
-						<div className="bg-white p-4 rounded-xl shadow-lg border border-light-gray">
+						<div className="bg-white p-3 sm:p-4 rounded-xl shadow-lg border border-light-gray">
 							<div className="text-center">
-								<h3 className="text-sm font-semibold text-medium-gray mb-2">
+								<h3 className="text-xs sm:text-sm font-semibold text-medium-gray mb-2">
 									Subject Info
 								</h3>
-								<p className="text-sm mb-2 text-charcoal-gray font-medium">
+								<p className="text-sm sm:text-base mb-2 text-charcoal-gray font-medium truncate">
 									{filteredStudents.length > 0 &&
 									filteredStudents[0][1]
 										.attendanceDetails.length >
@@ -326,12 +364,12 @@ function StudentData() {
 						</div>
 
 						{/* Lectures Info Card */}
-						<div className="bg-white p-4 rounded-xl shadow-lg border border-light-gray">
+						<div className="bg-white p-3 sm:p-4 rounded-xl shadow-lg border border-light-gray">
 							<div className="text-center">
-								<h3 className="text-sm font-semibold text-medium-gray mb-2">
+								<h3 className="text-xs sm:text-sm font-semibold text-medium-gray mb-2">
 									Lectures
 								</h3>
-								<p className="text-lg font-bold text-charcoal-gray">
+								<p className="text-base sm:text-lg font-bold text-charcoal-gray">
 									{filteredStudents.length > 0 &&
 									filteredStudents[0][1]
 										.statistics &&
@@ -358,19 +396,21 @@ function StudentData() {
 						</div>
 
 						{/* Standard Info Card */}
-						<div className="bg-white p-4 rounded-xl shadow-lg border border-light-gray">
+						<div className="bg-white p-3 sm:p-4 rounded-xl shadow-lg border border-light-gray">
 							<div className="text-center">
-								<h3 className="text-sm font-semibold text-medium-gray mb-2">
-									Standard
+								<h3 className="text-xs sm:text-sm font-semibold text-medium-gray mb-2">
+									Results
 								</h3>
-								<p className="text-lg font-bold text-charcoal-gray">
+								<p className="text-base sm:text-lg font-bold text-charcoal-gray truncate">
 									{standards.find(
 										(s) =>
 											s._id === activeStandard
 									)?.standardName || "N/A"}
 								</p>
 								<p className="text-xs text-slate-gray">
-									Students: {filteredStudents.length}
+									{searchTerm
+										? `Found: ${filteredStudents.length}`
+										: `Students: ${filteredStudents.length}`}
 								</p>
 							</div>
 						</div>
@@ -378,8 +418,8 @@ function StudentData() {
 				</div>
 			</div>
 
-			{/* Students Table */}
-			<div className="overflow-x-auto">
+			{/* Students Table - Desktop View */}
+			<div className="hidden lg:block overflow-x-auto">
 				<table className="min-w-full bg-white rounded-lg shadow-sm">
 					<thead className="bg-gray-200">
 						<tr>
@@ -423,7 +463,22 @@ function StudentData() {
 										className="hover:bg-gray-50"
 									>
 										<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-											{studentName}
+											{/* Highlight search term in name */}
+											{searchTerm ? (
+												<span
+													dangerouslySetInnerHTML={{
+														__html: studentName.replace(
+															new RegExp(
+																`(${searchTerm})`,
+																"gi"
+															),
+															'<mark class="bg-yellow-200 px-1 rounded">$1</mark>'
+														),
+													}}
+												/>
+											) : (
+												studentName
+											)}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
 											<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -494,23 +549,154 @@ function StudentData() {
 						)}
 					</tbody>
 				</table>
-
-				{filteredStudents.length === 0 && !loading && (
-					<div className="text-center py-12">
-						<FaGraduationCap className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-						<p className="text-gray-500 text-xl mb-2">
-							No students found for{" "}
-							{standards.find(
-								(s) => s._id === activeStandard
-							)?.standardName || "this standard"}
-						</p>
-						<p className="text-gray-400">
-							Try selecting a different standard or check
-							if students are assigned to this standard
-						</p>
-					</div>
-				)}
 			</div>
+
+			{/* Students Cards - Mobile/Tablet View */}
+			<div className="block lg:hidden space-y-4">
+				{filteredStudents.map(([studentId, attendanceData]) => {
+					const studentName =
+						attendanceData.attendanceDetails[0].student.name;
+					const presentCount =
+						attendanceData?.statistics?.present || 0;
+					const percentage =
+						attendanceData?.statistics?.percentage || "0.00%";
+					const studentStandard =
+						attendanceData.studentInfo?.profile?.standard
+							?.standardName || "N/A";
+
+					return (
+						<div
+							key={studentId}
+							className="bg-white p-4 rounded-lg shadow-md border border-light-gray"
+						>
+							{/* Student Header */}
+							<div className="flex justify-between items-start mb-3">
+								<div>
+									<h3 className="text-lg font-semibold text-charcoal-gray">
+										{/* Highlight search term in name */}
+										{searchTerm ? (
+											<span
+												dangerouslySetInnerHTML={{
+													__html: studentName.replace(
+														new RegExp(
+															`(${searchTerm})`,
+															"gi"
+														),
+														'<mark class="bg-yellow-200 px-1 rounded">$1</mark>'
+													),
+												}}
+											/>
+										) : (
+											studentName
+										)}
+									</h3>
+									<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+										{studentStandard}
+									</span>
+								</div>
+								<div className="text-right">
+									<div className="flex gap-2 flex-wrap justify-end">
+										<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+											Present: {presentCount}
+										</span>
+										<span
+											className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+												parseFloat(
+													percentage
+												) >= 75
+													? "bg-green-100 text-green-800"
+													: parseFloat(
+															percentage
+													  ) >= 50
+													? "bg-yellow-100 text-yellow-800"
+													: "bg-red-100 text-red-800"
+											}`}
+										>
+											{percentage}
+										</span>
+									</div>
+								</div>
+							</div>
+
+							{/* Remarks Section */}
+							<div className="border-t pt-3">
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Add Remark:
+								</label>
+								<div className="flex gap-2">
+									<input
+										type="text"
+										placeholder="Enter remark..."
+										value={
+											remarks[studentId] || ""
+										}
+										onChange={(e) =>
+											handleRemarkChange(
+												studentId,
+												e.target.value
+											)
+										}
+										className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medium-gray focus:border-transparent text-sm"
+									/>
+									<button
+										onClick={() =>
+											submitRemark(
+												studentId,
+												studentName
+											)
+										}
+										className="px-4 py-2 bg-medium-gray text-white rounded-md hover:bg-charcoal-gray cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors flex items-center gap-2"
+										title="Submit Remark"
+									>
+										<IoMdSend className="w-4 h-4" />
+										<span className="hidden sm:inline">
+											Submit
+										</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* Empty State */}
+			{filteredStudents.length === 0 && !loading && (
+				<div className="text-center py-8 sm:py-12">
+					<FaGraduationCap className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mb-4" />
+					{searchTerm ? (
+						<>
+							<p className="text-gray-500 text-lg sm:text-xl mb-2">
+								No students found for "{searchTerm}"
+							</p>
+							<p className="text-gray-400 text-sm sm:text-base mb-4">
+								Try adjusting your search term or check
+								the spelling
+							</p>
+							<button
+								onClick={clearSearch}
+								className="px-4 py-2 bg-medium-gray text-white rounded-lg hover:bg-charcoal-gray transition-colors duration-200"
+							>
+								Clear Search
+							</button>
+						</>
+					) : (
+						<>
+							<p className="text-gray-500 text-lg sm:text-xl mb-2">
+								No students found for{" "}
+								{standards.find(
+									(s) => s._id === activeStandard
+								)?.standardName || "this standard"}
+							</p>
+							<p className="text-gray-400 text-sm sm:text-base">
+								Try selecting a different standard or
+								check if students are assigned to this
+								standard
+							</p>
+						</>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }

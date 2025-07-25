@@ -14,7 +14,12 @@ import {
 	FaBook,
 	FaTrash,
 } from "react-icons/fa6";
-import { FaChalkboardTeacher, FaEdit, FaCalendarAlt } from "react-icons/fa";
+import {
+	FaChalkboardTeacher,
+	FaSearch,
+	FaEdit,
+	FaCalendarAlt,
+} from "react-icons/fa";
 import toast from "react-hot-toast";
 
 function EditMarks() {
@@ -25,6 +30,8 @@ function EditMarks() {
 
 	const [lectureData, setLectureData] = useState(null);
 	const [studentsData, setStudentsData] = useState([]);
+	const [filteredStudents, setFilteredStudents] = useState([]);
+	const [searchTerm, setSearchTerm] = useState("");
 	const [totalMarks, setTotalMarks] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,6 +46,7 @@ function EditMarks() {
 				if (response) {
 					setLectureData(response.lecture);
 					setStudentsData(response.studentsWithMarks);
+					setFilteredStudents(response.studentsWithMarks);
 					setTotalMarks(response.defaultTotalMarks.toString());
 				}
 			} catch (error) {
@@ -52,6 +60,25 @@ function EditMarks() {
 			fetchMarksData();
 		}
 	}, [lectureId, dispatch, token]);
+
+	// Search functionality
+	useEffect(() => {
+		if (!searchTerm.trim()) {
+			setFilteredStudents(studentsData);
+		} else {
+			const filtered = studentsData.filter(
+				(student) =>
+					student.name
+						?.toLowerCase()
+						.includes(searchTerm.toLowerCase()) ||
+					student.description
+						?.toLowerCase()
+						.includes(searchTerm.toLowerCase()) ||
+					student.marks?.toString().includes(searchTerm)
+			);
+			setFilteredStudents(filtered);
+		}
+	}, [searchTerm, studentsData]);
 
 	const handleMarksChange = (studentId, value) => {
 		setStudentsData((prevData) =>
@@ -138,12 +165,12 @@ function EditMarks() {
 	}
 
 	return (
-		<div className="p-6">
-			{/* Header */}
-			<div className="flex items-center justify-between mb-8">
+		<div className="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto">
+			{/* Header - Responsive */}
+			<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
 				<div className="flex items-center gap-3">
-					<FaEdit className="text-charcoal-gray text-2xl" />
-					<h1 className="text-3xl font-bold text-charcoal-gray">
+					<FaEdit className="text-charcoal-gray text-xl sm:text-2xl" />
+					<h1 className="text-2xl sm:text-3xl font-bold text-charcoal-gray">
 						Edit Marks
 					</h1>
 				</div>
@@ -152,39 +179,39 @@ function EditMarks() {
 					onClick={() =>
 						navigate("/dashboard/admin-marks/view-marks")
 					}
-					className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200"
+					className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
 				>
 					<FaArrowLeftLong className="text-sm" />
 					<span>Back</span>
 				</button>
 			</div>
 
-			{/* Test Details */}
-			<div className="bg-white p-6 rounded-lg shadow-md border border-light-gray mb-6">
-				<h2 className="text-xl font-semibold text-charcoal-gray mb-4">
+			{/* Test Details - Responsive Grid */}
+			<div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-light-gray mb-6">
+				<h2 className="text-lg sm:text-xl font-semibold text-charcoal-gray mb-4">
 					Test Details
 				</h2>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 					<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
-						<FaBook className="text-charcoal-gray" />
-						<div>
+						<FaBook className="text-charcoal-gray flex-shrink-0" />
+						<div className="min-w-0">
 							<p className="text-xs text-slate-gray">
 								Subject
 							</p>
-							<p className="text-sm font-semibold text-charcoal-gray">
+							<p className="text-sm font-semibold text-charcoal-gray truncate">
 								{lectureData.subject?.name}
 							</p>
 						</div>
 					</div>
 
 					<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
-						<FaCalendarAlt className="text-medium-gray" />
-						<div>
+						<FaCalendarAlt className="text-medium-gray flex-shrink-0" />
+						<div className="min-w-0">
 							<p className="text-xs text-slate-gray">
 								Date
 							</p>
-							<p className="text-sm font-semibold text-charcoal-gray">
+							<p className="text-sm font-semibold text-charcoal-gray truncate">
 								{format(
 									new Date(lectureData.date),
 									"dd MMM yyyy"
@@ -194,24 +221,24 @@ function EditMarks() {
 					</div>
 
 					<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
-						<FaClock className="text-medium-gray" />
-						<div>
+						<FaClock className="text-medium-gray flex-shrink-0" />
+						<div className="min-w-0">
 							<p className="text-xs text-slate-gray">
 								Time
 							</p>
-							<p className="text-sm font-semibold text-charcoal-gray">
+							<p className="text-sm font-semibold text-charcoal-gray truncate">
 								{lectureData.time}
 							</p>
 						</div>
 					</div>
 
 					<div className="flex items-center gap-3 p-3 bg-light-gray rounded-lg">
-						<FaUser className="text-charcoal-gray" />
-						<div>
+						<FaUser className="text-charcoal-gray flex-shrink-0" />
+						<div className="min-w-0">
 							<p className="text-xs text-slate-gray">
 								Tutor
 							</p>
-							<p className="text-sm font-semibold text-charcoal-gray">
+							<p className="text-sm font-semibold text-charcoal-gray truncate">
 								{lectureData.tutor?.name}
 							</p>
 						</div>
@@ -219,10 +246,10 @@ function EditMarks() {
 				</div>
 			</div>
 
-			{/* Total Marks Input */}
-			<div className="bg-white p-6 rounded-lg shadow-md border border-light-gray mb-6">
-				<div className="flex items-center justify-between">
-					<div className="flex-1 mr-4">
+			{/* Total Marks Input - Responsive */}
+			<div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-light-gray mb-6">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+					<div className="flex-1 w-full sm:mr-4">
 						<label className="block text-sm font-medium text-charcoal-gray mb-2">
 							Total Marks
 						</label>
@@ -238,7 +265,7 @@ function EditMarks() {
 					</div>
 					<button
 						onClick={handleDeleteMarks}
-						className="flex items-center gap-2 px-4 py-2 bg-medium-gray text-white rounded-lg hover:bg-charcoal-gray transition-colors duration-200"
+						className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-medium-gray text-white rounded-lg hover:bg-charcoal-gray transition-colors duration-200"
 					>
 						<FaTrash className="text-sm" />
 						<span>Delete All</span>
@@ -246,85 +273,210 @@ function EditMarks() {
 				</div>
 			</div>
 
-			{/* Marks Table */}
+			{/* Search Bar */}
+			<div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-light-gray mb-6">
+				<div className="relative">
+					<FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-gray text-sm" />
+					<input
+						type="text"
+						placeholder="Search by student name, marks, or description..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						className="w-full pl-10 pr-4 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
+					/>
+				</div>
+				{searchTerm && (
+					<div className="mt-2">
+						<p className="text-sm text-medium-gray">
+							Showing {filteredStudents.length} of{" "}
+							{studentsData.length} students
+						</p>
+					</div>
+				)}
+			</div>
+
+			{/* Marks Table - Responsive */}
 			<div className="bg-white rounded-lg shadow-md border border-light-gray overflow-hidden">
-				<div className="p-6">
+				<div className="p-4 sm:p-6">
 					<h3 className="text-lg font-semibold text-charcoal-gray mb-4">
 						Student Marks
+						{searchTerm && (
+							<span className="text-sm font-normal text-medium-gray ml-2">
+								({filteredStudents.length} results)
+							</span>
+						)}
 					</h3>
 
-					<div className="overflow-x-auto">
-						<table className="w-full">
-							<thead>
-								<tr className="bg-light-gray">
-									<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
-										Student Name
-									</th>
-									<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
-										Marks
-									</th>
-									<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
-										Description
-									</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-light-gray">
-								{studentsData.map((student) => (
-									<tr
+					{filteredStudents.length > 0 ? (
+						<>
+							{/* Mobile Card View */}
+							<div className="block sm:hidden space-y-4">
+								{filteredStudents.map((student) => (
+									<div
 										key={student._id}
-										className="hover:bg-light-gray/30"
+										className="bg-light-gray/30 p-4 rounded-lg border border-light-gray"
 									>
-										<td className="py-3 px-4 text-sm font-medium text-charcoal-gray">
+										<h4 className="font-medium text-charcoal-gray mb-3">
 											{student.name}
-										</td>
-										<td className="py-3 px-4">
-											<input
-												type="number"
-												value={
-													student.marks ||
-													""
-												}
-												onChange={(e) =>
-													handleMarksChange(
-														student._id,
-														e.target
-															.value
-													)
-												}
-												className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
-												placeholder="Enter marks"
-											/>
-										</td>
-										<td className="py-3 px-4">
-											<input
-												type="text"
-												value={
-													student.description ||
-													""
-												}
-												onChange={(e) =>
-													handleDescriptionChange(
-														student._id,
-														e.target
-															.value
-													)
-												}
-												className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
-												placeholder="Enter description (Optional)"
-											/>
-										</td>
-									</tr>
+										</h4>
+										<div className="space-y-3">
+											<div>
+												<label className="block text-xs text-slate-gray mb-1">
+													Marks
+												</label>
+												<input
+													type="number"
+													value={
+														student.marks ||
+														""
+													}
+													onChange={(
+														e
+													) =>
+														handleMarksChange(
+															student._id,
+															e
+																.target
+																.value
+														)
+													}
+													className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
+													placeholder="Enter marks"
+												/>
+											</div>
+											<div>
+												<label className="block text-xs text-slate-gray mb-1">
+													Description
+												</label>
+												<input
+													type="text"
+													value={
+														student.description ||
+														""
+													}
+													onChange={(
+														e
+													) =>
+														handleDescriptionChange(
+															student._id,
+															e
+																.target
+																.value
+														)
+													}
+													className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
+													placeholder="Enter description (Optional)"
+												/>
+											</div>
+										</div>
+									</div>
 								))}
-							</tbody>
-						</table>
-					</div>
+							</div>
+
+							{/* Desktop Table View */}
+							<div className="hidden sm:block overflow-x-auto">
+								<table className="w-full">
+									<thead>
+										<tr className="bg-light-gray">
+											<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
+												Student Name
+											</th>
+											<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
+												Marks
+											</th>
+											<th className="py-3 px-4 text-left text-sm font-semibold text-charcoal-gray">
+												Description
+											</th>
+										</tr>
+									</thead>
+									<tbody className="divide-y divide-light-gray">
+										{filteredStudents.map(
+											(student) => (
+												<tr
+													key={
+														student._id
+													}
+													className="hover:bg-light-gray/30"
+												>
+													<td className="py-3 px-4 text-sm font-medium text-charcoal-gray">
+														{
+															student.name
+														}
+													</td>
+													<td className="py-3 px-4">
+														<input
+															type="number"
+															value={
+																student.marks ||
+																""
+															}
+															onChange={(
+																e
+															) =>
+																handleMarksChange(
+																	student._id,
+																	e
+																		.target
+																		.value
+																)
+															}
+															className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
+															placeholder="Enter marks"
+														/>
+													</td>
+													<td className="py-3 px-4">
+														<input
+															type="text"
+															value={
+																student.description ||
+																""
+															}
+															onChange={(
+																e
+															) =>
+																handleDescriptionChange(
+																	student._id,
+																	e
+																		.target
+																		.value
+																)
+															}
+															className="w-full px-3 py-2 border border-light-gray rounded-lg text-charcoal-gray focus:outline-none focus:border-charcoal-gray transition-colors duration-200"
+															placeholder="Enter description (Optional)"
+														/>
+													</td>
+												</tr>
+											)
+										)}
+									</tbody>
+								</table>
+							</div>
+						</>
+					) : (
+						<div className="text-center py-8">
+							<FaSearch className="mx-auto h-12 w-12 text-slate-gray mb-4" />
+							<p className="text-medium-gray text-lg mb-2">
+								{searchTerm
+									? "No students found matching your search"
+									: "No students found"}
+							</p>
+							{searchTerm && (
+								<button
+									onClick={() => setSearchTerm("")}
+									className="mt-4 px-4 py-2 bg-charcoal-gray text-white rounded-lg hover:bg-medium-gray transition-colors duration-200"
+								>
+									Clear Search
+								</button>
+							)}
+						</div>
+					)}
 
 					{/* Update Button */}
 					<div className="mt-6 flex justify-end">
 						<button
 							onClick={handleUpdateMarks}
 							disabled={isSubmitting}
-							className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
+							className={`w-full sm:w-auto px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
 								isSubmitting
 									? "bg-light-gray text-slate-gray cursor-not-allowed"
 									: "bg-charcoal-gray text-white hover:bg-medium-gray"

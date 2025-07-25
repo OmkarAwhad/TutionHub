@@ -64,36 +64,36 @@ function TutorLecture() {
    };
 
    return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
          {/* Header */}
-         <div className="flex items-center justify-between mb-8">
+         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
             <div className="flex items-center gap-3">
-               <FaChalkboardTeacher className="text-charcoal-gray text-2xl" />
-               <h1 className="text-3xl font-bold text-charcoal-gray">My Lectures</h1>
+               <FaChalkboardTeacher className="text-charcoal-gray text-xl sm:text-2xl" />
+               <h1 className="text-2xl sm:text-3xl font-bold text-charcoal-gray">My Lectures</h1>
             </div>
 
             {/* Navigation Controls */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                <div className="flex items-center gap-2 text-medium-gray">
-                  <FaCalendarWeek className="text-lg" />
-                  <span className="text-sm font-medium">Navigate Weeks</span>
+                  <FaCalendarWeek className="text-base sm:text-lg" />
+                  <span className="text-xs sm:text-sm font-medium">Navigate Weeks</span>
                </div>
                <div className="flex gap-2">
                   <button
                      onClick={() => handleWeekShift(-1)}
-                     className="p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                     className="p-2 sm:p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                      disabled={loading}
                      aria-label="Previous week"
                   >
-                     <IoIosArrowBack className="text-lg" />
+                     <IoIosArrowBack className="text-base sm:text-lg" />
                   </button>
                   <button
                      onClick={() => handleWeekShift(1)}
-                     className="p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                     className="p-2 sm:p-3 bg-slate-gray text-white rounded-xl cursor-pointer hover:bg-medium-gray transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                      disabled={loading}
                      aria-label="Next week"
                   >
-                     <IoIosArrowForward className="text-lg" />
+                     <IoIosArrowForward className="text-base sm:text-lg" />
                   </button>
                </div>
             </div>
@@ -101,9 +101,9 @@ function TutorLecture() {
 
          {/* Loading State */}
          {loading && (
-            <div className="text-center py-8">
-               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-charcoal-gray mx-auto mb-4"></div>
-               <p className="text-medium-gray">Loading your lectures...</p>
+            <div className="text-center py-6 sm:py-8">
+               <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-t-2 border-b-2 border-charcoal-gray mx-auto mb-4"></div>
+               <p className="text-medium-gray text-sm sm:text-base">Loading your lectures...</p>
             </div>
          )}
 

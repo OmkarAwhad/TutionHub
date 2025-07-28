@@ -70,6 +70,10 @@ app.use((err, req, res, next) => {
 	});
 });
 
+app.get('/',(req,res,next)=>{
+	res.send("Backend working");
+})
+
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });

@@ -22,7 +22,7 @@ function UploadNote() {
    useEffect(() => {
       const fetchSubjects = async () => {
          try {
-            const response = await dispatch(subjectsOfAUser(token));
+            const response = await dispatch(subjectsOfAUser(null, token));
             if (response) {
                setSubjects(response);
             }

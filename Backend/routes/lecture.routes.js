@@ -15,6 +15,7 @@ const {
 	getLectureBySub,
 	getMyLecturesByDate,
 	getTutorLecturesByDate,
+	getLecturesByTutorId,
 } = require("../controllers/lecture.controller");
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.get("/getAllLectures", auth, isAdmin, getAllLectures);
 router.get("/getLectureBySub", auth, isAdmin, getLectureBySub);
 router.post("/getMyLecturesByDate", auth, isStudent, getMyLecturesByDate);
 router.post("/getTutorLecturesByDate", auth, isTutor, getTutorLecturesByDate);
+router.post("/getLecturesByTutorId", auth, isAdmin, getLecturesByTutorId);
 
 module.exports = router;

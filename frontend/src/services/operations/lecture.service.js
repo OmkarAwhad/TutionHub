@@ -210,6 +210,37 @@ export const getTutorLecturesByDate = async (token, date, fetchWeek = true) => {
 	}
 };
 
+export function getTutorLecturesByTutorId(tutorId, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Fetching tutor lectures...");
+      try {
+         const response = await apiConnector(
+            "POST",
+            lectureApi.GET_TUTOR_LECTURES_BY_TUTOR_ID,
+            { tutorId },
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+
+         if (!response.data.success) {
+            toast.error(response.data.message);
+            throw new Error(response.data.message);
+         }
+
+         return response.data.data;
+      } catch (error) {
+         toast.error("Failed to fetch tutor lectures");
+         console.log("Error in fetching tutor lectures", error);
+         throw error;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}
+
+
 // export const getLectByDesc = async (description, token) => {
 // 	const toastId = toast.loading("Fetching test days...");
 // 	try {

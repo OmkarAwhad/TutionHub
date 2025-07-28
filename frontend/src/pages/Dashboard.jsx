@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/dashboard/sidebar/Sidebar";
-import { FaTimes } from "react-icons/fa";
+import { RxCross1 } from "react-icons/rx";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,7 +27,7 @@ function Dashboard() {
       {/* Hamburger menu button (mobile only, when sidebar closed) */}
       {!sidebarOpen && (
         <button
-          className="fixed top-4 left-4 z-50 md:hidden bg-gray-100 p-2 rounded shadow"
+          className="fixed top-4 right-4 z-50 md:hidden bg-gray-100 p-2 rounded shadow"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open Sidebar"
         >
@@ -39,11 +39,11 @@ function Dashboard() {
       {/* Sidebar close button (mobile only, when sidebar open) */}
       {sidebarOpen && (
         <button
-          className="fixed top-4 left-4 z-50 md:hidden bg-gray-100 p-2 rounded shadow"
+          className="fixed top-4 right-4 z-50 md:hidden bg-gray-100 p-2 rounded shadow"
           onClick={() => setSidebarOpen(false)}
           aria-label="Close Sidebar"
         >
-          <FaTimes size={18} />
+          <RxCross1 size={18} />
         </button>
       )}
 

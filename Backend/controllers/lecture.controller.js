@@ -685,3 +685,31 @@ module.exports.getTutorLecturesByDate = async (req, res) => {
 		);
 	}
 };
+
+module.exports.getLecturesByTutorId = async (req, res) => {
+   try {
+      const { tutorId } = req.body;
+      if (!tutorId) {
+         return res.json(new ApiError(400, "Tutor ID is required"));
+      }
+
+      const lectures = await Lecture.find({ tutor: tutorId })
+         .populate("tutor")
+         .populate("subject")
+         .populate("standard")
+         .sort({ date: -1, time: 1 });
+
+      return res.json(
+         new ApiResponse(
+            200,
+            lectures,
+            "Lectures fetched successfully for the given tutor"
+         )
+      );
+   } catch (error) {
+      console.error("Error fetching lectures by tutorId:", error);
+      return res.json(
+         new ApiError(500, "Error fetching lectures by tutorId")
+      );
+   }
+};

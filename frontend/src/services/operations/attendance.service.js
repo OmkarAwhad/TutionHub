@@ -2,15 +2,16 @@ import { apiConnector } from "../apiConnector.service";
 import { attendanceApi } from "../apis.service";
 import toast from "react-hot-toast";
 
-export function viewAttendanceOfAStud(token) {
+export function viewMyAttendance(userId = null, token) {
 	return async () => {
 		try {
-			// Parse the token if it's a string
-			// const parsedToken = typeof token === 'string' ? JSON.parse(token) : token;
+			const url = userId
+				? `${attendanceApi.GET_STUDENT_ATTENDANCE}/${userId}`
+				: attendanceApi.GET_STUDENT_ATTENDANCE;
 
 			const result = await apiConnector(
 				"GET",
-				attendanceApi.GET_STUDENT_ATTENDANCE,
+				url,
 				{},
 				{
 					"Content-Type": "application/json",
@@ -23,11 +24,10 @@ export function viewAttendanceOfAStud(token) {
 				console.log(result.data.message);
 				return [];
 			}
-			// console.log(result.data.data)
 			return result.data.data;
 		} catch (error) {
-			toast.error("Error in fetching student subjects");
-			console.log("Error in fetching student subjects", error);
+			toast.error("Error in fetching student attendance");
+			console.log("Error in fetching student attendance", error);
 			return [];
 		}
 	};
@@ -207,30 +207,38 @@ export function getLecturesWithoutAttendance(token) {
 	};
 }
 
-export function attendAccToSub(subjectId, token) {
-	return async (dispatch) => {
-		try {
-			const result = await apiConnector(
-				"GET",
-				`${attendanceApi.GET_SUBJECT_ATTENDANCE}/${subjectId}`,
-				null,
-				{
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				}
-			);
-			if (!result.data.success) {
-				toast.error(result.data.message);
-				return null;
-			}
-			// console.log(result.data.data);
-			return result.data.data;
-		} catch (error) {
-			toast.error("Error fetching attendance for subject");
-			console.error("Error fetching attendance for subject:", error);
-			return null;
-		}
-	};
+export function attendAccToSub(subjectId, userId = null, token) {
+   return async (dispatch) => {
+      try {
+         // URL with userId as parameter if provided
+         const url = userId
+            ? `${attendanceApi.GET_SUBJECT_ATTENDANCE}/${userId}`
+            : attendanceApi.GET_SUBJECT_ATTENDANCE;
+
+         // Request body with subjectId
+         const requestBody = { subjectId };
+
+         const result = await apiConnector(
+            "POST", // Changed to POST since we're sending body data
+            url,
+            requestBody, // subjectId in body
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+         
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            return null;
+         }
+         return result.data.data;
+      } catch (error) {
+         toast.error("Error fetching attendance for subject");
+         console.error("Error fetching attendance for subject:", error);
+         return null;
+      }
+   };
 }
 
 export function StudAttendAccToSubForTutor(studentId, subjectId, token) {
@@ -261,91 +269,91 @@ export function StudAttendAccToSubForTutor(studentId, subjectId, token) {
 
 // Get attendance data for editing
 export function getAttendanceForEdit(lectureId, token) {
-   return async (dispatch) => {
-      try {
-         const result = await apiConnector(
-            "GET",
-            `${attendanceApi.GET_ATTENDANCE_FOR_EDIT}/${lectureId}`,
-            null,
-            {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            }
-         );
+	return async (dispatch) => {
+		try {
+			const result = await apiConnector(
+				"GET",
+				`${attendanceApi.GET_ATTENDANCE_FOR_EDIT}/${lectureId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
 
-         if (!result.data.success) {
-            toast.error(result.data.message);
-            return null;
-         }
-         return result.data.data;
-      } catch (error) {
-         toast.error("Error fetching attendance data for editing");
-         console.error("Error fetching attendance for edit:", error);
-         return null;
-      }
-   };
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return null;
+			}
+			return result.data.data;
+		} catch (error) {
+			toast.error("Error fetching attendance data for editing");
+			console.error("Error fetching attendance for edit:", error);
+			return null;
+		}
+	};
 }
 
 // Update attendance
 export function updateAttendance(lectureId, attendanceData, token) {
-   return async (dispatch) => {
-      const toastId = toast.loading("Updating attendance...");
-      try {
-         const result = await apiConnector(
-            "PUT",
-            `${attendanceApi.UPDATE_ATTENDANCE}/${lectureId}`,
-            { attendanceData },
-            {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            }
-         );
+	return async (dispatch) => {
+		const toastId = toast.loading("Updating attendance...");
+		try {
+			const result = await apiConnector(
+				"PUT",
+				`${attendanceApi.UPDATE_ATTENDANCE}/${lectureId}`,
+				{ attendanceData },
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
 
-         if (!result.data.success) {
-            toast.error(result.data.message);
-            return false;
-         }
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return false;
+			}
 
-         toast.success("Attendance updated successfully");
-         return true;
-      } catch (error) {
-         toast.error("Failed to update attendance");
-         console.error("Error updating attendance:", error);
-         return false;
-      } finally {
-         toast.dismiss(toastId);
-      }
-   };
+			toast.success("Attendance updated successfully");
+			return true;
+		} catch (error) {
+			toast.error("Failed to update attendance");
+			console.error("Error updating attendance:", error);
+			return false;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
 }
 
 // Delete attendance for lecture
 export function deleteAttendanceForLecture(lectureId, token) {
-   return async (dispatch) => {
-      const toastId = toast.loading("Deleting attendance...");
-      try {
-         const result = await apiConnector(
-            "DELETE",
-            `${attendanceApi.DELETE_ATTENDANCE}/${lectureId}`,
-            null,
-            {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            }
-         );
+	return async (dispatch) => {
+		const toastId = toast.loading("Deleting attendance...");
+		try {
+			const result = await apiConnector(
+				"DELETE",
+				`${attendanceApi.DELETE_ATTENDANCE}/${lectureId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
 
-         if (!result.data.success) {
-            toast.error(result.data.message);
-            return false;
-         }
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return false;
+			}
 
-         toast.success("Attendance deleted successfully");
-         return true;
-      } catch (error) {
-         toast.error("Failed to delete attendance");
-         console.error("Error deleting attendance:", error);
-         return false;
-      } finally {
-         toast.dismiss(toastId);
-      }
-   };
+			toast.success("Attendance deleted successfully");
+			return true;
+		} catch (error) {
+			toast.error("Failed to delete attendance");
+			console.error("Error deleting attendance:", error);
+			return false;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
 }

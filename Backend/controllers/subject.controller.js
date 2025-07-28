@@ -157,32 +157,54 @@ module.exports.getAllSubjects = async (req, res) => {
 	}
 };
 
-module.exports.subsOfThatUser = async (req, res) => {
-	try {
-		const userId = req.user.id;
+module.exports.subjectsOfAUser = async (req, res) => {
+   try {
+      let userId = req.user.id;
 
-		const subDetails = await User.findById(userId)
-			.populate("subjects")
-			.exec();
-		if (!subDetails) {
-			return res.json(
-				new ApiError(404, "No subjects found for the given student")
-			);
-		}
+      const userDetails = await User.findById(userId);
+      if (!userDetails) {
+         return res.json(new ApiError(404, "User not found"));
+      }
 
-		return res.json(
-			new ApiResponse(
-				200,
-				subDetails.subjects,
-				"Subjects fetched successfully"
-			)
-		);
-	} catch (error) {
-		console.log("Error in fetching subjects of that student ", error);
-		return res.json(
-			new ApiError(500, "Error in fetching subjects of that student ")
-		);
-	}
+      // If admin and userId param is present, use that
+      if (userDetails.role === "Admin" && req.params.userId) {
+         userId = req.params.userId;
+         
+         // Verify the target user exists
+         const targetUser = await User.findById(userId);
+         if (!targetUser) {
+            return res.json(new ApiError(404, "Target user not found"));
+         }
+      }
+
+      // If admin but no userId param, return error
+      if (userDetails.role === "Admin" && !req.params.userId) {
+         return res.json(new ApiError(400, "User ID is required for admin"));
+      }
+
+      const subDetails = await User.findById(userId)
+         .populate("subjects")
+         .exec();
+      
+      if (!subDetails) {
+         return res.json(
+            new ApiError(404, "No subjects found for the given user")
+         );
+      }
+
+      return res.json(
+         new ApiResponse(
+            200,
+            subDetails.subjects,
+            "Subjects fetched successfully"
+         )
+      );
+   } catch (error) {
+      console.log("Error in fetching subjects of that user ", error);
+      return res.json(
+         new ApiError(500, "Error in fetching subjects of that user ")
+      );
+   }
 };
 
 module.exports.assignSubject = async (req, res) => {

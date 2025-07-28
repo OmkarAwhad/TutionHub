@@ -23,9 +23,11 @@ module.exports.addARemark = async (req, res) => {
 			return res.json(new ApiError(404, "Student not found"));
 		}
 
-      if (!student.subjects.includes(subjectId)) {
-         return res.json(new ApiError(400, "Student has not taken this subject"));
-      }
+		if (!student.subjects.includes(subjectId)) {
+			return res.json(
+				new ApiError(400, "Student has not taken this subject")
+			);
+		}
 
 		const newRemark = await Remark.create({
 			student: studentId,
@@ -47,9 +49,34 @@ module.exports.addARemark = async (req, res) => {
 
 module.exports.viewRemarks = async (req, res) => {
 	try {
-		const studentId = req.user.id;
+		let userId = req.user.id;
+		// console.log("User id : ",userId);
 
-		const remarks = await Remark.find({ student: studentId })
+		const userDetails = await User.findById(userId);
+		if (!userDetails) {
+			return res.json(new ApiError(404, "User not found"));
+		}
+		if (userDetails.role === "Tutor") {
+			return res.json(
+				new ApiError(
+					403,
+					"Tutors are not allowed to view student remarks"
+				)
+			);
+		}
+
+		// If admin and userId param is present, use that
+		if (userDetails.role === "Admin" && req.params.userId) {
+			userId = req.params.userId;
+		}
+
+		// If student, always use their own id (ignore param)
+		// If admin but no userId param, return error
+		if (userDetails.role === "Admin" && !req.params.userId) {
+			return res.json(new ApiError(400, "Student userId is required for admin"));
+		}
+
+		const remarks = await Remark.find({ student: userId })
 			.populate("tutor", "name email")
 			.populate("subject", "name code")
 			.sort({ createdAt: -1 });

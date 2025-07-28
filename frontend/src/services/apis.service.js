@@ -11,7 +11,7 @@ export const profileApi = {
 };
 
 export const attendanceApi = {
-	GET_STUDENT_ATTENDANCE: BASE_URL + "/attendance/viewAttendanceOfAStud",
+	GET_STUDENT_ATTENDANCE: BASE_URL + "/attendance/viewMyAttendance",
 	GET_SUBJECT_ATTENDANCE: BASE_URL + "/attendance/attendAccToSub",
 	GET_SUBJECT_ATTENDANCE_BY_TUTOR:
 		BASE_URL + "/attendance/StudAttendAccToSubForTutor",
@@ -46,7 +46,7 @@ export const remarksApi = {
 };
 
 export const subjectApi = {
-	SUBJECT_OF_USER: BASE_URL + "/subject/subsOfThatUser",
+	SUBJECT_OF_USER: BASE_URL + "/subject/subjectsOfAUser",
 	CREATE_SUBJECT: BASE_URL + "/subject/createSubject",
 	UPDATE_SUBJECT: BASE_URL + "/subject/updateSubject",
 	DELETE_SUBJECT: BASE_URL + "/subject/deleteSubject",
@@ -64,6 +64,7 @@ export const lectureApi = {
 	DELETE_LECTURE: BASE_URL + "/lecture/deleteLecture",
 	UPDATE_LECTURE: BASE_URL + "/lecture/updateLecture",
 	GET_TUTOR_LECTURES_BY_DATE: BASE_URL + "/lecture/getTutorLecturesByDate",
+	GET_TUTOR_LECTURES_BY_TUTOR_ID: BASE_URL + "/lecture/getLecturesByTutorId",
 };
 
 export const usersApi = {
@@ -72,6 +73,7 @@ export const usersApi = {
 	// GET_TUTORS: BASE_URL + "/users/getTutors",
 	GET_STUDENTS_BY_LEC: BASE_URL + "/users/getMyStudentsListByLec",
 	GET_MY_DETAILS: BASE_URL + "/users/getMyDetails",
+	GET_USER_DETAILS: BASE_URL + "/users/getUserDetails",
 };
 
 export const feedbackApi = {

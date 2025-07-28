@@ -146,3 +146,35 @@ export function getMyDetails(token) {
 		}
 	};
 }
+
+export function getUserDetails(userId, token) {
+   return async (dispatch) => {
+      const toastId = toast.loading("Loading user details...");
+      try {
+			// console.log("User id : ",userId);
+         const result = await apiConnector(
+            "GET",
+            `${usersApi.GET_USER_DETAILS}/${userId}`,
+            null,
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+         if (!result.data.success) {
+            toast.error(result.data.message);
+            console.log(result.data.message);
+            return null;
+         }
+			// console.log(result)
+         return result.data.data;
+      } catch (error) {
+         toast.error("Failed to fetch user details");
+         console.log("Failed to fetch user details", error);
+         return null;
+      } finally {
+         toast.dismiss(toastId);
+      }
+   };
+}
+

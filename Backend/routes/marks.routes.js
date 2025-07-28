@@ -21,7 +21,8 @@ router.get(
 router.get("/getMarksForEdit/:lectureId", auth, isAdmin, getMarksForEdit);
 router.put("/updateMarksInBulk/:lectureId", auth, isAdmin, updateMarksInBulk);
 router.delete("/deleteMarks/:lectureId", auth, isAdmin, deleteMarksForLecture);
-router.get("/getStudentAnalytics", auth, isStudent, getStudentAnalytics);
+router.get("/getStudentAnalytics", auth, getStudentAnalytics); // for students
+router.get("/getStudentAnalytics/:userId", auth, getStudentAnalytics); // for admin
 router.get(
 	"/getPerformanceComparison/:subjectId",
 	auth,

@@ -270,3 +270,48 @@ module.exports.getMyDetails = async (req, res) => {
 		);
 	}
 };
+
+module.exports.getUserDetails = async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		if (!userId) {
+			return res.json(new ApiError(400, "User ID is required"));
+		}
+
+		// Fetch user details with populated fields
+		const userDetails = await User.findById(userId)
+			.populate("subjects", "name code")
+			.populate({
+				path: "profile",
+				populate: {
+					path: "standard",
+					select: "standardName",
+				},
+			})
+			.populate("homework")
+			.populate("notes")
+			.select("-password")
+			.exec();
+
+		if (!userDetails) {
+			return res.json(new ApiError(404, "User not found"));
+		}
+
+		return res.json(
+			new ApiResponse(
+				200,
+				userDetails,
+				"User details fetched successfully"
+			)
+		);
+	} catch (error) {
+		console.log("Error in fetching user details:", error);
+		return res.json(
+			new ApiError(
+				500,
+				"Error in fetching user details: " + error.message
+			)
+		);
+	}
+};

@@ -2,30 +2,34 @@ import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector.service";
 import { subjectApi } from "../apis.service";
 
-export function subjectsOfAUser(token) {
-	return async () => {
-		try {
-			const result = await apiConnector(
-				"GET",
-				subjectApi.SUBJECT_OF_USER,
-				{},
-				{
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				}
-			);
-			if (!result.data.success) {
-				toast.error(result.data.message);
-				console.log(result.data.message);
-				return [];
-			}
-			return result.data.data;
-		} catch (error) {
-			toast.error("Error in fetching student subjects");
-			console.log("Error in fetching student subjects", error);
-			return [];
-		}
-	};
+export function subjectsOfAUser(userId = null, token) {
+   return async () => {
+      try {
+         const url = userId
+            ? `${subjectApi.SUBJECT_OF_USER}/${userId}`
+            : subjectApi.SUBJECT_OF_USER;
+
+         const result = await apiConnector(
+            "GET",
+            url,
+            {},
+            {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            }
+         );
+         if (!result.data.success) {
+            // toast.error(result.data.message);
+            console.log(result.data.message);
+            return [];
+         }
+         return result.data.data;
+      } catch (error) {
+         toast.error("Error in fetching user subjects");
+         console.log("Error in fetching user subjects", error);
+         return [];
+      }
+   };
 }
 
 export function createSubject(data, token) {

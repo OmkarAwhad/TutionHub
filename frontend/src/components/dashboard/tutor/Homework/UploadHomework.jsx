@@ -27,7 +27,7 @@ function UploadHomework() {
       const fetchData = async () => {
          try {
             const [subjectsResponse, standardsResponse] = await Promise.all([
-               dispatch(subjectsOfAUser(token)),
+               dispatch(subjectsOfAUser(null, token)),
                dispatch(getAllStandards(token))
             ]);
             

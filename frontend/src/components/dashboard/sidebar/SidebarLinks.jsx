@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-function SidebarLinks({ item }) {
+function SidebarLinks({ item, onClose }) {
    const location = useLocation();
 
    const matchRoute = (route) => {
@@ -11,9 +11,18 @@ function SidebarLinks({ item }) {
 
    const isActive = matchRoute(item.path);
 
+   // Handle click - close sidebar on mobile only
+   const handleClick = () => {
+      // Check if we're on mobile (screen width < 768px) and close sidebar
+      if (onClose && window.innerWidth < 768) {
+         onClose();
+      }
+   };
+
    return (
       <NavLink
          to={item.path}
+         onClick={handleClick}
          className={`relative block mx-2 mb-2 rounded-lg font-medium transition-all duration-300 group ${
             isActive
                ? "bg-charcoal-gray text-white shadow-lg" 

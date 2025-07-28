@@ -2,7 +2,7 @@ const express = require("express");
 const { auth, isAdmin, isStudent } = require("../middlewares/auth.middleware");
 const {
 	markAttendance,
-	viewAttendanceOfAStud,
+	viewMyAttendance,
 	viewStudAttendanceForLec,
 	attendAccToSub,
 	StudAttendAccToSubForTutor,
@@ -17,8 +17,12 @@ const {
 const router = express.Router();
 
 router.post("/markAttendance", auth, isAdmin, markAttendance);
-router.get("/viewAttendanceOfAStud", auth, isStudent, viewAttendanceOfAStud);
-router.get("/attendAccToSub/:subjectId", auth, isStudent, attendAccToSub);
+router.get("/viewMyAttendance", auth, viewMyAttendance); // for students
+router.get("/viewMyAttendance/:userId", auth, viewMyAttendance); // for admin
+// Routes - Change to POST to accommodate request body
+router.post("/attendAccToSub/:userId", auth, attendAccToSub); // for admin - userId in params
+router.post("/attendAccToSub", auth, attendAccToSub); // for students - no userId
+
 router.post("/StudAttendAccToSubForTutor", auth, StudAttendAccToSubForTutor);
 router.get("/viewStudAttendanceForLec", auth, viewStudAttendanceForLec);
 router.get("/studsPresentForALec", auth, isAdmin, studsPresentForALec);

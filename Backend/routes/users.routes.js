@@ -8,6 +8,7 @@ const {
 	// getTutors,
 	getMyStudentsListByLec,
 	getMyDetails,
+	getUserDetails,
 } = require("../controllers/users.controller");
 
 router.get("/viewStudentProfile/:studentId", auth, isTutor, viewStudentProfile);
@@ -16,5 +17,6 @@ router.get("/getAllUsersList", auth, getAllUsersList);
 // router.get("/getTutors", auth, isAdmin, getTutors);
 router.get("/getMyDetails", auth, getMyDetails);
 router.get("/getMyStudentsListByLec/:lectureId", auth, getMyStudentsListByLec);
+router.get("/getUserDetails/:userId", auth, isAdmin, getUserDetails);
 
 module.exports = router;

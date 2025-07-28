@@ -154,17 +154,22 @@ export function deleteMarksForLecture(lectureId, token) {
    };
 }
 
-export const getStudentAnalytics = async (token) => {
+export const getStudentAnalytics = async (userId = null, token) => {
    try {
+      const url = userId
+         ? `${marksApi.GET_STUDENT_ANALYTICS}/${userId}`
+         : marksApi.GET_STUDENT_ANALYTICS;
+
       const response = await apiConnector(
          "GET",
-         marksApi.GET_STUDENT_ANALYTICS,
+         url,
          null,
          {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
          }
       );
+      
       if (!response?.data?.success) {
          throw new Error(response?.data?.message || "Failed to fetch analytics");
       }

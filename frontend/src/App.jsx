@@ -60,6 +60,7 @@ import EditMarks from "./components/dashboard/admin/marks/EditMarks.jsx";
 import CreateFeedback from "./components/dashboard/Students/feedback/CreateFeedback.jsx";
 import FeedbackList from "./components/dashboard/Students/feedback/FeedbackList.jsx";
 import NotFound from "./components/auth/NotFound.jsx";
+import TutorLecturesDisplay from "./components/dashboard/admin/users/TutorLecturesDisplay.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -162,10 +163,21 @@ function App() {
 								path="/dashboard/admin-users"
 								element={<AdminUsers />}
 							/>
-
 							<Route
-								path="/dashboard/admin-users/:id"
+								path="/dashboard/admin-users/:userId"
 								element={<UserDetails />}
+							/>
+							<Route
+								path="/dashboard/admin-users/:userId/attendance"
+								element={<Attendance />}
+							/>
+							<Route
+								path="/dashboard/admin-users/:userId/progress"
+								element={<Progress />}
+							/>
+							<Route
+								path="/dashboard/admin-users/:userId/remarks"
+								element={<Remarks />}
 							/>
 							<Route
 								path="/dashboard/admin-lecture"
@@ -270,6 +282,10 @@ function App() {
 							<Route
 								path="/dashboard/admin-announcement/list-announcements"
 								element={<AnnouncementList />}
+							/>
+							<Route
+								path="/dashboard/admin-users/:userId/lectures"
+								element={<TutorLecturesDisplay />}
 							/>
 						</>
 					)}

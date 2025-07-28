@@ -9,11 +9,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowRoundBack, IoMdSend } from "react-icons/io";
 import { FaGraduationCap } from "react-icons/fa6";
-import { FaSearch , FaTimes} from "react-icons/fa";
-import {
-	attendAccToSub,
-	StudAttendAccToSubForTutor,
-} from "../../../../services/operations/attendance.service";
+import { FaSearch, FaTimes } from "react-icons/fa";
+import { StudAttendAccToSubForTutor } from "../../../../services/operations/attendance.service";
 import { addARemark } from "../../../../services/operations/remarks.service";
 
 function StudentData() {

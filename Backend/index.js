@@ -30,10 +30,10 @@ const standardRoutes = require("./routes/standard.routes");
 const PORT = process.env.PORT || 5001;
 
 // Remove this block to avoid mkdir error on Vercel/serverless
-// const uploadDir = path.join(__dirname, "uploads/notes");
-// if (!fs.existsSync(uploadDir)) {
-// 	fs.mkdirSync(uploadDir, { recursive: true });
-// }
+const uploadDir = path.join(__dirname, "uploads/notes");
+if (!fs.existsSync(uploadDir)) {
+	fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 app.use(cookieParser());
 app.use(express.json());

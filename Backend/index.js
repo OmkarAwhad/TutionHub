@@ -6,6 +6,13 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL,
+		credentials: true,
+	})
+);
+
 const authRoutes = require("./routes/auth.routes");
 const profileRoutes = require("./routes/profile.routes");
 const subjectRoutes = require("./routes/subject.routes");
@@ -33,12 +40,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Allow CORS for frontend
-app.use(
-	cors({
-		origin: process.env.FRONTEND_URL,
-		credentials: true,
-	})
-);
+// app.use(
+// 	cors({
+// 		origin: process.env.FRONTEND_URL,
+// 		credentials: true,
+// 	})
+// );
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

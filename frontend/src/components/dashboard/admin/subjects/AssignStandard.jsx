@@ -5,7 +5,7 @@ import { getAllStandards } from "../../../../services/operations/standard.servic
 import { assignStandardToStudent } from "../../../../services/operations/standard.service";
 import { toast } from "react-hot-toast";
 import { FaArrowLeftLong, FaGraduationCap } from "react-icons/fa6";
-import {  FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function AssignStandard() {
@@ -158,7 +158,7 @@ function AssignStandard() {
                      </div>
                   </div>
 
-                  {/* Desktop Table View */}
+                  {/* Desktop Table View - Fixed Alignment */}
                   <div className="hidden lg:block">
                      <div className="p-4 border-b border-light-gray">
                         <h3 className="text-lg font-semibold text-charcoal-gray">
@@ -170,74 +170,61 @@ function AssignStandard() {
                            )}
                         </h3>
                      </div>
-                     <div className="relative">
-                        <div className="border-b border-gray-200 overflow-hidden">
-                           {/* Fixed Left Column */}
-                           <div className="absolute left-0 top-0 w-[400px] bg-white border-r border-gray-200">
-                              <table className="w-full">
-                                 <thead>
-                                    <tr>
-                                       <th className="px-6 py-4 bg-light-gray text-left text-xs font-semibold text-charcoal-gray uppercase tracking-wider w-[180px]">
-                                          Student
-                                       </th>
-                                       <th className="px-6 py-4 bg-light-gray text-left text-xs font-semibold text-charcoal-gray uppercase tracking-wider">
-                                          Email
-                                       </th>
-                                    </tr>
-                                 </thead>
-                                 <tbody>
-                                    {filteredStudents.map((student) => (
-                                       <tr key={student._id} className="hover:bg-light-gray/30">
-                                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-charcoal-gray">
-                                             {student.name}
-                                          </td>
-                                          <td className="px-6 py-4 whitespace-nowrap text-sm text-medium-gray">
-                                             {student.email}
-                                          </td>
-                                       </tr>
+                     
+                     {/* Single Table with Fixed Layout */}
+                     <div className="overflow-x-auto">
+                        <table className="w-full table-fixed">
+                           <thead>
+                              <tr className="bg-light-gray">
+                                 <th className="sticky left-0 z-10 bg-light-gray px-6 py-4 text-left text-xs font-semibold text-charcoal-gray uppercase tracking-wider w-[200px] border-r border-gray-200">
+                                    Student
+                                 </th>
+                                 <th className="sticky left-[200px] z-10 bg-light-gray px-6 py-4 text-left text-xs font-semibold text-charcoal-gray uppercase tracking-wider w-[250px] border-r border-gray-200">
+                                    Email
+                                 </th>
+                                 {standards.map((standard) => (
+                                    <th
+                                       key={standard._id}
+                                       className="px-6 py-4 text-center text-xs font-semibold text-charcoal-gray uppercase tracking-wider w-[150px]"
+                                    >
+                                       {standard.standardName}
+                                    </th>
+                                 ))}
+                              </tr>
+                           </thead>
+                           <tbody className="divide-y divide-light-gray">
+                              {filteredStudents.map((student, index) => (
+                                 <tr 
+                                    key={student._id} 
+                                    className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50 transition-colors duration-200`}
+                                 >
+                                    <td className="sticky left-0 z-10 bg-inherit px-6 py-4 text-sm font-medium text-charcoal-gray border-r border-gray-200">
+                                       <div className="truncate pr-2" title={student.name}>
+                                          {student.name}
+                                       </div>
+                                    </td>
+                                    <td className="sticky left-[200px] z-10 bg-inherit px-6 py-4 text-sm text-medium-gray border-r border-gray-200">
+                                       <div className="truncate pr-2" title={student.email}>
+                                          {student.email}
+                                       </div>
+                                    </td>
+                                    {standards.map((standard) => (
+                                       <td key={standard._id} className="px-6 py-4 text-center">
+                                          <div className="flex justify-center">
+                                             <input
+                                                type="radio"
+                                                name={`student-${student._id}`}
+                                                checked={student.profile?.standard === standard._id}
+                                                onChange={() => handleStandardChange(student._id, standard._id)}
+                                                className="h-4 w-4 text-charcoal-gray focus:ring-2 focus:ring-charcoal-gray focus:ring-offset-2 cursor-pointer"
+                                             />
+                                          </div>
+                                       </td>
                                     ))}
-                                 </tbody>
-                              </table>
-                           </div>
-
-                           {/* Scrollable Right Section */}
-                           <div className="ml-[400px] overflow-x-auto">
-                              <table className="w-full">
-                                 <thead>
-                                    <tr>
-                                       {standards.map((standard) => (
-                                          <th
-                                             key={standard._id}
-                                             className="px-6 py-4 bg-light-gray text-center text-xs font-semibold text-charcoal-gray uppercase tracking-wider min-w-[150px]"
-                                          >
-                                             {standard.standardName}
-                                          </th>
-                                       ))}
-                                    </tr>
-                                 </thead>
-                                 <tbody>
-                                    {filteredStudents.map((student) => (
-                                       <tr key={student._id} className="hover:bg-light-gray/30">
-                                          {standards.map((standard) => (
-                                             <td
-                                                key={standard._id}
-                                                className="px-6 py-4 whitespace-nowrap text-center"
-                                             >
-                                                <input
-                                                   type="radio"
-                                                   name={`student-${student._id}`}
-                                                   checked={student.profile?.standard === standard._id}
-                                                   onChange={() => handleStandardChange(student._id, standard._id)}
-                                                   className="h-4 w-4 text-charcoal-gray focus:ring-charcoal-gray cursor-pointer"
-                                                />
-                                             </td>
-                                          ))}
-                                       </tr>
-                                    ))}
-                                 </tbody>
-                              </table>
-                           </div>
-                        </div>
+                                 </tr>
+                              ))}
+                           </tbody>
+                        </table>
                      </div>
                   </div>
                </>

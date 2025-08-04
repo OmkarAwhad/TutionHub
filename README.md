@@ -63,10 +63,10 @@ TuitionHub is a modern web platform designed to streamline tuition management fo
 
 ## 🖼️ Screenshots
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
+<img width="1859" height="999" alt="image" src="https://github.com/user-attachments/assets/26c06768-65dc-4c1d-b749-310938c8f5a6" />
+<img width="1862" height="997" alt="image" src="https://github.com/user-attachments/assets/8f109980-6596-496d-83ce-2472887f33e5" />
+<img width="1860" height="1003" alt="image" src="https://github.com/user-attachments/assets/0eb07f0b-4b48-400d-9963-3598db7f7e1a" />
+<img width="1919" height="996" alt="image" src="https://github.com/user-attachments/assets/dc645e1b-eee1-4a02-a577-5f9a1c3c8986" />
 
 ## 🤝 Contributing
 

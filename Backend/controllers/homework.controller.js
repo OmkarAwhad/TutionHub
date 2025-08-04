@@ -1,6 +1,6 @@
 const upload = require("../utils/multer.utils");
 const {
-	uploadToCloudinary,
+	uploadBuffer,
 	cloudinary,
 	forceDeleteCloudinaryFile,
 } = require("../config/cloudinary");
@@ -11,7 +11,6 @@ const HomeworkSubmission = require("../models/homeworkSubmission.model");
 const Subject = require("../models/subject.model");
 const User = require("../models/user.model");
 const Standard = require("../models/standard.model");
-const fs = require("fs").promises;
 
 const uploadMiddleware = upload.single("file");
 
@@ -40,10 +39,6 @@ module.exports.uploadHomework = async (req, res) => {
 
 			const standardExists = await Standard.findById(standardId);
 			if (!standardExists) {
-				// Clean up local file if standard not found
-				if (req.file && req.file.path) {
-					await fs.unlink(req.file.path);
-				}
 				return res.json(new ApiError(404, "Standard not found"));
 			}
 
@@ -59,16 +54,17 @@ module.exports.uploadHomework = async (req, res) => {
 
 			const subjectDetails = await Subject.findById(subject);
 			if (!subjectDetails) {
-				// Clean up local file if subject not found
-				if (req.file && req.file.path)
-					await fs.unlink(req.file.path);
 				return res.json(new ApiError(404, "Subject not found"));
 			}
 
 			let fileUrl = null;
 			if (req.file) {
 				try {
-					fileUrl = await uploadToCloudinary(req.file.path);
+					fileUrl = await uploadBuffer(
+						req.file.buffer,
+						process.env.CLOUDINARY_FOLDER || "homework",
+						req.file.originalname
+					);
 				} catch (uploadError) {
 					throw new ApiError(
 						500,
@@ -87,6 +83,7 @@ module.exports.uploadHomework = async (req, res) => {
 				fileUrl,
 				dueDate,
 			});
+
 			await User.findByIdAndUpdate(tutorId, {
 				$push: { homework: newHomework._id },
 			});
@@ -100,17 +97,6 @@ module.exports.uploadHomework = async (req, res) => {
 			);
 		} catch (error) {
 			console.log("Error in uploading homework: ", error);
-			// Clean up local file if it still exists
-			if (req.file && req.file.path) {
-				try {
-					await fs.unlink(req.file.path);
-				} catch (unlinkError) {
-					console.log(
-						"Error deleting local file: ",
-						unlinkError
-					);
-				}
-			}
 			return res.json(
 				new ApiError(
 					500,
@@ -201,92 +187,102 @@ module.exports.getHomeworkBySubject = async (req, res) => {
 };
 
 module.exports.deleteHomework = async (req, res) => {
-   try {
-      const { homeworkId } = req.params;
+	try {
+		const { homeworkId } = req.params;
 
-      if (!homeworkId) {
-         return res.json(new ApiError(400, "Homework ID is required"));
-      }
+		if (!homeworkId) {
+			return res.json(new ApiError(400, "Homework ID is required"));
+		}
 
-      const homework = await Homework.findById(homeworkId);
-      if (!homework) {
-         return res.json(new ApiError(404, "Homework not found"));
-      }
+		const homework = await Homework.findById(homeworkId);
+		if (!homework) {
+			return res.json(new ApiError(404, "Homework not found"));
+		}
 
-      // Check authorization
-      if (homework.tutor.toString() !== req.user.id) {
-         return res.json(
-            new ApiError(403, "Not authorized to delete this homework")
-         );
-      }
+		// Check authorization
+		if (homework.tutor.toString() !== req.user.id) {
+			return res.json(
+				new ApiError(403, "Not authorized to delete this homework")
+			);
+		}
 
-      let fileDeleteStatus = "No file to delete";
-      
-      // Handle file deletion
-      if (homework.fileUrl) {
-         console.log("Deleting homework file:", homework.fileUrl);
-         
-         try {
-            const fileDeleted = await forceDeleteCloudinaryFile(homework.fileUrl);
-            
-            if (fileDeleted) {
-               console.log("File deleted successfully from Cloudinary");
-               fileDeleteStatus = "File deleted successfully";
-            } else {
-               console.warn("File deletion failed");
-               fileDeleteStatus = "File deletion failed";
-            }
-         } catch (error) {
-            console.error("Error during file deletion:", error);
-            fileDeleteStatus = `File deletion error: ${error.message}`;
-         }
-      }
+		let fileDeleteStatus = "No file to delete";
 
-      // Handle submissions
-      const submissions = await HomeworkSubmission.find({ homework: homeworkId });
-      let submissionResults = [];
+		// Handle file deletion
+		if (homework.fileUrl) {
+			console.log("Deleting homework file:", homework.fileUrl);
 
-      if (submissions.length > 0) {
-         for (const submission of submissions) {
-            if (submission.fileUrl) {
-               try {
-                  const deleted = await forceDeleteCloudinaryFile(submission.fileUrl);
-                  submissionResults.push({
-                     id: submission._id,
-                     status: deleted ? "File deleted" : "File deletion failed"
-                  });
-               } catch (error) {
-                  submissionResults.push({
-                     id: submission._id,
-                     status: `Error: ${error.message}`
-                  });
-               }
-            }
-         }
+			try {
+				const fileDeleted = await forceDeleteCloudinaryFile(
+					homework.fileUrl
+				);
 
-         await HomeworkSubmission.deleteMany({ homework: homeworkId });
-      }
+				if (fileDeleted) {
+					console.log(
+						"File deleted successfully from Cloudinary"
+					);
+					fileDeleteStatus = "File deleted successfully";
+				} else {
+					console.warn("File deletion failed");
+					fileDeleteStatus = "File deletion failed";
+				}
+			} catch (error) {
+				console.error("Error during file deletion:", error);
+				fileDeleteStatus = `File deletion error: ${error.message}`;
+			}
+		}
 
-      // Delete homework from database
-      await Homework.findByIdAndDelete(homeworkId);
+		// Handle submissions
+		const submissions = await HomeworkSubmission.find({
+			homework: homeworkId,
+		});
+		let submissionResults = [];
 
-      return res.json(
-         new ApiResponse(
-            200,
-            {
-               fileDeleteStatus,
-               submissionsDeleted: submissions.length,
-               submissionResults,
-            },
-            "Homework deleted successfully"
-         )
-      );
-   } catch (error) {
-      console.error("Error deleting homework:", error);
-      return res.json(
-         new ApiError(500, "Error deleting homework: " + error.message)
-      );
-   }
+		if (submissions.length > 0) {
+			for (const submission of submissions) {
+				if (submission.fileUrl) {
+					try {
+						const deleted = await forceDeleteCloudinaryFile(
+							submission.fileUrl
+						);
+						submissionResults.push({
+							id: submission._id,
+							status: deleted
+								? "File deleted"
+								: "File deletion failed",
+						});
+					} catch (error) {
+						submissionResults.push({
+							id: submission._id,
+							status: `Error: ${error.message}`,
+						});
+					}
+				}
+			}
+
+			await HomeworkSubmission.deleteMany({ homework: homeworkId });
+		}
+
+		// Delete homework from database
+		await Homework.findByIdAndDelete(homeworkId);
+
+		return res.json(
+			new ApiResponse(
+				200,
+				{
+					fileDeleteStatus,
+					submissionsDeleted: submissions.length,
+					submissionResults,
+				},
+				"Homework deleted successfully"
+			)
+		);
+	} catch (error) {
+		console.error("Error deleting homework:", error);
+		return res.json(
+			new ApiError(500, "Error deleting homework: " + error.message)
+		);
+	}
 };
 
 ///////////////////// Homework Submission //////////////////////////
@@ -312,9 +308,6 @@ module.exports.submitHomework = async (req, res) => {
 
 			const homework = await Homework.findById(homeworkId);
 			if (!homework) {
-				// Clean up local file if homework not found
-				if (req.file && req.file.path)
-					await fs.unlink(req.file.path);
 				return res.json(new ApiError(404, "Homework not found"));
 			}
 
@@ -325,9 +318,6 @@ module.exports.submitHomework = async (req, res) => {
 			});
 
 			if (existingSubmission) {
-				// Clean up local file if already submitted
-				if (req.file && req.file.path)
-					await fs.unlink(req.file.path);
 				return res.json(
 					new ApiError(
 						400,
@@ -344,7 +334,12 @@ module.exports.submitHomework = async (req, res) => {
 
 			let fileUrl = null;
 			try {
-				fileUrl = await uploadToCloudinary(req.file.path);
+				fileUrl = await uploadBuffer(
+					req.file.buffer,
+					process.env.CLOUDINARY_FOLDER ||
+						"homework-submissions",
+					req.file.originalname
+				);
 			} catch (uploadError) {
 				throw new ApiError(
 					500,
@@ -378,17 +373,6 @@ module.exports.submitHomework = async (req, res) => {
 			);
 		} catch (error) {
 			console.log("Error in submitting homework: ", error);
-			// Clean up local file if it still exists
-			if (req.file && req.file.path) {
-				try {
-					await fs.unlink(req.file.path);
-				} catch (unlinkError) {
-					console.log(
-						"Error deleting local file: ",
-						unlinkError
-					);
-				}
-			}
 			return res.json(
 				new ApiError(
 					500,

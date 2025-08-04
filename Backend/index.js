@@ -6,9 +6,23 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const allowedOrigins = [
+	"http://localhost:5173",
+	// "http://localhost:3000",
+	"https://tution-hub-ikxz.vercel.app", // your deployed frontend URL
+	"https://tution-hub-ikxz-nfrpqqkq1-omkarawhads-projects.vercel.app", // possible Vercel preview URL
+];
+
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL,
+		origin: function (origin, callback) {
+			if (!origin) return callback(null, true); // allow non-browser requests
+			if (allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
 		credentials: true,
 	})
 );
@@ -30,10 +44,13 @@ const standardRoutes = require("./routes/standard.routes");
 const PORT = process.env.PORT || 5001;
 
 // Remove this block to avoid mkdir error on Vercel/serverless
-const uploadDir = path.join(__dirname, "uploads/notes");
+const uploadDir = path.join("/tmp", "uploads", "notes");
 if (!fs.existsSync(uploadDir)) {
 	fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+// You could remove or keep this only if you still use any local files:
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(cookieParser());
 app.use(express.json());

@@ -1,0 +1,33 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
+function AdminSubjects() {
+	return (
+		<div className="w-full min-h-[70vh] flex items-end justify-center p-3 sm:p-4 lg:p-6">
+			<div className="w-full flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-6 sm:gap-8 lg:gap-20">
+				<Link
+					to={"/dashboard/assigns/subjects/create-subject"}
+					className="w-full max-w-sm sm:max-w-[45%] bg-medium-gray px-6 py-8 sm:px-12 lg:px-20 sm:py-10 lg:py-14 text-white font-extrabold text-lg sm:text-2xl lg:text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] text-center"
+				>
+					Create Subject
+				</Link>
+
+				<Link
+					to={"/dashboard/assigns/subject/subjects-list"}
+					className="w-full max-w-sm sm:max-w-[45%] bg-medium-gray px-6 py-8 sm:px-12 lg:px-20 sm:py-10 lg:py-14 text-white font-extrabold text-lg sm:text-2xl lg:text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] text-center"
+				>
+					Get All Subjects
+				</Link>
+
+				<Link
+					to={"/dashboard/assigns/subject/assign-subjects"}
+					className="w-full max-w-sm sm:max-w-[45%] bg-medium-gray px-6 py-8 sm:px-12 lg:px-20 sm:py-10 lg:py-14 text-white font-extrabold text-lg sm:text-2xl lg:text-3xl hover:bg-charcoal-gray transition-all duration-150 rounded-lg hover:scale-[102%] text-center"
+				>
+					Assign Subjects
+				</Link>
+			</div>
+		</div>
+	);
+}
+
+export default AdminSubjects;

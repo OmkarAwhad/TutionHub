@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsersList } from "../../../../services/operations/users.service";
-import { assignSubjectToStudent } from "../../../../services/operations/subject.service";
-import { getAllSubjects } from "../../../../services/operations/subject.service";
+import { getAllUsersList } from "../../../../../services/operations/users.service";
+import { assignSubjectToStudent } from "../../../../../services/operations/subject.service";
+import { getAllSubjects } from "../../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FaSearch, FaChalkboardTeacher } from "react-icons/fa";
@@ -86,7 +86,7 @@ function AssignSubTutors() {
 					</h1>
 				</div>
 				<button
-					onClick={() => navigate("/dashboard/admin-subjects/assign-subjects")}
+					onClick={() => navigate("/dashboard/assigns/subject/assign-subjects")}
 					className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
 				>
 					<FaArrowLeftLong className="text-sm" />

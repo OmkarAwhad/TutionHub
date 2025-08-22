@@ -60,35 +60,6 @@ export function getAllUsersList(token) {
 	};
 }
 
-// export function getTutors(token) {
-// 	return async (dispatch) => {
-// 		const toastId = toast.loading("Loading...");
-// 		try {
-// 			const result = await apiConnector(
-// 				"GET",
-// 				usersApi.GET_TUTORS,
-// 				{},
-// 				{
-// 					"Content-Type": "application/json",
-// 					Authorization: `Bearer ${token}`,
-// 				}
-// 			);
-// 			if (!result.data.success) {
-// 				toast.error(result.data.message);
-// 				console.log(result.data.message);
-// 				return [];
-// 			}
-// 			return result.data.data;
-// 		} catch (error) {
-// 			toast.error("Failed to fetch tutors");
-// 			console.log("Failed to fetch tutors", error);
-// 			return [];
-// 		} finally {
-// 			toast.dismiss(toastId);
-// 		}
-// 	};
-// }
-
 export function getMyStudentsListByLec(lectureId, token) {
 	return async (dispatch) => {
 		const toastId = toast.loading("Loading students for lecture...");
@@ -148,33 +119,92 @@ export function getMyDetails(token) {
 }
 
 export function getUserDetails(userId, token) {
-   return async (dispatch) => {
-      const toastId = toast.loading("Loading user details...");
-      try {
+	return async (dispatch) => {
+		const toastId = toast.loading("Loading user details...");
+		try {
 			// console.log("User id : ",userId);
-         const result = await apiConnector(
-            "GET",
-            `${usersApi.GET_USER_DETAILS}/${userId}`,
-            null,
-            {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            }
-         );
-         if (!result.data.success) {
-            toast.error(result.data.message);
-            console.log(result.data.message);
-            return null;
-         }
+			const result = await apiConnector(
+				"GET",
+				`${usersApi.GET_USER_DETAILS}/${userId}`,
+				null,
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
+			}
 			// console.log(result)
-         return result.data.data;
-      } catch (error) {
-         toast.error("Failed to fetch user details");
-         console.log("Failed to fetch user details", error);
-         return null;
-      } finally {
-         toast.dismiss(toastId);
-      }
-   };
+			return result.data.data;
+		} catch (error) {
+			toast.error("Failed to fetch user details");
+			console.log("Failed to fetch user details", error);
+			return null;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
 }
 
+export function assignTutor(tutorId, token) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Loading user details...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				`${usersApi.ASSIGN_TUTOR}/${tutorId}`,
+				{},
+				{
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				}
+			);
+
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				console.log(result.data.message);
+				return null;
+			}
+			// console.log(result)
+			return result.data.data;
+		} catch (error) {
+			toast.error("Failed assign students");
+			console.log("Failed assign students", error);
+			return null;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+// export function getTutors(token) {
+// 	return async (dispatch) => {
+// 		const toastId = toast.loading("Loading...");
+// 		try {
+// 			const result = await apiConnector(
+// 				"GET",
+// 				usersApi.GET_TUTORS,
+// 				{},
+// 				{
+// 					"Content-Type": "application/json",
+// 					Authorization: `Bearer ${token}`,
+// 				}
+// 			);
+// 			if (!result.data.success) {
+// 				toast.error(result.data.message);
+// 				console.log(result.data.message);
+// 				return [];
+// 			}
+// 			return result.data.data;
+// 		} catch (error) {
+// 			toast.error("Failed to fetch tutors");
+// 			console.log("Failed to fetch tutors", error);
+// 			return [];
+// 		} finally {
+// 			toast.dismiss(toastId);
+// 		}
+// 	};
+// }

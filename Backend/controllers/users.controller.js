@@ -279,7 +279,6 @@ module.exports.getUserDetails = async (req, res) => {
 			return res.json(new ApiError(400, "User ID is required"));
 		}
 
-		// Fetch user details with populated fields
 		const userDetails = await User.findById(userId)
 			.populate("subjects", "name code")
 			.populate({
@@ -312,6 +311,30 @@ module.exports.getUserDetails = async (req, res) => {
 				500,
 				"Error in fetching user details: " + error.message
 			)
+		);
+	}
+};
+
+module.exports.assignTutor = async (req, res) => {
+	try {
+		const { tutorId } = req.params;
+
+		const tutorDetails = await User.findById(tutorId);
+		if (!tutorDetails) {
+			return res.json(new ApiError(404, "User not found"));
+		}
+		if (tutorDetails.role === "Tutor") tutorDetails.role = "Student";
+		else if (tutorDetails.role === "Student") tutorDetails.role = "Tutor";
+
+		await tutorDetails.save();
+
+		return res.json(
+			new ApiResponse(200, tutorDetails, "Tutor assigned successfully")
+		);
+	} catch (error) {
+		console.log("Error in assigning tutor", error);
+		return res.json(
+			new ApiError(500, "Error in assigning tutor: " + error.message)
 		);
 	}
 };

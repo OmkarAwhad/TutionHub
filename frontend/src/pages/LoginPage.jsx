@@ -104,12 +104,22 @@ function LoginPage() {
 						Log in
 					</button>
 				</form>
-				<p className="font-sans text-xs font-medium text-center pt-3 ">
-					Don't have an account?{" "}
-					<Link to={"/signup"} className="text-blue-500">
-						Sign up
-					</Link>
-				</p>
+				<div className="flex justify-between">
+					<p className="font-sans text-xs font-medium text-center pt-3 ">
+						<Link
+							to={"/forgot-password"}
+							className="text-blue-500"
+						>
+							Forgot Password?
+						</Link>
+					</p>
+					<p className="font-sans text-xs font-medium text-center pt-3 ">
+						Don't have an account?{" "}
+						<Link to={"/signup"} className="text-blue-500">
+							Sign up
+						</Link>
+					</p>
+				</div>
 			</div>
 		</div>
 	);

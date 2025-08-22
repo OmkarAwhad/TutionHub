@@ -112,3 +112,75 @@ export function deleteMyAccount(token, navigate) {
 		toast.remove(toastId);
 	};
 }
+
+export function forgetPassword(email) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Sending OTP...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				authApi.FORGET_PASSWORD,
+				{ email }
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return false;
+			}
+			toast.success(result.data.message || "OTP sent successfully");
+			return true;
+		} catch (error) {
+			toast.error("Failed to send OTP");
+			return false;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function verifyOTP(email, otp) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Verifying OTP...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				authApi.VERIFY_OTP,
+				{ email, otp }
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return null;
+			}
+			toast.success(result.data.message || "OTP verified");
+			return result.data.resetToken;
+		} catch (error) {
+			toast.error("Failed to verify OTP");
+			return null;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}
+
+export function changePassword(token, newPassword) {
+	return async (dispatch) => {
+		const toastId = toast.loading("Changing password...");
+		try {
+			const result = await apiConnector(
+				"POST",
+				authApi.CHANGE_PASSWORD,
+				{ token, newPassword }
+			);
+			if (!result.data.success) {
+				toast.error(result.data.message);
+				return false;
+			}
+			toast.success(result.data.message || "Password changed successfully");
+			return true;
+		} catch (error) {
+			toast.error("Failed to change password");
+			return false;
+		} finally {
+			toast.dismiss(toastId);
+		}
+	};
+}

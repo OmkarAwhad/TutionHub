@@ -21,7 +21,7 @@ import AdminLecture from "./components/dashboard/admin/lecture/AdminLecture.jsx"
 import CreateLecture from "./components/dashboard/admin/lecture/CreateLecture.jsx";
 import EditLecture from "./components/dashboard/admin/lecture/EditLecture.jsx";
 import LectureList from "./components/dashboard/admin/lecture/LectureList.jsx";
-import AdminSubjects from "./components/dashboard/admin/subjects/AdminSubjects.jsx";
+import AdminSubjects from "./components/dashboard/admin/assigns/subjects/AdminSubjects.jsx";
 import AdminMarks from "./components/dashboard/admin/marks/AdminMarks.jsx";
 import PutMarks from "./components/dashboard/admin/marks/PutMarks.jsx";
 import AdminAttendance from "./components/dashboard/admin/attendance/AdminAttendance.jsx";
@@ -44,23 +44,28 @@ import UploadHomework from "./components/dashboard/tutor/Homework/UploadHomework
 import HomeworkList from "./components/dashboard/tutor/Homework/HomeworkList.jsx";
 import ViewSubmissions from "./components/dashboard/tutor/Homework/ViewSubmissions.jsx";
 import SubmissionsOfAHW from "./components/dashboard/tutor/Homework/SubmissionsOfAHW.jsx";
-import SubjectForm from "./components/dashboard/admin/subjects/SubjectForm.jsx";
-import GetAllSubjects from "./components/dashboard/admin/subjects/GetAllSubjects.jsx";
-import AssignSubjects from "./components/dashboard/admin/subjects/AssignSubjects.jsx";
-import AssignSubStudents from "./components/dashboard/admin/subjects/AssignSubStudents.jsx";
-import AssignSubTutors from "./components/dashboard/admin/subjects/AssignSubTutors.jsx";
+import SubjectForm from "./components/dashboard/admin/assigns/subjects/SubjectForm.jsx";
+import GetAllSubjects from "./components/dashboard/admin/assigns/subjects/GetAllSubjects.jsx";
+import AssignSubjects from "./components/dashboard/admin/assigns/subjects/AssignSubjects.jsx";
+import AssignSubStudents from "./components/dashboard/admin/assigns/subjects/AssignSubStudents.jsx";
+import AssignSubTutors from "./components/dashboard/admin/assigns/subjects/AssignSubTutors.jsx";
 import AdminAnnoucement from "./components/dashboard/admin/announcement/AdminAnnoucement.jsx";
 import CreateAnnouncement from "./components/dashboard/admin/announcement/CreateAnnouncement.jsx";
 import AnnouncementList from "./components/dashboard/admin/announcement/AnnouncementList.jsx";
 import MyAnnouncement from "./components/dashboard/myprofile/MyAnnouncement.jsx";
 import UserDetails from "./components/dashboard/admin/users/UserDetails.jsx";
-import AssignStandard from "./components/dashboard/admin/subjects/AssignStandard.jsx";
+import AssignStandard from "./components/dashboard/admin/assigns/standard/AssignStandard.jsx";
 import EditAttendance from "./components/dashboard/admin/attendance/EditAttendance.jsx";
 import EditMarks from "./components/dashboard/admin/marks/EditMarks.jsx";
 import CreateFeedback from "./components/dashboard/Students/feedback/CreateFeedback.jsx";
 import FeedbackList from "./components/dashboard/Students/feedback/FeedbackList.jsx";
 import NotFound from "./components/auth/NotFound.jsx";
 import TutorLecturesDisplay from "./components/dashboard/admin/users/TutorLecturesDisplay.jsx";
+import AssignTutor from "./components/dashboard/admin/assigns/tutor/AssignTutor.jsx";
+import AdminAssign from "./components/dashboard/admin/assigns/AdminAssign.jsx";
+import ForgotPassword from "./components/auth/ForgotPassword.jsx";
+import VerifyOTP from "./components/auth/VerifyOTP.jsx";
+import ChangePassword from "./components/auth/ChangePassword.jsx";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -93,6 +98,30 @@ function App() {
 					element={
 						<OpenRoute>
 							<SignUpPage />
+						</OpenRoute>
+					}
+				/>
+				<Route
+					path="/forgot-password"
+					element={
+						<OpenRoute>
+							<ForgotPassword />
+						</OpenRoute>
+					}
+				/>
+				<Route
+					path="/verify-otp"
+					element={
+						<OpenRoute>
+							<VerifyOTP />
+						</OpenRoute>
+					}
+				/>
+				<Route
+					path="/change-passsword"
+					element={
+						<OpenRoute>
+							<ChangePassword />
 						</OpenRoute>
 					}
 				/>
@@ -184,7 +213,7 @@ function App() {
 								element={<AdminLecture />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/assign-standard"
+								path="/dashboard/assigns/assign-standard"
 								element={<AssignStandard />}
 							/>
 							<Route
@@ -200,27 +229,35 @@ function App() {
 								element={<LectureList />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects"
+								path="/dashboard/assigns"
+								element={<AdminAssign />}
+							/>
+							<Route
+								path="/dashboard/assigns/subjects"
 								element={<AdminSubjects />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/create-subject"
+								path="/dashboard/assigns/subjects/create-subject"
 								element={<SubjectForm />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/subjects-list"
+								path="/dashboard/assigns/subject/subjects-list"
 								element={<GetAllSubjects />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/assign-subjects"
+								path="/dashboard/assigns/assign-tutor"
+								element={<AssignTutor />}
+							/>
+							<Route
+								path="/dashboard/assigns/subject/assign-subjects"
 								element={<AssignSubjects />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/assign-subjects/students"
+								path="/dashboard/assigns/subject/assign-subjects/students"
 								element={<AssignSubStudents />}
 							/>
 							<Route
-								path="/dashboard/admin-subjects/assign-subjects/tutors"
+								path="/dashboard/assigns/subject/assign-subjects/tutors"
 								element={<AssignSubTutors />}
 							/>
 							<Route

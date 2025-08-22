@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
    createSubject,
    updateSubject,
-} from "../../../../services/operations/subject.service";
+} from "../../../../../services/operations/subject.service";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeftLong, FaBook, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
-import { clearEditingSubject } from "../../../../slices/subject.slice";
+import { clearEditingSubject } from "../../../../../slices/subject.slice";
 
 function SubjectForm() {
    const {
@@ -42,13 +42,13 @@ function SubjectForm() {
                )
             );
             if (result) {
-               navigate("/dashboard/admin-subjects/subjects-list");
+               navigate("/dashboard/assigns/subject/subjects-list");
             }
          } else {
             const result = await dispatch(createSubject(data, token));
             if (result) {
                reset();
-               navigate("/dashboard/admin-subjects/subjects-list");
+               navigate("/dashboard/assigns/subject/subjects-list");
             }
          }
       } catch (error) {
@@ -79,7 +79,7 @@ function SubjectForm() {
             </div>
 
             <button
-               onClick={() => navigate("/dashboard/admin-subjects")}
+               onClick={() => navigate("/dashboard/assigns")}
                className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
             >
                <FaArrowLeftLong className="text-sm" />
@@ -174,7 +174,7 @@ function SubjectForm() {
                         onClick={() => {
                            reset();
                            dispatch(clearEditingSubject());
-                           navigate("/dashboard/admin-subjects/subjects-list");
+                           navigate("/dashboard/assigns/subject/subjects-list");
                         }}
                         className="w-full sm:w-auto px-6 py-3 bg-light-gray text-charcoal-gray font-medium rounded-lg hover:bg-slate-gray hover:text-white transition-colors duration-200"
                      >

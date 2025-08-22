@@ -4,6 +4,9 @@ export const authApi = {
 	SIGNUP_API: BASE_URL + "/auth/signUp",
 	LOGIN_API: BASE_URL + "/auth/login",
 	DELETE_MY_ACCOUNT: BASE_URL + "/auth/deleteMyAccount",
+	FORGET_PASSWORD: BASE_URL + "/auth/forgetPassword",
+	VERIFY_OTP: BASE_URL + "/auth/verifyOTP",
+	CHANGE_PASSWORD: BASE_URL + "/auth/changePassword",
 };
 
 export const profileApi = {
@@ -31,13 +34,13 @@ export const attendanceApi = {
 };
 
 export const marksApi = {
-   GET_MARKS_FOR_EDIT: BASE_URL + "/marks/getMarksForEdit",
-   UPDATE_MARKS_BULK: BASE_URL + "/marks/updateMarksInBulk",
-   DELETE_MARKS: BASE_URL + "/marks/deleteMarks",
-   MARK_STUDENT_MARKS: BASE_URL + "/marks/markStudentMarks",
-   GET_MARKS_DETAILS_BY_LEC: BASE_URL + "/marks/getMarksDetailsByALec",
+	GET_MARKS_FOR_EDIT: BASE_URL + "/marks/getMarksForEdit",
+	UPDATE_MARKS_BULK: BASE_URL + "/marks/updateMarksInBulk",
+	DELETE_MARKS: BASE_URL + "/marks/deleteMarks",
+	MARK_STUDENT_MARKS: BASE_URL + "/marks/markStudentMarks",
+	GET_MARKS_DETAILS_BY_LEC: BASE_URL + "/marks/getMarksDetailsByALec",
 	GET_STUDENT_ANALYTICS: BASE_URL + "/marks/getStudentAnalytics",
-   GET_PERFORMANCE_COMPARISON: BASE_URL + "/marks/getPerformanceComparison",
+	GET_PERFORMANCE_COMPARISON: BASE_URL + "/marks/getPerformanceComparison",
 };
 
 export const remarksApi = {
@@ -74,6 +77,7 @@ export const usersApi = {
 	GET_STUDENTS_BY_LEC: BASE_URL + "/users/getMyStudentsListByLec",
 	GET_MY_DETAILS: BASE_URL + "/users/getMyDetails",
 	GET_USER_DETAILS: BASE_URL + "/users/getUserDetails",
+	ASSIGN_TUTOR: BASE_URL + "/users/assignTutor",
 };
 
 export const feedbackApi = {

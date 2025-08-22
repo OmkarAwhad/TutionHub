@@ -16,7 +16,7 @@ function AssignSubjects() {
                </h1>
             </div>
             <button
-               onClick={() => navigate("/dashboard/admin-subjects")}
+               onClick={() => navigate("/dashboard/assigns")}
                className="flex items-center gap-2 px-3 py-2 text-medium-gray hover:text-charcoal-gray transition-colors duration-200 self-start sm:self-auto"
             >
                <FaArrowLeftLong className="text-sm" />
@@ -28,13 +28,13 @@ function AssignSubjects() {
          <div className="w-full min-h-[50vh] flex items-center justify-center">
             <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 lg:gap-20">
                <Link
-                  to={"/dashboard/admin-subjects/assign-subjects/students"}
+                  to={"/dashboard/assigns/subject/assign-subjects/students"}
                   className="w-full sm:w-[45%] bg-medium-gray px-8 sm:px-12 lg:px-20 py-10 sm:py-12 lg:py-14 text-white font-extrabold text-xl sm:text-2xl lg:text-3xl text-center rounded-lg hover:bg-charcoal-gray hover:scale-[102%] transition-all duration-200"
                >
                   Students
                </Link>
                <Link
-                  to={"/dashboard/admin-subjects/assign-subjects/tutors"}
+                  to={"/dashboard/assigns/subject/assign-subjects/tutors"}
                   className="w-full sm:w-[45%] bg-medium-gray px-8 sm:px-12 lg:px-20 py-10 sm:py-12 lg:py-14 text-white font-extrabold text-xl sm:text-2xl lg:text-3xl text-center rounded-lg hover:bg-charcoal-gray hover:scale-[102%] transition-all duration-200"
                >
                   Tutors

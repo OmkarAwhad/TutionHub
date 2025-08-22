@@ -5,12 +5,12 @@ import { FaArrowLeftLong, FaBook, FaCode } from "react-icons/fa6";
 import {
    deleteSubject,
    getAllSubjects,
-} from "../../../../services/operations/subject.service";
+} from "../../../../../services/operations/subject.service";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Modal from "../../extras/Modal";
-import { setEditingSubject } from "../../../../slices/subject.slice";
+import Modal from "../../../extras/Modal";
+import { setEditingSubject } from "../../../../../slices/subject.slice";
 
 function GetAllSubjects() {
    const { token } = useSelector((state) => state.auth);
@@ -55,7 +55,7 @@ function GetAllSubjects() {
 
    const handleEdit = (subject) => {
       dispatch(setEditingSubject(subject));
-      navigate("/dashboard/admin-subjects/create-subject");
+      navigate("/dashboard/assigns/subjects/create-subject");
    };
 
    const handleDeleteClick = (subject) => {
@@ -101,7 +101,7 @@ function GetAllSubjects() {
                </h1>
             </div>
             <button
-               onClick={() => navigate("/dashboard/admin-subjects")}
+               onClick={() => navigate("/dashboard/assigns")}
                className="flex items-center gap-2 px-3 py-2 bg-light-gray text-charcoal-gray rounded-lg hover:bg-slate-200 hover:text-white transition-colors duration-200 self-start sm:self-auto"
             >
                <FaArrowLeftLong className="text-sm" />

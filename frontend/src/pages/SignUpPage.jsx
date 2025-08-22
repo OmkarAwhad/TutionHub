@@ -28,21 +28,6 @@ function SignUpPage() {
 
 	const { loading, signUpData } = useSelector((state) => state.auth);
 
-	const [role, setRole] = useState(ACCOUNT_TYPE.STUDENT);
-
-	const tabData = [
-		{
-			id: 1,
-			tabName: "Student",
-			type: ACCOUNT_TYPE.STUDENT,
-		},
-		{
-			id: 2,
-			tabName: "Tutor",
-			type: ACCOUNT_TYPE.TUTOR,
-		},
-	];
-
 	const submitHandler = async (data) => {
 		if (data.password !== data.confirmPassword) {
 			toast.error("Passwords do not match");
@@ -50,9 +35,7 @@ function SignUpPage() {
 		}
 		const signUpData = {
 			...data,
-			role,
 		};
-		// console.log(signUpData);
 
 		dispatch(signUp(signUpData, navigate));
 
@@ -70,7 +53,6 @@ function SignUpPage() {
 				<h1 className="pb-5 pt-5 text-medium-gray logo-text text-center font-extrabold text-4xl ">
 					Sign Up
 				</h1>
-				<Tab tabData={tabData} role={role} setRole={setRole} />
 				<form
 					onSubmit={handleSubmit(submitHandler)}
 					className="flex flex-col gap-4   "

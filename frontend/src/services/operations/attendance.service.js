@@ -35,7 +35,6 @@ export function viewMyAttendance(userId = null, token) {
 
 export function markAttendance(lectureId, studentId, status, token) {
 	return async (dispatch) => {
-		const toastId = toast.loading("Marking attendance...");
 		try {
 			const result = await apiConnector(
 				"POST",
@@ -61,8 +60,6 @@ export function markAttendance(lectureId, studentId, status, token) {
 			toast.error("Failed to mark attendance");
 			console.error("Error in marking attendance:", error);
 			return false;
-		} finally {
-			toast.dismiss(toastId);
 		}
 	};
 }

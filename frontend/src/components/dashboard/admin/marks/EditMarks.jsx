@@ -311,9 +311,9 @@ function EditMarks() {
 						<>
 							{/* Mobile Card View */}
 							<div className="block sm:hidden space-y-4">
-								{filteredStudents.map((student) => (
+								{filteredStudents.map((student,index) => (
 									<div
-										key={student._id}
+										key={index}
 										className="bg-light-gray/30 p-4 rounded-lg border border-light-gray"
 									>
 										<h4 className="font-medium text-charcoal-gray mb-3">
@@ -391,10 +391,10 @@ function EditMarks() {
 									</thead>
 									<tbody className="divide-y divide-light-gray">
 										{filteredStudents.map(
-											(student) => (
+											(student,index) => (
 												<tr
 													key={
-														student._id
+														index
 													}
 													className="hover:bg-light-gray/30"
 												>

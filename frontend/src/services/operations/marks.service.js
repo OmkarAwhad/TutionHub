@@ -130,7 +130,7 @@ export function deleteMarksForLecture(lectureId, token) {
          const result = await apiConnector(
             "DELETE",
             `${marksApi.DELETE_MARKS}/${lectureId}`,
-            null,
+            {},
             {
                "Content-Type": "application/json",
                Authorization: `Bearer ${token}`,

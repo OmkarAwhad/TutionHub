@@ -9,8 +9,8 @@ const cors = require("cors");
 const allowedOrigins = [
 	"http://localhost:5173",
 	// "http://localhost:3000",
-	"https://tution-hub-ikxz.vercel.app", // your deployed frontend URL
-	"https://tution-hub-ikxz-nfrpqqkq1-omkarawhads-projects.vercel.app", // possible Vercel preview URL
+	"https://tution-hub-web.vercel.app",
+	"https://vercel.com/omkarawhads-projects/tution-hub-ikxz/2ewzZB4T5fE6WVFWDYvQaAREbdTi",
 ];
 
 app.use(
